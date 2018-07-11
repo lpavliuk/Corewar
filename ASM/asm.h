@@ -22,7 +22,7 @@
 
 #define MAX_ARGS_NUMBER			4
 #define MAX_PLAYERS				4
-#define MEM_SIZE				(4*1024)
+#define MEM_SIZE				(4 * 1024)
 #define IDX_MOD					(MEM_SIZE / 8)
 #define CHAMP_MAX_SIZE			(MEM_SIZE / 6)
 
@@ -69,3 +69,32 @@ typedef struct		header_s
   unsigned int		prog_size;
   char				comment[COMMENT_LENGTH + 1];
 }					header_t;
+
+typedef	struct		s_table
+{
+	char			opcode;
+	char			args_count;
+	char			hex;
+	char			*name;
+	char			carry : 1;
+	char			codage : 1;
+	char			label_size : 3;
+	char			arg1[3] : 1;
+	char			arg2[3] : 1;
+	char			arg3[3] : 1;
+	short			cycles;
+}					t_table;
+
+typedef struct		s_command
+{
+	char				*label;
+	
+	struct s_command	*next;
+}					t_command;
+
+typedef struct		s_asm
+{
+	header_t		*header;
+	t_command		*command;
+	t_table			*table;
+}					t_asm;
