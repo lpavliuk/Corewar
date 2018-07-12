@@ -6,20 +6,12 @@ void	ft_error(char *str)
 	exit(0);
 }
 
-// void		ft_syntax(int i, int j)
-// {
-// 	ft_printf("Syntax error at [%.3d:%.3d]\n", i, j);
-// 	exit(0);
-// }
-
 t_asm			*init_asmb(void)
 {
 	t_asm		*s;
 
 	if (!(s = (t_asm*)malloc(sizeof(t_asm))))
 		ft_error("Error [init_asmb()]: memory was not allocated");
-	// ft_bzero(s->prog_name, PROG_NAME_LENGTH + 1);
-	// ft_bzero(s->comment, COMMENT_LENGTH + 1);
 	s->prog_name = NULL;
 	s->comment = NULL;
 	s->file_name = NULL;
@@ -68,126 +60,6 @@ char		is_comment(char *s)
 	return ((*s == ';' || *s == '#' || *s == '\0') ? 1 : 0);
 }
 
-
-
-
-
-
-
-
-
-
-
-/*
-** 2 functions for getting bot name.
-** first function writes to name string in main structure called asmb.
-** second check if it's valid name string and send this string int pieces.
-*/
-
-// char	copy_to_dst(char *dst, char *src, int *j)
-// {
-// 	static int i = 0;
-
-// 	while (i < PROG_NAME_LENGTH && src[*j] && src[*j] != '\"')
-// 	{
-// 		dst[i] = src[*j];
-// 		i++;
-// 		(*j)++;
-// 	}
-// 	(i == PROG_NAME_LENGTH && src[*j] != '\"') ? ft_error("Error") : 0;
-// 	return ((src[*j] == '\"') ? 1 : 0);
-// }
-
-// void	add_name(char *dst, char **src, int fd, char *flag)
-// {
-// 	int		j;
-
-// 	(*flag & 1) ? ft_error("Error") : (*flag = *flag | 1);
-// 	j = ft_strstr(*src, NAME_CMD_STRING) - *src + ft_strlen(NAME_CMD_STRING);
-// 	while ((*src)[j] && ((*src)[j] == ' ' || (*src)[j] == '\t'))
-// 		j++;
-// 	((*src)[j] != '\"') ? ft_error("Error") : j++;
-// 	while (*src && !copy_to_dst(dst, *src, &j))
-// 	{
-// 		j = 0;
-// 		ft_strdel(src);
-// 		get_next_line(fd, src);
-// 	}
-// 	(!*src) ? ft_error("Error") : 0;
-// 	((*src)[j] != '\"') ? ft_error("Error") : j++;
-// 	while ((*src)[j] && ((*src)[j] == ' ' || (*src)[j] == '\t'))
-// 		j++;
-// 	if ((*src)[j] != '#' && (*src)[j] != ';' && (*src)[j] != '\0')
-// 		ft_error("Error");
-// }
-
-// void	add_comment(char *dst, char **src, int fd, int *i)
-// {
-// 	int j;
-
-// 	(*flag & 2) ? ft_error("Error") : (*flag = *flag | 2);
-// 	j = ft_strstr(*src, COMMENT_CMD_STRING) - *src + ft_strlen(COMMENT_CMD_STRING);
-// 	((*src)[j] != '\"') ? ft_error("Error") : j++;
-// 	while (*src && !copy_to_dst(dst, *src, &j))
-// 	{
-// 		j = 0;
-// 		ft_strdel(src);
-// 		get_next_line(fd, src);
-// 	}
-// 	(!*src) ? ft_error("Error") : 0;
-// 	((*src)[j] != '\"') ? ft_error("Error") : j++;
-// 	while ((*src)[j] && ((*src)[j] == ' ' || (*src)[j] == '\t'))
-// 		j++;
-// 	if ((*src)[j] != '#' && (*src)[j] != ';' && (*src)[j] != '\0')
-// 		ft_error("Error");
-// }
-
-
-// while (*src && !copy_to_dst(new_line, *src, &j))
-	// {
-	// 	j = 0;
-	// 	ft_strdel(src);
-	// 	get_next_line(fd, src);
-	// }
-
-
-
-
-
-/*
-** needle_cmd -> (NAME_CMD / COMMENT_CMD)
-** needle_size -> (PROG_NAME_LENGTH / COMMENT_LENGTH)
-*/
-
-// char	*copy_to_dst(char **src, int needle_size, char fd)
-// {
-// 	char	*new_line;
-// 	int		i; // for new_line
-// 	int		j; // for src
-
-// 	new_line = (char*)malloc(needle_size + 1);
-// 	ft_bzero(new_line, needle_size + 1);
-// 	i = 0;
-// 	j = ft_strchr(*src, '\"') - *src;
-// 	while (*src)
-// 	{
-// 		*src = ft_strjoinfree(*src, "\n", 1); // free *str
-// 		while (i < needle_size && (*src)[j] && (*src)[j] != '\"')
-// 			new_line[i++] = (*src)[j++];
-// 		if ((*src)[j] == '\"')
-// 			break ;
-// 		((*src)[j] != '\0') ? ft_error("Error") : (j = 0);
-// 		ft_strdel(src);
-// 		get_next_line(fd, src);
-// 	}
-// 	(!*src || (*src)[j] != '\"') ? ft_error("Error") : j++;
-// 	while ((*src)[j] && ((*src)[j] == ' ' || (*src)[j] == '\t'))
-// 		j++;
-// 	if ((*src)[j] != '#' && (*src)[j] != ';' && (*src)[j] != '\0')
-// 		ft_error("Error");
-// 	return (new_line);
-// }
-
 char	*copy_to_dst(char **src, int needle_size, char fd, int *j)
 {
 	char	*new_line;
@@ -199,14 +71,14 @@ char	*copy_to_dst(char **src, int needle_size, char fd, int *j)
 	*j = ft_strchr(*src, '\"') - *src + 1; // index in src after bracket(").
 	while (*src)
 	{
-		*src = ft_strjoinfree(*src, "\n", 1); // free *str
+		*src = ft_strjoinfree(*src, "\n", 1); // free *str.
 		while (i < needle_size && (*src)[*j] && (*src)[*j] != '\"')
 			new_line[i++] = (*src)[(*j)++];
 		if ((*src)[*j] == '\"')
 			break ;
 		else if ((*src)[*j] != '\0')
 			ft_error("Error");
-		j = 0;
+		*j = 0;
 		ft_strdel(src);
 		get_next_line(fd, src);
 	}
@@ -259,15 +131,15 @@ void	get_name_and_comment(t_asm *asmb)
 	(flag != 3) ? ft_error("Error\n") : 0;
 }
 
-// void	get_commands(int fd, t_asm *asmb)
-// {
+void	get_commands(int fd, t_asm *asmb)
+{
 
-// }
+}
 
 void		parsing(t_asm *asmb)
 {
 	get_name_and_comment(asmb);
-	// get_commands(asmb, i);
+	get_commands(asmb, i);
 }
 
 void	check_argvs(t_asm *asmb, char **av, int ac)
@@ -299,10 +171,6 @@ stripped and annotated version of the code to the standard output\n");
 			read(asmb->fd, 0, 0) == -1)
 			ft_error(ERR_FILE);
 		parsing(asmb);
-
-		printf("prog_name = %s\n", asmb->prog_name);
-		printf("prog_comment = %s\n", asmb->comment);
-
 		// (asmb->flag_a) ? show_bot(asmb) : create_binary(asmb);
 		// close(asmb->fd);
 	}
