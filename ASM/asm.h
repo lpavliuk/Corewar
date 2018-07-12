@@ -37,8 +37,8 @@
 
 # define LABEL_CHARS				"abcdefghijklmnopqrstuvwxyz_0123456789"
 
-# define NAME_CMD_STRING			".name"
-# define COMMENT_CMD_STRING		".comment"
+# define NAME_CMD			".name"
+# define COMMENT_CMD		".comment"
 
 # define REG_NUMBER				16
 
@@ -121,6 +121,7 @@ typedef struct		s_command
 {
 	unsigned char		codage;
 	char				bytes;
+	char				bytes_before;
 	char				opcode;
 	char				*label;
 	char				*t_reg;
@@ -131,12 +132,13 @@ typedef struct		s_command
 
 typedef struct		s_asm
 {
-	char			prog_name[PROG_NAME_LENGTH + 1];
+	char			*prog_name;
 	char			*file_name;
 	char			flag_a : 1;
 	unsigned int	prog_size;
-	char			comment[COMMENT_LENGTH + 1];
+	char			*comment;
 	int				new_fd;
+	int				fd;
 	t_command		*command;
 }					t_asm;
 
