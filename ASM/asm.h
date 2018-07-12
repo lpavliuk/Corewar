@@ -42,27 +42,27 @@
 
 # define REG_NUMBER				16
 
-# define CYCLE_TO_DIE			1536
-# define CYCLE_DELTA				50
-# define NBR_LIVE				21
-# define MAX_CHECKS				10
 
-/*
-** asdsad
-*/
 
-# define T_REG					1
-# define T_DIR					2
-# define T_IND					4
-# define T_LAB					8
+// # define CYCLE_TO_DIE			1536
+// # define CYCLE_DELTA				50
+// # define NBR_LIVE				21
+// # define MAX_CHECKS				10
 
-/*
-** jni
-*/
+// # define T_REG					1
+// # define T_DIR					2
+// # define T_IND					4
+// # define T_LAB					8
+
+
 
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)
 # define COREWAR_EXEC_MAGIC		0xea83f3
+
+# define ERR_BRACKET "not-closed bracket."
+# define ERR_NAME "second name."
+# define ERR_FILE "Can't read source file "
 
 # define NAME(i) g_table[i].name
 # define COUNT_ARG(i) g_table[i].args_count
@@ -77,6 +77,7 @@
 # define HEX(i) g_table[i].hex
 
 # define MAX_TABLE 16
+
 
 typedef	struct		s_table
 {
@@ -131,6 +132,8 @@ typedef struct		s_command
 typedef struct		s_asm
 {
 	char			prog_name[PROG_NAME_LENGTH + 1];
+	char			*file_name;
+	char			flag_a : 1;
 	unsigned int	prog_size;
 	char			comment[COMMENT_LENGTH + 1];
 	int				new_fd;
