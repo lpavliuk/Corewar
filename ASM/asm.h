@@ -131,7 +131,9 @@ typedef struct		s_command
 	unsigned int		arg1;
 	char 				size_arg1;
 	unsigned int		arg2;
+	char 				size_arg2;
 	unsigned int		arg3;
+	char 				size_arg3;
 	struct s_command	*next;
 }					t_command;
 
@@ -139,17 +141,10 @@ typedef struct		s_asm
 {
 	unsigned int	prog_size;
 	unsigned int	magic;
-<<<<<<< HEAD
-	char			prog_name[PROG_NAME_LENGTH + 1];
-	char			*file_name;
-	char			flag_a : 1;
-	unsigned int	prog_size;
-=======
 	char			*line;
 	char			prog_name[PROG_NAME_LENGTH + 1];
 	char			*file_name;
 	char			flag_a : 1;
->>>>>>> 577c2046e263821541f1f0578616cad5da2158db
 	char			comment[COMMENT_LENGTH + 1];
 	int				new_fd;
 	int				fd;
