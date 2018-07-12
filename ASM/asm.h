@@ -124,20 +124,21 @@ typedef struct		s_command
 	char				bytes_before;
 	char				opcode;
 	char				*label;
-	char				*t_reg;
-	char				*t_dir;
-	char				*t_ind;
+	unsigned int		arg1;
+	char 				size_arg1;
+	unsigned int		arg2;
+	unsigned int		arg3;
 	struct s_command	*next;
 }					t_command;
 
 typedef struct		s_asm
 {
 	unsigned int	magic;
-	char			*prog_name;
+	char			prog_name[PROG_NAME_LENGTH + 1];
 	char			*file_name;
 	char			flag_a : 1;
 	unsigned int	prog_size;
-	char			*comment;
+	char			comment[COMMENT_LENGTH + 1];
 	int				new_fd;
 	int				fd;
 	t_command		*command;
