@@ -6,7 +6,7 @@
 /*   By: opavliuk <opavliuk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 12:40:45 by opavliuk          #+#    #+#             */
-/*   Updated: 2018/05/16 16:59:56 by opavliuk         ###   ########.fr       */
+/*   Updated: 2018/07/12 14:34:27 by tkiselev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ size_t			ft_count_words(char *str, char c);
 size_t			ft_count(intmax_t n, short int base);
 size_t			ft_sqrt(size_t n);
 int				get_next_line(const int fd, char **line);
+char			*ft_strjoinfree(char const *s1, char const *s2, char n);
 
 /*
 ** ****************************************************************************
