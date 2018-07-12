@@ -12,18 +12,17 @@ t_asm			*init_asmb(void)
 
 	if (!(s = (t_asm*)malloc(sizeof(t_asm))))
 		ft_error("Error [init_asmb()]: memory was not allocated");
-	s->prog_name = NULL;
-	s->comment = NULL;
+	ft_bzero(s->prog_name, PROG_NAME_LENGTH + 1);
+	ft_bzero(s->comment, COMMENT_LENGTH + 1);
 	s->file_name = NULL;
+	s->command = NULL;
+	s->line = NULL;
 	s->flag_a = 0;
 	s->prog_size = 0;
 	s->new_fd = 0;
-	s->command = NULL;
 	s->magic = 0;
 	return (s);
 }
-
-
 
 /*
 ** 3 functions for checking if it's line is
@@ -62,55 +61,53 @@ char		is_comment(char *s)
 }
 
 /*
-** copy_to_dst it's a function that allocate memory for str, fills this str, and return str.
+** this function copies string to dest after command and between brackets.
 */
 
-char	*copy_to_dst(char **src, int needle_size, char fd, int *j)
+void	copy_to_dst(t_asm *asmb, char *dest, int size, int *j)
 {
-	char	*new_line;
-	int		i; // for new_line.
+	int		i;
 
-	new_line = (char*)malloc(needle_size + 1);
-	ft_bzero(new_line, needle_size + 1);
 	i = 0;
-	*j = ft_strchr(*src, '\"') - *src + 1; // index in src after bracket(").
-	while (*src)
+	while (asmb->line)
 	{
-		*src = ft_strjoinfree(*src, "\n", 1); // free *str.
-		while (i < needle_size && (*src)[*j] && (*src)[*j] != '\"')
-			new_line[i++] = (*src)[(*j)++];
-		if ((*src)[*j] == '\"')
-			break ;
-		else if ((*src)[*j] != '\0')
+		while (i < size && asmb->line[*j] && asmb->line[*j] != '\"')
+			dest[i++] = asmb->line[(*j)++];
+		if (asmb->line[*j] == '\"')
+			return ;
+		else if (i < size) // it means that the last character in asmb->line is '\0'.
+			dest[i++] = '\n';
+		else
 			ft_error("Error");
 		*j = 0;
-		ft_strdel(src);
-		get_next_line(fd, src);
+		ft_strdel(&asmb->line);
+		get_next_line(asmb->fd, &asmb->line);
 	}
-	return (new_line);
 }
 
 /*
-** function that get str after CMD.
-** this fuction usus copy_to_dst.
+** this function gets string after command.
 */
 
-char	*get_str(char **src, char *needle_cmd, int needle_size, char fd)
+void		get_str(t_asm *asmb, char flag)
 {
-	char	*new_line;
 	int		j;
+	int		size;
+	char	*dest;
 
-	j = ft_strstr(*src, needle_cmd) - *src + ft_strlen(needle_cmd); // index in src after needle_cmd.
-	while ((*src)[j] && ((*src)[j] == ' ' || (*src)[j] == '\t'))    // skip spaces and tabs.
+	j = ft_strstr(asmb->line, ((flag == GET_NAME) ? NAME_CMD : COMMENT_CMD)) -
+		asmb->line + ft_strlen(((flag == GET_NAME) ? NAME_CMD : COMMENT_CMD));
+	size = (flag == GET_NAME) ? PROG_NAME_LENGTH : COMMENT_LENGTH;
+	dest = (flag == GET_NAME) ? asmb->prog_name : asmb->comment;
+	while (asmb->line[j] && (asmb->line[j] == ' ' || asmb->line[j] == '\t'))
 		j++;
-	((*src)[j] != '\"') ? ft_error("Error") : j++;                  // check bracket.
-	new_line = copy_to_dst(src, needle_size, fd, &j);               // copy string between brackets.
-	(!*src || (*src)[j] != '\"') ? ft_error("Error") : j++;         // check bracket.
-	while ((*src)[j] && ((*src)[j] == ' ' || (*src)[j] == '\t'))    // skip spaces and tabs.
+	(asmb->line[j] != '\"') ? ft_error("Error") : j++;
+	copy_to_dst(asmb, dest, size, &j);
+	(!asmb->line || asmb->line[j] != '\"') ? ft_error("Error") : j++;
+	while (asmb->line[j] && (asmb->line[j] == ' ' || asmb->line[j] == '\t'))
 		j++;
-	if ((*src)[j] != '#' && (*src)[j] != ';' && (*src)[j] != '\n')  // check the comment. \n because i have added to this string this character.
+	if (asmb->line[j] != ';' && asmb->line[j] != '#' && asmb->line[j] != '\0') // \0 || \n!!!!!!!!!!
 		ft_error("Error");
-	return (new_line);
 }
 
 /*
@@ -119,41 +116,39 @@ char	*get_str(char **src, char *needle_cmd, int needle_size, char fd)
 
 void	get_header(t_asm *asmb)
 {
-	char	*line;
 	char	flag; // 1 bit is for name, and 2 bit - for comment.
 
-	line = 0;
 	flag = 0;
-	while (get_next_line(asmb->fd, &line) > 0)
+	while (get_next_line(asmb->fd, &asmb->line) > 0)
 	{
-		if (is_bot_name(line))
+		if (is_bot_name(asmb->line))
 		{
 			(flag & 1) ? ft_error("Error") : (flag = flag | 1);
-			asmb->prog_name = get_str(&line, NAME_CMD, PROG_NAME_LENGTH, asmb->fd);
+			get_str(asmb, GET_NAME); // GET_NAME means that we are going to get name.
 		}
-		else if (is_bot_comment(line))
+		else if (is_bot_comment(asmb->line))
 		{
 			(flag & 2) ? ft_error("Error") : (flag = flag | 2);
-			asmb->comment = get_str(&line, COMMENT_CMD, COMMENT_LENGTH, asmb->fd);
+			get_str(asmb, GET_COMMENT); // GET_COMMENT means that we are going to get name.
 		}
-		else if (!is_comment(line))
+		else if (!is_comment(asmb->line))
 			ft_error("Error");
-		ft_strdel(&line);
+		ft_strdel(&asmb->line);
 		if (flag == 3)
 			break ;
 	}
 	(flag != 3) ? ft_error("Error\n") : 0;
 }
 
-void	get_commands(t_asm *asmb)
-{
+// void	get_commands(t_asm *asmb)
+// {
 	
-}
+// }
 
 void		parsing(t_asm *asmb)
 {
 	get_header(asmb);
-	get_commands(asmb);
+	// get_commands(asmb);
 }
 
 void	check_argvs(t_asm *asmb, char **av, int ac)
@@ -185,6 +180,7 @@ stripped and annotated version of the code to the standard output\n");
 			read(asmb->fd, 0, 0) == -1)
 			ft_error(ERR_FILE);
 		parsing(asmb);
+
 		// (asmb->flag_a) ? show_bot(asmb) : create_binary(asmb);
 		// close(asmb->fd);
 	}
