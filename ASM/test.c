@@ -1,11 +1,16 @@
 #include "../libft/libft.h"
 #include <stdio.h>
 
+
+inline void	func()
+{
+	write(1, "Hello\n", 6);
+}
+
 int		main()
 {
 	char	*line = "Hello, world!";
 
-	printf("%d\n", line);
-	printf("%d\n", ft_strstr(line, "lo,") - line + ft_strlen("lo,"));
+	func();
 	return (0);
 }

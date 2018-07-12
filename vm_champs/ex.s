@@ -1,7 +1,16 @@
+<<<<<<< HEAD
 .name "name"
 
 .comment "comment"
+=======
+.name "A"
 
-l2:	sti	r1,%:live,%0
-live:	live	%1
-	zjmp	%:l2
+.comment "B"
+>>>>>>> f1c858716118d4af0cff90185f5b3ba21b3e81a0
+
+label: 
+
+
+
+live: sti r99, %0    								,                 %0					
+ live%:live
