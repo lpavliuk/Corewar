@@ -34,7 +34,6 @@ int		main(void)
 	int fd;
 	unsigned char	binary[128] = "0xea83fe";
 	char *name = "name.cor";
-	unsigned int	magic = COREWAR_EXEC_MAGIC;
 	unsigned int	rew_magic;
 	unsigned int	rew_bot_size;
 	char 			prog_name[PROG_NAME_LENGTH + 1];
