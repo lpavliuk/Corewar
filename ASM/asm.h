@@ -132,6 +132,7 @@ typedef struct		s_command
 
 typedef struct		s_asm
 {
+	unsigned int	magic;
 	char			*prog_name;
 	char			*file_name;
 	char			flag_a : 1;

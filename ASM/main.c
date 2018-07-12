@@ -19,6 +19,7 @@ t_asm			*init_asmb(void)
 	s->prog_size = 0;
 	s->new_fd = 0;
 	s->command = NULL;
+	s->magic = 0;
 	return (s);
 }
 
@@ -60,6 +61,10 @@ char		is_comment(char *s)
 	return ((*s == ';' || *s == '#' || *s == '\0') ? 1 : 0);
 }
 
+/*
+** copy_to_dst it's a function that allocate memory for str, fills this str, and return str.
+*/
+
 char	*copy_to_dst(char **src, int needle_size, char fd, int *j)
 {
 	char	*new_line;
@@ -85,6 +90,11 @@ char	*copy_to_dst(char **src, int needle_size, char fd, int *j)
 	return (new_line);
 }
 
+/*
+** function that get str after CMD.
+** this fuction usus copy_to_dst.
+*/
+
 char	*get_str(char **src, char *needle_cmd, int needle_size, char fd)
 {
 	char	*new_line;
@@ -103,7 +113,11 @@ char	*get_str(char **src, char *needle_cmd, int needle_size, char fd)
 	return (new_line);
 }
 
-void	get_name_and_comment(t_asm *asmb)
+/*
+** function that gets prog_name and comment, and also checks if strings are valid or not.
+*/
+
+void	get_header(t_asm *asmb)
 {
 	char	*line;
 	char	flag; // 1 bit is for name, and 2 bit - for comment.
@@ -131,15 +145,15 @@ void	get_name_and_comment(t_asm *asmb)
 	(flag != 3) ? ft_error("Error\n") : 0;
 }
 
-void	get_commands(int fd, t_asm *asmb)
+void	get_commands(t_asm *asmb)
 {
-
+	
 }
 
 void		parsing(t_asm *asmb)
 {
-	get_name_and_comment(asmb);
-	get_commands(asmb, i);
+	get_header(asmb);
+	get_commands(asmb);
 }
 
 void	check_argvs(t_asm *asmb, char **av, int ac)
