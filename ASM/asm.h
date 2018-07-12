@@ -64,6 +64,10 @@
 # define ERR_NAME "second name."
 # define ERR_FILE "Can't read source file "
 
+# define GET_NAME 1
+# define GET_COMMENT 2
+
+
 # define NAME(i) g_table[i].name
 # define COUNT_ARG(i) g_table[i].args_count
 # define ARG1(i, num) g_table[i].arg1[num]
@@ -132,12 +136,13 @@ typedef struct		s_command
 
 typedef struct		s_asm
 {
+	unsigned int	prog_size;
 	unsigned int	magic;
-	char			*prog_name;
+	char			*line;
+	char			prog_name[PROG_NAME_LENGTH + 1];
 	char			*file_name;
 	char			flag_a : 1;
-	unsigned int	prog_size;
-	char			*comment;
+	char			comment[COMMENT_LENGTH + 1];
 	int				new_fd;
 	int				fd;
 	t_command		*command;
