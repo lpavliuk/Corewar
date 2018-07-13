@@ -32,11 +32,9 @@ t_list			*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem))
 {
 	t_list *ping;
 	t_list *tmp;
-	t_list *new;
 
 	if (lst && (*f))
 	{
-		new = lst;
 		if (!(ping = f(lst)))
 			return (NULL);
 		tmp = ping;

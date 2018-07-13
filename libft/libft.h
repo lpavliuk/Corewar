@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <stdarg.h>
 # include <wchar.h>
+# include <stdint.h>
 
 # define BUFF_SIZE 42
 

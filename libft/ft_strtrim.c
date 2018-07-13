@@ -31,12 +31,10 @@ char		*ft_strtrim(char const *s)
 {
 	size_t	i;
 	size_t	n;
-	size_t	k;
 	char	*d;
 
 	i = 0;
 	n = 0;
-	k = -1;
 	if (s == NULL)
 		return (NULL);
 	while ((s[i] == ' ' || s[i] == '\n' || s[i] == '\t') && s[n] != '\0')

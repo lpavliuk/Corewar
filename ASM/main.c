@@ -1,4 +1,24 @@
 #include "asm.h"
+#include <stdio.h>
+
+//DELETE THIS SHIT!!!
+void	prohodochka(t_asm *asmb)
+{
+	t_command *command;
+
+	command = asmb->command;
+	while (command)
+	{
+		printf("command->name = %s\n", command->name);
+
+		while (command->labels)
+		{
+			printf("label = %s\n", (char *)command->labels->content);
+			command->labels = command->labels->next;
+		}
+		command = command->next;
+	}
+}
 
 void	ft_error(char *str)
 {
@@ -271,6 +291,7 @@ void	get_labels(t_asm *asmb, t_command *new, int *j)
 		skip_shit(s, j, " \t");
 		if (s[*j] != '\0' && !is_comment(s + *j))
 			return ;
+		*j = 0;
 		ft_strdel(&s);
 		get_next_line(asmb->fd, &asmb->line);
 	}
@@ -289,24 +310,35 @@ void	get_command(t_asm *asmb, t_command *new, int *j) // gets command_name and o
 	if (s[*j] != ' ' && s[*j] != '\t' && s[*j] != '%' && s[*j] != '-')
 		ft_error("Error");
 	new->name = my_strsub(s, tmp, *j);
-	new->opcode = index_of(new->name);
+	new->opcode = index_of(new->name) + 1;
 	(new->opcode == -1) ? ft_error("Error") : 0;
+}
+
+/*
+** functions which gets arguments after cmd.
+*/
+
+void	get_arguments(t_asm *asmb, t_command *new, int j)
+{
+	char	**arr;
+
+	if (!(arr = ft_strsplit(asmb->line + j, SEPARATOR_CHAR)))
+		ft_error("Error");
+
 }
 
 void	get_lca(t_asm *asmb) // lca means label + command + arguments
 {
-	t_command	*new;
+	t_command		*new;
 	int			j;
 
 	j = 0;
 	new = push_new_command(&asmb->command);
 	get_labels(asmb, new, &j);
-	// printf("%s\n", asmb->line);
-	// printf("%d\n", (int)str_has(asmb->line, COMMAND));
 	if (str_has(asmb->line, COMMAND))
 	{
 		get_command(asmb, new, &j);
-		// get_arguments(asmb, new, j);
+		get_arguments(asmb, new, j);
 	}
 }
 
@@ -339,25 +371,6 @@ void	check_argvs(t_asm *asmb, char **av, int ac)
 			asmb->file_name = ft_strdup(av[ac]);
 	}
 }
-
-void	prohodochka(t_asm *asmb)
-{
-	t_command *command;
-
-	command = asmb->command;
-	while (command)
-	{
-		printf("command->name = %s\n", command->name);
-
-		while (command->labels)
-		{
-			printf("label = %s\n", command->labels->content);
-			command->labels = command->labels->next;
-		}
-		command = command->next;
-	}
-}
-
 
 int		main(int ac, char **av)
 {
