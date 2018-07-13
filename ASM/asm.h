@@ -66,7 +66,8 @@
 
 # define GET_NAME 1
 # define GET_COMMENT 2
-
+# define LABEL 1
+# define COMMAND 2
 
 # define NAME(i) g_table[i].name
 # define COUNT_ARG(i) g_table[i].args_count
@@ -117,9 +118,14 @@ static t_table		g_table[16] = {
 	{"aff", 1, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}, 16, 2, 1, 0, 4, "10"}
 };
 
-/*
-** opcode in t_command are equal to enum(operation_name) - 1;!!!
-*/
+typedef struct		s_arg
+{
+	char			*name;
+	int				value;
+	char			type; // T_REG | T_DIR | T_IND
+	char			arg_size;
+	struct s_arg	*next;
+}					t_arg;
 
 typedef struct		s_command
 {
@@ -127,10 +133,9 @@ typedef struct		s_command
 	char				bytes;
 	char				bytes_before;
 	char				opcode;
-	char				*label;
-	char				*t_reg;
-	char				*t_dir;
-	char				*t_ind;
+	char				*name;
+	t_list				*labels;
+	t_arg				*args;
 	struct s_command	*next;
 }					t_command;
 

@@ -6,6 +6,12 @@ void	ft_error(char *str)
 	exit(0);
 }
 
+void	skip_shit(char *str, int *j, char *symbols)
+{
+	while (str[*j] && ft_strchr(symbols, str[*j]))
+		(*j)++;
+}
+
 t_asm			*init_asmb(void)
 {
 	t_asm		*s;
@@ -140,15 +146,187 @@ void	get_header(t_asm *asmb)
 	(flag != 3) ? ft_error("Error\n") : 0;
 }
 
-// void	get_commands(t_asm *asmb)
-// {
-	
-// }
+/*
+** functions that get commands.
+*/
+
+char	check_last_line(char fd)
+{
+	char buf[1];
+
+	lseek(fd, -1, SEEK_CUR);
+	read(fd, &buf, 1);
+	if (buf[0] == '\n')
+		return (1);
+	return (0);
+}
+
+int		index_of(char *needle)
+{
+	int i;
+
+	i = 0;
+	while (i < MAX_TABLE)
+	{
+		if (ft_strncmp(NAME(i), needle, ft_strlen(NAME(i))) == 0)
+			return (1);
+		i++;
+	}
+	return (-1);
+}
+
+char	str_has(char *str, char flag)
+{
+	int i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	skip_shit(str, &i, " \t");
+	if (flag == LABEL)
+	{
+		while (str[i] && str[i] != ':')
+			if (ft_strchr(LABEL_CHARS, str[i++]) == NULL)
+				return (0);
+		return ((str[i] == ':') ? 1 : 0);
+	}
+	else if (flag == COMMAND)
+	{
+		if (str_has(str, LABEL))
+			i = ft_strchr(str, ':') - str + 1;
+		skip_shit(str, &i, " \t");
+		if (index_of(str + i) != -1)
+			return (1);
+	}
+	return (0);
+}
+
+t_command	*push_new_command(t_command **head)
+{
+	t_command	*new;
+	t_command	*tmp;
+
+	tmp = *head;
+	while (tmp && tmp->next)
+		tmp = tmp->next;
+	if (!(new = (t_command*)malloc(sizeof(t_command))))
+		ft_error("Error");
+	new->next = NULL;
+	new->args = NULL;
+	new->labels = NULL;
+	new->opcode = 0;
+	new->bytes_before = 0;
+	new->bytes = 0;
+	new->codage = 0;
+	if (!*head)
+		*head = new;
+	else
+		tmp->next = new;
+	return (new);
+}
+
+char	*my_strsub(char *src, int start, int end)
+{
+	char	*s;
+	int		i;
+	int		size;
+
+	size = end - start;
+	if (!(s = (char *)malloc(size + 1)))
+		ft_error("Error");
+	ft_bzero(s, size + 1);
+	i = 0;
+	while (i < size)
+	{
+		s[i] = src[start + i];
+		i++;
+	}
+	return (s);
+}
+
+void	get_label(t_list **labels, char *s, int *j)
+{
+	int tmp;
+	char	*tmp_s;
+
+	tmp = *j;
+	while (s[*j] && s[*j] != ':')
+		(*j)++;
+	tmp_s = my_strsub(s, tmp, *j);
+	ft_list_pushback(labels, tmp_s);
+	free(tmp_s);
+	*j += 2; // skip ':'
+}
+
+void	get_labels(t_asm *asmb, t_command *new, int *j)
+{
+	char	*s;
+
+	while (asmb->line)
+	{
+		s = asmb->line;
+		skip_shit(s, j, " \t");
+		if (str_has(s, LABEL))
+			get_label(&new->labels, s, j);
+		skip_shit(s, j, " \t");
+		if (s[*j] != '\0' && !is_comment(s + *j))
+			return ;
+		ft_strdel(&s);
+		get_next_line(asmb->fd, &asmb->line);
+	}
+}
+
+void	get_command(t_asm *asmb, t_command *new, int *j) // gets command_name and opcode.
+{
+	char	*s;
+	int		tmp;
+
+	s = asmb->line;
+	tmp = *j;
+	while (s[*j] && s[*j] != '-' && s[*j] != '%' && s[*j] != ' ' &&
+		s[*j] != '\t' && (s[*j] < '0' || s[*j] > '9'))
+		(*j)++;
+	if (s[*j] != ' ' && s[*j] != '\t' && s[*j] != '%' && s[*j] != '-')
+		ft_error("Error");
+	new->name = my_strsub(s, tmp, *j);
+	new->opcode = index_of(new->name);
+	(new->opcode == -1) ? ft_error("Error") : 0;
+}
+
+void	get_lca(t_asm *asmb) // lca means label + command + arguments
+{
+	t_command	*new;
+	int			j;
+
+	j = 0;
+	new = push_new_command(&asmb->command);
+	get_labels(asmb, new, &j);
+	// printf("%s\n", asmb->line);
+	// printf("%d\n", (int)str_has(asmb->line, COMMAND));
+	if (str_has(asmb->line, COMMAND))
+	{
+		get_command(asmb, new, &j);
+		// get_arguments(asmb, new, j);
+	}
+}
+
+void	get_commands(t_asm *asmb)
+{
+	while (get_next_line(asmb->fd, &asmb->line) > 0)
+	{
+		if (str_has(asmb->line, LABEL) || str_has(asmb->line, COMMAND))
+			get_lca(asmb);
+		else if (!is_comment(asmb->line))
+			ft_error("Error");
+		ft_strdel(&asmb->line);
+	}
+	(!check_last_line(asmb->fd)) ? ft_error("Error") : 0; // instead of 0 we need to execute function that will compute other variables.
+}
 
 void		parsing(t_asm *asmb)
 {
 	get_header(asmb);
-	// get_commands(asmb);
+	get_commands(asmb);
 }
 
 void	check_argvs(t_asm *asmb, char **av, int ac)
@@ -159,6 +337,24 @@ void	check_argvs(t_asm *asmb, char **av, int ac)
 			asmb->flag_a = 1;
 		else if (!asmb->file_name)
 			asmb->file_name = ft_strdup(av[ac]);
+	}
+}
+
+void	prohodochka(t_asm *asmb)
+{
+	t_command *command;
+
+	command = asmb->command;
+	while (command)
+	{
+		printf("command->name = %s\n", command->name);
+
+		while (command->labels)
+		{
+			printf("label = %s\n", command->labels->content);
+			command->labels = command->labels->next;
+		}
+		command = command->next;
 	}
 }
 
@@ -180,6 +376,8 @@ stripped and annotated version of the code to the standard output\n");
 			read(asmb->fd, 0, 0) == -1)
 			ft_error(ERR_FILE);
 		parsing(asmb);
+
+		prohodochka(asmb);
 
 		// (asmb->flag_a) ? show_bot(asmb) : create_binary(asmb);
 		// close(asmb->fd);

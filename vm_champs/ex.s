@@ -1,10 +1,7 @@
-.name "A"
+.name""
+.comment""
+l2: 
+	and 10,%10,r1
+live:	live        
 
-.comment "B"
-
-label: 
-
-
-
-live: sti r99, %0    								,                 %0					
- live%:live
+	zjmp	%:l2
