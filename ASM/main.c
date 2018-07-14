@@ -238,6 +238,7 @@ t_command	*push_new_command(t_command **head)
 	new->bytes_before = 0;
 	new->bytes = 0;
 	new->codage = 0;
+	new->name = NULL;
 	if (!*head)
 		*head = new;
 	else
@@ -275,7 +276,7 @@ void	get_label(t_list **labels, char *s, int *j)
 	tmp_s = my_strsub(s, tmp, *j);
 	ft_list_pushback(labels, tmp_s);
 	free(tmp_s);
-	*j += 2; // skip ':'
+	(*j)++;
 }
 
 void	get_labels(t_asm *asmb, t_command *new, int *j)
@@ -292,7 +293,7 @@ void	get_labels(t_asm *asmb, t_command *new, int *j)
 		if (s[*j] != '\0' && !is_comment(s + *j))
 			return ;
 		*j = 0;
-		ft_strdel(&s);
+		ft_strdel(&asmb->line);
 		get_next_line(asmb->fd, &asmb->line);
 	}
 }
@@ -318,18 +319,186 @@ void	get_command(t_asm *asmb, t_command *new, int *j) // gets command_name and o
 ** functions which gets arguments after cmd.
 */
 
+void	array_map(char **arr, char* (*f)(const char *))
+{
+	char	*tmp;
+	int		i;
+
+	i = 0;
+	while (arr[i])
+	{
+		tmp = (*f)(arr[i]);
+		free(arr[i]);
+		arr[i] = tmp;
+		i++;
+	}
+}
+
+t_arg	*push_new_arg(t_arg **args)
+{
+	t_arg	*new;
+	t_arg	*tmp;
+
+	if (!(new = (t_arg *)malloc(sizeof(t_arg))))
+		ft_error("Error");
+	new->str_value = NULL;
+	new->num_value = 0;
+	new->arg_size = 0;
+	new->type = 0;
+	new->flag = 0;
+	new->next = NULL;
+	tmp = *args;
+	while (tmp && tmp->next)
+		tmp = tmp->next;
+	(!tmp) ? (*args = new) : (tmp->next = new);
+	return (new);
+}
+
+char	is_treg(char *str)
+{
+	int	tmp;
+
+	if (*str == 'r')
+	{
+		str++;
+		if (!ft_is_uint(str) || *str == '-' || *str == '+')
+			return (0);
+		tmp = ft_atoi(str);
+		if (tmp >= 0 && tmp <= REG_NUMBER)
+			return (1);
+	}
+	return (0);
+}
+
+char	is_tdir(char *str)
+{
+	if (*str == '%')
+	{
+		str++;
+		if (*str == ':')
+		{
+			str++;
+			if (!ft_strchr(str, ':'))
+				return (1);
+		}
+		else if (*str)
+		{
+			(*str == '-') ? str++ : 0;
+			while (ft_isdigit(*str))
+				str++;
+			if (*str == '\0')
+				return (1);
+		}
+	}
+	return (0);
+}
+
+char	is_tind(char *str)
+{
+	if (*str == ':')
+	{
+		str++;
+		if (!ft_strchr(str, ':'))
+			return (1);
+	}
+	else if (*str)
+	{
+		(*str == '-') ? str++ : 0;
+		while (ft_isdigit(*str))
+			str++;
+		if (*str == '\0')
+			return (1);
+	}
+	return (0);
+}
+
+char	get_type(char *str)
+{
+	if (is_treg(str))
+		return (T_REG);
+	else if (is_tdir(str))
+		return (T_DIR);
+	else if (is_tind(str))
+		return (T_IND);
+	return (UNDEFINED_TYPE);
+}
+
+void	*get_data(char type, char *str)
+{
+	unsigned int	*num_val;
+	char			*str_val;
+
+	if (type == T_REG)
+	{
+		*num_val = (unsigned int *)malloc(sizeof(unsigned int));
+		*num_val = ft_atoi(str + 1); // because these strings has 'r' at the beginning.
+		return ((void*)num_val);
+	}
+	else
+	{
+		(*str == '%') ? str++ : 0;
+		if (*str == ':')
+			return ((void*)my_strsub(str + 1, 0, ft_strlen(str) - 1)); // because at the beginning we have ':'.
+		else
+		{
+			*num_val = (unsigned int *)malloc(sizeof(unsigned int));
+			*num_val = ft_atoi(str + 1); // because these strings has 'r' at the beginning.
+			return ((void*)num_val);
+		}
+	}
+}
+
+void	add_argument(t_arg **args, char type, void *data, char flag)
+{
+	t_arg	*new;
+
+	new = push_new_arg(args);
+	if (type == T_REG)
+		new->num_value = 
+}
+
+void	foreach_arg(char **arr, t_arg **args)
+{
+	int		i;
+	char	type;
+	char	flag;
+
+	i = 0;
+	while (arr[i])
+	{
+		type = get_type(arr[i]);
+		if (type == UNDEFINED_TYPE)
+			ft_error("Error");
+		add_argument(args, type, get_data(type, str), &flag); // we pass flag just in order to determine if this argument is INT or CHAR *.
+		i++;
+	}
+}
+
 void	get_arguments(t_asm *asmb, t_command *new, int j)
 {
+	char	*tmp;
 	char	**arr;
+	int		t1;
+	int		t2;
 
-	if (!(arr = ft_strsplit(asmb->line + j, SEPARATOR_CHAR)))
+	t1 = (int)ft_strchr(asmb->line, ';');
+	t2 = (int)ft_strchr(asmb->line, '#');
+	if (t1 != 0 && t2 != 0) 													// if string contains both, we choose the one that occurs earlier.
+		tmp = my_strsub(asmb->line, j, ((t1 < t2) ? t1 : t2) - (int)asmb->line);
+	else if (t1 == 0 ^ t2 == 0) 												// if string contains one of these.
+		tmp = my_strsub(asmb->line, j, ((t1 == 0) ? t2 : t1) - (int)asmb->line);
+	else
+		tmp = my_strsub(asmb->line, j, ft_strlen(asmb->line));
+	if (!(arr = ft_strsplit(tmp, SEPARATOR_CHAR)))
 		ft_error("Error");
-
+	array_map(arr, ft_strtrim);
+	free(tmp);
+	foreach_arg(arr, &new->args);
 }
 
 void	get_lca(t_asm *asmb) // lca means label + command + arguments
 {
-	t_command		*new;
+	t_command	*new;
 	int			j;
 
 	j = 0;

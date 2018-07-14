@@ -1,7 +1,3 @@
 .name""
 .comment""
-l2: 
-	and 10,%10,r1
-live:	live        
-
-	zjmp	%:l2
+live:	lld 4294967296,r1

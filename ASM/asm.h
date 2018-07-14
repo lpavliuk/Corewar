@@ -42,8 +42,6 @@
 
 # define REG_NUMBER				16
 
-
-
 // # define CYCLE_TO_DIE			1536
 // # define CYCLE_DELTA				50
 // # define NBR_LIVE				21
@@ -53,8 +51,6 @@
 // # define T_DIR					2
 // # define T_IND					4
 // # define T_LAB					8
-
-
 
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)
@@ -69,6 +65,13 @@
 # define LABEL 1
 # define COMMAND 2
 
+# define UNDEFINED_TYPE 0
+# define T_REG 1
+# define T_DIR_I 2
+# define T_DIR_S 3
+# define T_IND_I 4
+# define T_IND_S 5
+
 # define NAME(i) g_table[i].name
 # define COUNT_ARG(i) g_table[i].args_count
 # define ARG1(i, num) g_table[i].arg1[num]
@@ -82,7 +85,6 @@
 # define HEX(i) g_table[i].hex
 
 # define MAX_TABLE 16
-
 
 typedef	struct		s_table
 {
@@ -120,20 +122,21 @@ static t_table		g_table[16] = {
 
 typedef struct		s_arg
 {
-	char			*name;
-	int				value;
-	char			type; // T_REG | T_DIR | T_IND
+	char			*str_value;
+	int				num_value;
 	char			arg_size;
+	char			type; // for codage.
+	char			flag : 1; // flag for pointer to label.
 	struct s_arg	*next;
 }					t_arg;
 
 typedef struct		s_command
 {
-	unsigned char		codage;
+	char				*name;
+	char				opcode;
 	char				bytes;
 	char				bytes_before;
-	char				opcode;
-	char				*name;
+	unsigned char		codage;
 	t_list				*labels;
 	t_arg				*args;
 	struct s_command	*next;

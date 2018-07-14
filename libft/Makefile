@@ -6,7 +6,7 @@
 #    By: opavliuk <opavliuk@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/26 16:04:15 by opavliuk          #+#    #+#              #
-#    Updated: 2018/07/13 15:56:05 by tkiselev         ###   ########.fr        #
+#    Updated: 2018/07/14 15:32:13 by tkiselev         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -90,7 +90,8 @@ SRC=./ft_memset.c \
 	./write_type_u.c \
 	./write_colors.c \
 	./ft_strjoinfree.c \
-	./ft_list_pushback.c
+	./ft_list_pushback.c \
+	./ft_is_uint.c
 OBJ=$(SRC:.c=.o)
 NAME=libft.a
 
