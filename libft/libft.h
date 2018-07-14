@@ -118,7 +118,7 @@ size_t			ft_sqrt(size_t n);
 int				get_next_line(const int fd, char **line);
 char			*ft_strjoinfree(char const *s1, char const *s2, char n);
 void			ft_list_pushback(t_list **head, char *line);
-char			ft_is_int(char *str);
+char			ft_is_uint(char *str);
 
 /*
 ** ****************************************************************************

@@ -16,6 +16,26 @@ void	prohodochka(t_asm *asmb)
 			printf("label = %s\n", (char *)command->labels->content);
 			command->labels = command->labels->next;
 		}
+
+		while (command->args)
+		{
+			if (command->args->type == T_REG)
+				printf("type = t_reg\n");
+			else if (command->args->type == T_DIR)
+				printf("type = t_dir\n");
+			else if (command->args->type == T_IND)
+				printf("type = t_ind\n");
+
+			if (command->args->flag)
+				printf("arg = %s\n", command->args->str_value);
+			else
+				printf("arg = %d\n", command->args->num_value);
+
+			printf("arg_size = %d\n", command->args->arg_size);
+
+			command->args = command->args->next;
+		}
+
 		command = command->next;
 	}
 }
@@ -423,41 +443,67 @@ char	get_type(char *str)
 	return (UNDEFINED_TYPE);
 }
 
-void	*get_data(char type, char *str)
+void	*get_data(char type, char *str, char *flag)
 {
 	unsigned int	*num_val;
-	char			*str_val;
 
 	if (type == T_REG)
 	{
-		*num_val = (unsigned int *)malloc(sizeof(unsigned int));
+		*flag = UINT_VAL;
+		num_val = (unsigned int *)malloc(sizeof(unsigned int));
 		*num_val = ft_atoi(str + 1); // because these strings has 'r' at the beginning.
 		return ((void*)num_val);
 	}
 	else
 	{
 		(*str == '%') ? str++ : 0;
-		if (*str == ':')
+		if (*str == ':' && (*flag = 2))
+		{
+			*flag = STRING_VAL;
 			return ((void*)my_strsub(str + 1, 0, ft_strlen(str) - 1)); // because at the beginning we have ':'.
+		}
 		else
 		{
-			*num_val = (unsigned int *)malloc(sizeof(unsigned int));
+			*flag = UINT_VAL;
+			num_val = (unsigned int *)malloc(sizeof(unsigned int));
 			*num_val = ft_atoi(str + 1); // because these strings has 'r' at the beginning.
 			return ((void*)num_val);
 		}
 	}
 }
 
-void	add_argument(t_arg **args, char type, void *data, char flag)
+char	get_arg_size(char opcode, char type)
+{
+	if (type == T_REG)
+		return (T_REG_SIZE);
+	else if (type == T_IND)
+		return (T_IND_SIZE);
+	else
+	{
+		if (LABEL_SIZE(opcode - 1) == 4) // -1 because we refer to table which is array, maybe we'll rebuild this so that refer ro table with opcode.
+			return (4);
+		else
+			return (T_DIR_SIZE);
+	}
+}
+
+void	add_argument(t_command *command, char type, void *data, char flag)
 {
 	t_arg	*new;
 
-	new = push_new_arg(args);
-	if (type == T_REG)
-		new->num_value = 
+	new = push_new_arg(&command->args);
+	if (flag == STRING_VAL)
+	{
+		new->str_value = (char *)data;
+		new->flag = 1; // we must return to this variable because it's just a pointer to a label which we cannot have on this stage.
+	}
+	else
+		new->num_value = ((int *)data)[0]; // LEAK CAN BE HERE.
+	new->type = type;
+	new->arg_size = get_arg_size(command->opcode, type);
 }
 
-void	foreach_arg(char **arr, t_arg **args)
+void	foreach_arg(char **arr, t_command *command)
 {
 	int		i;
 	char	type;
@@ -466,10 +512,11 @@ void	foreach_arg(char **arr, t_arg **args)
 	i = 0;
 	while (arr[i])
 	{
+		flag = 0;
 		type = get_type(arr[i]);
 		if (type == UNDEFINED_TYPE)
 			ft_error("Error");
-		add_argument(args, type, get_data(type, str), &flag); // we pass flag just in order to determine if this argument is INT or CHAR *.
+		add_argument(command, type, get_data(type, arr[i], &flag), flag); // we pass flag just in order to determine if this argument is INT or CHAR *.
 		i++;
 	}
 }
@@ -481,11 +528,11 @@ void	get_arguments(t_asm *asmb, t_command *new, int j)
 	int		t1;
 	int		t2;
 
-	t1 = (int)ft_strchr(asmb->line, ';');
-	t2 = (int)ft_strchr(asmb->line, '#');
+	t1 = ((int)ft_strchr(asmb->line, ';'));
+	t2 = ((int)ft_strchr(asmb->line, '#'));
 	if (t1 != 0 && t2 != 0) 													// if string contains both, we choose the one that occurs earlier.
 		tmp = my_strsub(asmb->line, j, ((t1 < t2) ? t1 : t2) - (int)asmb->line);
-	else if (t1 == 0 ^ t2 == 0) 												// if string contains one of these.
+	else if ((t1 == 0) ^ (t2 == 0)) 												// if string contains one of these.
 		tmp = my_strsub(asmb->line, j, ((t1 == 0) ? t2 : t1) - (int)asmb->line);
 	else
 		tmp = my_strsub(asmb->line, j, ft_strlen(asmb->line));
@@ -493,7 +540,7 @@ void	get_arguments(t_asm *asmb, t_command *new, int j)
 		ft_error("Error");
 	array_map(arr, ft_strtrim);
 	free(tmp);
-	foreach_arg(arr, &new->args);
+	foreach_arg(arr, new);
 }
 
 void	get_lca(t_asm *asmb) // lca means label + command + arguments
