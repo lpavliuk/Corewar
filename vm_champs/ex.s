@@ -1,3 +1,8 @@
 .name""
 .comment""
-live:	lld 4294967296,r1
+
+lld %:live,r1
+
+live:
+	live %1
+	

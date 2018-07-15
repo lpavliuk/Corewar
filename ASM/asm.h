@@ -39,16 +39,6 @@
 
 # define REG_NUMBER				16
 
-// # define CYCLE_TO_DIE			1536
-// # define CYCLE_DELTA				50
-// # define NBR_LIVE				21
-// # define MAX_CHECKS				10
-
-// # define T_REG					1
-// # define T_DIR					2
-// # define T_IND					4
-// # define T_LAB					8
-
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)
 # define COREWAR_EXEC_MAGIC		0xea83f3
@@ -62,42 +52,42 @@
 # define LABEL		1
 # define COMMAND	2
 
-# define UNDEFINED_TYPE 0
-# define T_REG		1
-# define T_DIR		2
-# define T_IND		3
+// CAN NOT BE CHANGED
+
+# define UNDEFINED_TYPE -1
+# define T_REG		0
+# define T_DIR		1
+# define T_IND		2
 
 # define STRING_VAL	1
 # define UINT_VAL	2
 
-# define UNDEFINED_TYPE 0
-# define T_REG 1
-# define T_DIR_I 2
-# define T_DIR_S 3
-# define T_IND_I 4
-# define T_IND_S 5
+/*
+** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
+*/
 
-# define NAME(i) g_table[i].name
-# define COUNT_ARG(i) g_table[i].args_count
-# define ARG1(i, num) g_table[i].arg1[num]
-# define ARG2(i, num) g_table[i].arg2[num]
-# define ARG3(i, num) g_table[i].arg3[num]
+# define NAME(i) g_table[i - 1].name
+# define COUNT_ARGS(i) g_table[i - 1].args_count
+# define ARG(i, j, k) g_table[i - 1].args[j].arg[(int)k]
 # define OPCODE(i) g_table[i].opcode
-# define CYCLES(i) g_table[i].cycles
-# define CODAGE(i) g_table[i].codage
-# define CARRY(i) g_table[i].carry
-# define LABEL_SIZE(i) g_table[i].label_size
-# define HEX(i) g_table[i].hex
+# define CYCLES(i) g_table[i - 1].cycles
+# define CODAGE(i) g_table[i - 1].codage
+# define CARRY(i) g_table[i - 1].carry
+# define LABEL_SIZE(i) g_table[i - 1].label_size
+# define HEX(i) g_table[i - 1].hex
 
 # define MAX_TABLE 16
+
+typedef struct
+{
+	char			arg[3];
+}					t_arr;
 
 typedef	struct		s_table
 {
 	char			*name;
 	char			args_count;
-	char			arg1[3];
-	char			arg2[3];
-	char			arg3[3];
+	t_arr			args[3];
 	char			opcode;
 	short			cycles;
 	char			codage : 1;
@@ -106,23 +96,42 @@ typedef	struct		s_table
 	char			hex[3];
 }					t_table;
 
+// static t_table		g_table[16] = {
+// 	{"live", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 1, 10, 0, 0, 4, "01"},
+// 	{"ld", 2, {0, 1, 1}, {1, 0, 0}, {0, 0, 0}, 2, 5, 1, 0, 4, "02"},
+// 	{"st", 2, {1, 0, 0}, {1, 0, 1}, {0, 0, 0}, 3, 5, 1, 0, 4, "03"},
+// 	{"add", 3, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, 4, 10, 1, 0, 4, "04"},
+// 	{"sub", 3, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, 5, 10, 1, 0, 4, "05"},
+// 	{"and", 3, {1, 1, 1}, {1, 1, 1}, {1, 0, 0}, 6, 6, 1, 0, 4, "06"},
+// 	{"or", 3, {1, 1, 1}, {1, 1, 1}, {1, 0, 0}, 7, 6, 1, 0, 4, "07"},
+// 	{"xor", 3, {1, 1, 1}, {1, 1, 1}, {1, 0, 0}, 8, 6, 1, 0, 4, "08"},
+// 	{"zjmp", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 9, 20, 0, 0, 2, "09"},
+// 	{"ldi", 3, {1, 1, 1}, {1, 1, 0}, {1, 0, 0}, 10, 25, 1, 0, 2, "0a"},
+// 	{"sti", 3, {1, 0, 0}, {1, 1, 1}, {1, 1, 0}, 11, 25, 1, 0, 2, "0b"},
+// 	{"fork", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 12, 800, 0, 0, 2, "0c"},
+// 	{"lld", 2, {0, 1, 1}, {1, 0, 0}, {0, 0, 0}, 13, 10, 1, 0, 4, "0d"},
+// 	{"lldi", 3, {1, 1, 1}, {1, 1, 0}, {1, 0, 0}, 14, 50, 1, 0, 2, "0e"},
+// 	{"lfork", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 15, 1000, 0, 0, 2, "0f"},
+// 	{"aff", 1, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}, 16, 2, 1, 0, 4, "10"}
+// };
+
 static t_table		g_table[16] = {
-	{"live", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 1, 10, 0, 0, 4, "01"},
-	{"ld", 2, {0, 1, 1}, {1, 0, 0}, {0, 0, 0}, 2, 5, 1, 0, 4, "02"},
-	{"st", 2, {1, 0, 0}, {1, 0, 1}, {0, 0, 0}, 3, 5, 1, 0, 4, "03"},
-	{"add", 3, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, 4, 10, 1, 0, 4, "04"},
-	{"sub", 3, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, 5, 10, 1, 0, 4, "05"},
-	{"and", 3, {1, 1, 1}, {1, 1, 1}, {1, 0, 0}, 6, 6, 1, 0, 4, "06"},
-	{"or", 3, {1, 1, 1}, {1, 1, 1}, {1, 0, 0}, 7, 6, 1, 0, 4, "07"},
-	{"xor", 3, {1, 1, 1}, {1, 1, 1}, {1, 0, 0}, 8, 6, 1, 0, 4, "08"},
-	{"zjmp", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 9, 20, 0, 0, 2, "09"},
-	{"ldi", 3, {1, 1, 1}, {1, 1, 0}, {1, 0, 0}, 10, 25, 1, 0, 2, "0a"},
-	{"sti", 3, {1, 0, 0}, {1, 1, 1}, {1, 1, 0}, 11, 25, 1, 0, 2, "0b"},
-	{"fork", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 12, 800, 0, 0, 2, "0c"},
-	{"lld", 2, {0, 1, 1}, {1, 0, 0}, {0, 0, 0}, 13, 10, 1, 0, 4, "0d"},
-	{"lldi", 3, {1, 1, 1}, {1, 1, 0}, {1, 0, 0}, 14, 50, 1, 0, 2, "0e"},
-	{"lfork", 1, {0, 1, 0}, {0, 0, 0}, {0, 0, 0}, 15, 1000, 0, 0, 2, "0f"},
-	{"aff", 1, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}, 16, 2, 1, 0, 4, "10"}
+	{"live", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 1, 10, 0, 0, 4, "01"},
+	{"ld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 2, 5, 1, 0, 4, "02"},
+	{"st", 2, {{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}}, 3, 5, 1, 0, 4, "03"},
+	{"add", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 4, 10, 1, 0, 4, "04"},
+	{"sub", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 5, 10, 1, 0, 4, "05"},
+	{"and", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 6, 6, 1, 0, 4, "06"},
+	{"or", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 7, 6, 1, 0, 4, "07"},
+	{"xor", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 8, 6, 1, 0, 4, "08"},
+	{"zjmp", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 9, 20, 0, 0, 2, "09"},
+	{"ldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 10, 25, 1, 0, 2, "0a"},
+	{"sti", 3, {{{1, 0, 0}}, {{1, 1, 1}}, {{1, 1, 0}}}, 11, 25, 1, 0, 2, "0b"},
+	{"fork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 12, 800, 0, 0, 2, "0c"},
+	{"lld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 13, 10, 1, 0, 4, "0d"},
+	{"lldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 14, 50, 1, 0, 2, "0e"},
+	{"lfork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 15, 1000, 0, 0, 2, "0f"},
+	{"aff", 1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 16, 2, 1, 0, 4, "10"}
 };
 
 typedef struct		s_arg
@@ -139,8 +148,8 @@ typedef struct		s_command
 {
 	char				*name;
 	char				opcode;
-	char				bytes;
-	char				bytes_before;
+	unsigned int		bytes;
+	unsigned int		bb; // means bytes_before.
 	unsigned char		codage;
 	t_list				*labels;
 	t_arg				*args;
@@ -158,6 +167,7 @@ typedef struct		s_asm
 	char			comment[COMMENT_LENGTH + 1];
 	int				new_fd;
 	int				fd;
+	int				last_line_size;
 	t_command		*command;
 }					t_asm;
 

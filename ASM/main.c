@@ -16,26 +16,19 @@ void	prohodochka(t_asm *asmb)
 			printf("label = %s\n", (char *)command->labels->content);
 			command->labels = command->labels->next;
 		}
+		
 		while (command->args)
 		{
-			if (command->args->type == T_REG)
-				printf("type = t_reg\n");
-			else if (command->args->type == T_DIR)
-				printf("type = t_dir\n");
-			else if (command->args->type == T_IND)
-				printf("type = t_ind\n");
-
-			if (command->args->flag)
-				printf("arg = %s\n", command->args->str_value);
-			else
-				printf("arg = %d\n", command->args->num_value);
-
-			printf("arg_size = %d\n", command->args->arg_size);
-
+			printf("arg = %d\n", command->args->num_value);
 			command->args = command->args->next;
 		}
+		
+		printf("codage = %d\n", command->codage);
+		printf("bytes_before = %d\n", command->bb);
+		printf("bytes = %d\n", command->bytes);
 		command = command->next;
 	}
+	printf("program size = %d\n", asmb->prog_size);
 }
 
 void	ft_error(char *str)
@@ -64,7 +57,9 @@ t_asm			*init_asmb(void)
 	s->flag_a = 0;
 	s->prog_size = 0;
 	s->new_fd = 0;
-	s->magic = 0;
+	s->fd = 0;
+	s->last_line_size = 0;
+	s->magic = COREWAR_EXEC_MAGIC;
 	return (s);
 }
 
@@ -188,14 +183,29 @@ void	get_header(t_asm *asmb)
 ** functions that get commands.
 */
 
-char	check_last_line(char fd)
+char	check_last_line(t_asm *asmb)
 {
-	char buf[1];
+	char	buf[asmb->last_line_size + 1];
+	int		i;
+	char	*s;
 
-	lseek(fd, -1, SEEK_CUR);
-	read(fd, &buf, 1);
-	if (buf[0] == '\n')
+	i = 0;
+	ft_bzero(buf, asmb->last_line_size);
+	lseek(asmb->fd, asmb->last_line_size + 1, SEEK_CUR);
+	read(asmb->fd, &buf, asmb->last_line_size);
+	s = buf;
+	ft_printf("%d\n", asmb->last_line_size);
+	ft_printf("%s\n", s);
+	while (s[i] && s[i] != ';' && s[i] != '#')
+		i++;
+	if (s[i] == ';' || s[i] == '#')
 		return (1);
+	else
+	{
+		i--;
+		if (i >= 0 && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t'))
+			return (1);
+	}
 	return (0);
 }
 
@@ -206,7 +216,7 @@ int		index_of(char *needle, int len)
 	i = 0;
 	while (i < MAX_TABLE)
 	{
-		if (ft_strnequ(NAME(i), needle, len))
+		if (ft_strnequ(NAME(i + 1), needle, len)) // + 1 here because to table we refer just with opcode.
 			return (i);
 		i++;
 	}
@@ -260,7 +270,7 @@ t_command	*push_new_command(t_command **head)
 	new->args = NULL;
 	new->labels = NULL;
 	new->opcode = 0;
-	new->bytes_before = 0;
+	new->bb = 0;
 	new->bytes = 0;
 	new->codage = 0;
 	new->name = NULL;
@@ -310,6 +320,7 @@ void	get_labels(t_asm *asmb, t_command *new, int *j)
 
 	while (asmb->line)
 	{
+		asmb->last_line_size = ft_strlen(asmb->line);
 		s = asmb->line;
 		skip_shit(s, j, " \t");
 		if (str_has(s, LABEL))
@@ -485,7 +496,7 @@ char	get_arg_size(char opcode, char type)
 		return (T_IND_SIZE);
 	else
 	{
-		if (LABEL_SIZE(opcode - 1) == 4) // -1 because we refer to table which is array, maybe we'll rebuild this so that refer ro table with opcode.
+		if (LABEL_SIZE(opcode) == 4)
 			return (4);
 		else
 			return (T_DIR_SIZE);
@@ -529,16 +540,26 @@ void	foreach_arg(char **arr, t_command *command)
 	}
 }
 
-void	check_arguments(t_arg *args)
-{
-	int		i;
 
-	i = 0;
-	while (args)
+/*
+** SEGFAULT CAN BE HERE!!!!!!!!!!!!!!!!!!!!!!
+*/
+
+void	check_arguments(t_command *command)
+{
+	t_arg	*arg;
+	int		len;
+
+	len = 0;
+	arg = command->args;
+	while (arg)
 	{
-		
-		args = args->next;
+		(len > 3) ? ft_error("Error") : 0; 							// for counting quantity of arguments.
+		(!ARG(command->opcode, len, arg->type)) ? ft_error("Error") : 0;
+		len++;
+		arg = arg->next;
 	}
+	(COUNT_ARGS(command->opcode) != len) ? ft_error("Error") : 0;
 }
 
 void	get_arguments(t_asm *asmb, t_command *new, int j)
@@ -566,7 +587,7 @@ void	get_arguments(t_asm *asmb, t_command *new, int j)
 	while (arr[i])
 		free(arr[i++]);
 	free(arr);
-	check_arguments(new->args);
+	check_arguments(new);
 }
 
 void	get_lca(t_asm *asmb) // lca means label + command + arguments
@@ -582,8 +603,111 @@ void	get_lca(t_asm *asmb) // lca means label + command + arguments
 		get_command(asmb, new, &j);
 		get_arguments(asmb, new, j);
 	}
-	else if (!is_comment(asmb->line + j))
+	else if (asmb->line && !is_comment(asmb->line + j))
 		ft_error("Error");
+}
+
+void	get_codage(t_command *command)
+{
+	t_arg	*arg;
+	unsigned char	n;
+	char	len;
+
+	if (!CODAGE(command->opcode))
+		return ;
+	n = 0;
+	len = 4;
+	arg = command->args;
+	while (arg)
+	{
+		(n) ? (n <<= 2) : 0;
+		(arg->type == T_REG) ? (n |= 1) : 0;
+		(arg->type == T_DIR) ? (n |= 2) : 0;
+		(arg->type == T_IND) ? (n |= 3) : 0;
+		len--;
+		arg = arg->next;
+	}
+	n <<= (len * 2);
+	command->codage = n;
+}
+
+void	get_bytes(t_command *command)
+{
+	t_arg	*arg;
+
+	if (command->opcode) // because if opcode == 0, command doesn't exist.
+	{
+		arg = command->args;
+		command->bytes++;
+		(command->codage != 0) ? command->bytes++ : 0;
+		while (arg)
+		{
+			command->bytes += arg->arg_size;
+			arg = arg->next;
+		}
+	}
+}
+
+void	get_val_from_pointer(t_command *head, t_command *command, t_arg *arg)
+{
+	t_list	*label;
+
+	while (head)
+	{
+		label = head->labels;
+		while (label)
+		{
+			if (ft_strequ(label->content, arg->str_value))
+			{
+				arg->num_value = head->bb - command->bb;
+				ft_strdel(&arg->str_value);
+				arg->flag = 0;
+				return ;
+			}
+			label = label->next;
+		}
+		head = head->next;
+	}
+}
+
+void			compute_tdirs(t_command *command)
+{
+	t_command	*tmp;
+	t_arg		*arg;
+
+	tmp = command;
+	while (tmp)
+	{
+		arg = tmp->args;
+		while (arg)
+		{
+			if (arg->flag)
+				get_val_from_pointer(command, tmp, arg);
+			arg = arg->next;
+		}
+		tmp = tmp->next;
+	}
+}
+
+unsigned int	compute_variables(t_command *command)
+{
+	t_command	*tmp;
+
+	tmp = command;
+	while (command)
+	{
+		get_codage(command);
+		get_bytes(command);
+		if (command->next)
+		{
+			command->next->bb = command->bb + command->bytes;
+			command = command->next;
+		}
+		else
+			break ;
+	}
+	compute_tdirs(tmp);
+	return (command->bb + command->bytes);
 }
 
 void	get_commands(t_asm *asmb)
@@ -594,15 +718,21 @@ void	get_commands(t_asm *asmb)
 			get_lca(asmb);
 		else if (!is_comment(asmb->line))
 			ft_error("Error");
-		ft_strdel(&asmb->line);
+		if (asmb->line)
+		{
+			asmb->last_line_size = ft_strlen(asmb->line);
+			ft_strdel(&asmb->line);
+		}
 	}
-	(!check_last_line(asmb->fd)) ? ft_error("Error") : ; // instead of 0 we need to execute function that will compute other variables.
+	(!check_last_line(asmb)) ? ft_error("Error") : 0; // check_last_line is a function that checks if a file ends with '\n'.
 }
 
 void		parsing(t_asm *asmb)
 {
 	get_header(asmb);
 	get_commands(asmb);
+	if (asmb->command)
+		asmb->prog_size = compute_variables(asmb->command); // SEGFAULT CAN BE HERE.
 }
 
 void	check_argvs(t_asm *asmb, char **av, int ac)
