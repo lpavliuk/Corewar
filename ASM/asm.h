@@ -68,7 +68,14 @@
 # define T_IND		3
 
 # define STRING_VAL	1
-# define UINT_VAL	1
+# define UINT_VAL	2
+
+# define UNDEFINED_TYPE 0
+# define T_REG 1
+# define T_DIR_I 2
+# define T_DIR_S 3
+# define T_IND_I 4
+# define T_IND_S 5
 
 # define NAME(i) g_table[i].name
 # define COUNT_ARG(i) g_table[i].args_count

@@ -16,7 +16,6 @@ void	prohodochka(t_asm *asmb)
 			printf("label = %s\n", (char *)command->labels->content);
 			command->labels = command->labels->next;
 		}
-
 		while (command->args)
 		{
 			if (command->args->type == T_REG)
@@ -35,7 +34,6 @@ void	prohodochka(t_asm *asmb)
 
 			command->args = command->args->next;
 		}
-
 		command = command->next;
 	}
 }
@@ -201,23 +199,28 @@ char	check_last_line(char fd)
 	return (0);
 }
 
-int		index_of(char *needle)
+int		index_of(char *needle, int len)
 {
 	int i;
 
 	i = 0;
 	while (i < MAX_TABLE)
 	{
-		if (ft_strncmp(NAME(i), needle, ft_strlen(NAME(i))) == 0)
-			return (1);
+		if (ft_strnequ(NAME(i), needle, len))
+			return (i);
 		i++;
 	}
 	return (-1);
 }
 
+/*
+** ATTENTION: GAVNOKOD
+*/
+
 char	str_has(char *str, char flag)
 {
 	int i;
+	int	len;
 
 	i = 0;
 	if (!str)
@@ -235,8 +238,10 @@ char	str_has(char *str, char flag)
 		if (str_has(str, LABEL))
 			i = ft_strchr(str, ':') - str + 1;
 		skip_shit(str, &i, " \t");
-		if (index_of(str + i) != -1)
-			return (1);
+		len = 0;
+		while (str[i + len] && str[i + len] != ' ' && str[i + len] != '\t')
+			len++;
+		return ((index_of(str + i, len) != -1) ? 1 : 0);
 	}
 	return (0);
 }
@@ -331,7 +336,7 @@ void	get_command(t_asm *asmb, t_command *new, int *j) // gets command_name and o
 	if (s[*j] != ' ' && s[*j] != '\t' && s[*j] != '%' && s[*j] != '-')
 		ft_error("Error");
 	new->name = my_strsub(s, tmp, *j);
-	new->opcode = index_of(new->name) + 1;
+	new->opcode = index_of(new->name, ft_strlen(new->name)) + 1;
 	(new->opcode == -1) ? ft_error("Error") : 0;
 }
 
@@ -457,7 +462,7 @@ void	*get_data(char type, char *str, char *flag)
 	else
 	{
 		(*str == '%') ? str++ : 0;
-		if (*str == ':' && (*flag = 2))
+		if (*str == ':')
 		{
 			*flag = STRING_VAL;
 			return ((void*)my_strsub(str + 1, 0, ft_strlen(str) - 1)); // because at the beginning we have ':'.
@@ -466,7 +471,7 @@ void	*get_data(char type, char *str, char *flag)
 		{
 			*flag = UINT_VAL;
 			num_val = (unsigned int *)malloc(sizeof(unsigned int));
-			*num_val = ft_atoi(str + 1); // because these strings has 'r' at the beginning.
+			*num_val = ft_atoi(str);
 			return ((void*)num_val);
 		}
 	}
@@ -497,8 +502,11 @@ void	add_argument(t_command *command, char type, void *data, char flag)
 		new->str_value = (char *)data;
 		new->flag = 1; // we must return to this variable because it's just a pointer to a label which we cannot have on this stage.
 	}
-	else
-		new->num_value = ((int *)data)[0]; // LEAK CAN BE HERE.
+	else if (flag == UINT_VAL)
+	{
+		new->num_value = ((int *)data)[0];
+		free(data);
+	}
 	new->type = type;
 	new->arg_size = get_arg_size(command->opcode, type);
 }
@@ -521,16 +529,29 @@ void	foreach_arg(char **arr, t_command *command)
 	}
 }
 
+void	check_arguments(t_arg *args)
+{
+	int		i;
+
+	i = 0;
+	while (args)
+	{
+		
+		args = args->next;
+	}
+}
+
 void	get_arguments(t_asm *asmb, t_command *new, int j)
 {
 	char	*tmp;
 	char	**arr;
 	int		t1;
 	int		t2;
+	int		i;
 
 	t1 = ((int)ft_strchr(asmb->line, ';'));
 	t2 = ((int)ft_strchr(asmb->line, '#'));
-	if (t1 != 0 && t2 != 0) 													// if string contains both, we choose the one that occurs earlier.
+	if (t1 != 0 && t2 != 0) 														// if string contains both, we choose the one that occurs earlier.
 		tmp = my_strsub(asmb->line, j, ((t1 < t2) ? t1 : t2) - (int)asmb->line);
 	else if ((t1 == 0) ^ (t2 == 0)) 												// if string contains one of these.
 		tmp = my_strsub(asmb->line, j, ((t1 == 0) ? t2 : t1) - (int)asmb->line);
@@ -539,8 +560,13 @@ void	get_arguments(t_asm *asmb, t_command *new, int j)
 	if (!(arr = ft_strsplit(tmp, SEPARATOR_CHAR)))
 		ft_error("Error");
 	array_map(arr, ft_strtrim);
-	free(tmp);
 	foreach_arg(arr, new);
+	free(tmp);
+	i = 0;
+	while (arr[i])
+		free(arr[i++]);
+	free(arr);
+	check_arguments(new->args);
 }
 
 void	get_lca(t_asm *asmb) // lca means label + command + arguments
@@ -556,6 +582,8 @@ void	get_lca(t_asm *asmb) // lca means label + command + arguments
 		get_command(asmb, new, &j);
 		get_arguments(asmb, new, j);
 	}
+	else if (!is_comment(asmb->line + j))
+		ft_error("Error");
 }
 
 void	get_commands(t_asm *asmb)
@@ -568,7 +596,7 @@ void	get_commands(t_asm *asmb)
 			ft_error("Error");
 		ft_strdel(&asmb->line);
 	}
-	(!check_last_line(asmb->fd)) ? ft_error("Error") : 0; // instead of 0 we need to execute function that will compute other variables.
+	(!check_last_line(asmb->fd)) ? ft_error("Error") : ; // instead of 0 we need to execute function that will compute other variables.
 }
 
 void		parsing(t_asm *asmb)
