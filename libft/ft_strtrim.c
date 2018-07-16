@@ -3,50 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/23 20:48:32 by opavliuk          #+#    #+#             */
-/*   Updated: 2018/03/27 15:30:49 by opavliuk         ###   ########.fr       */
+/*   Created: 2018/03/25 14:18:06 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/03/28 19:27:10 by tkiselev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char	*ft_copy(char *d, char const *s, size_t i, size_t n)
+void		ft_strtrim(char **s)
 {
-	size_t k;
-
-	k = 0;
-	while (k <= n)
-	{
-		d[k] = s[i];
-		k++;
-		i++;
-	}
-	d[k] = '\0';
-	return (d);
-}
-
-char		*ft_strtrim(char const *s)
-{
-	size_t	i;
-	size_t	n;
-	char	*d;
+	char	*str;
+	int		i;
+	int		j;
+	int		k;
 
 	i = 0;
-	n = 0;
-	if (s == NULL)
-		return (NULL);
-	while ((s[i] == ' ' || s[i] == '\n' || s[i] == '\t') && s[n] != '\0')
-		s++;
-	if (s[i] != '\0')
-		n = (ft_strlen(s) - 1);
-	while ((s[n] == ' ' || s[n] == '\n' || s[n] == '\t') && s[n] != '\0')
-		n--;
-	d = (char *)malloc(sizeof(char) * (n + 2));
-	if (d == NULL)
-		return (NULL);
-	ft_bzero(d, (n + 2));
-	d = ft_copy(d, s, i, n);
-	return (d);
+	j = 0;
+	k = -1;
+	if (!s || !*s)
+		return ;
+	while ((*s)[i] != '\0' && ((*s)[i] == ' ' ||
+		(*s)[i] == '\n' || (*s)[i] == '\t'))
+		i++;
+	j = ft_strlen(*s) - 1;
+	while (i < j && ((*s)[j] == ' ' || (*s)[j] == '\n' || (*s)[j] == '\t'))
+		j--;
+	str = ft_strnew(j - i + 1);
+	if (str == NULL)
+		return ;
+	while (++k < (j - i + 1))
+		str[k] = (char)(*s)[i + k];
+	ft_strdel(s);
+	*s = str;
 }

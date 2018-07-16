@@ -90,15 +90,6 @@ char		is_bot_comment(char *s)
 	return (0);
 }
 
-char		is_comment(char *s)
-{
-	if (!s)
-		return (0);
-	while (*s && (*s == ' ' || *s == '\t'))
-		s++;
-	return ((*s == ';' || *s == '#' || *s == '\0') ? 1 : 0);
-}
-
 /*
 ** this function copies string to dest after command and between brackets.
 */
@@ -138,20 +129,38 @@ void		get_str(t_asm *asmb, char flag)
 		asmb->line + ft_strlen(((flag == GET_NAME) ? NAME_CMD : COMMENT_CMD));
 	size = (flag == GET_NAME) ? PROG_NAME_LENGTH : COMMENT_LENGTH;
 	dest = (flag == GET_NAME) ? asmb->prog_name : asmb->comment;
-	while (asmb->line[j] && (asmb->line[j] == ' ' || asmb->line[j] == '\t'))
-		j++;
+	skip_shit(asmb->line, &j, " \t");
 	(asmb->line[j] != '\"') ? ft_error("Error") : j++;
 	copy_to_dst(asmb, dest, size, &j);
 	(!asmb->line || asmb->line[j] != '\"') ? ft_error("Error") : j++;
-	while (asmb->line[j] && (asmb->line[j] == ' ' || asmb->line[j] == '\t'))
-		j++;
-	if (asmb->line[j] != ';' && asmb->line[j] != '#' && asmb->line[j] != '\0') // \0 || \n!!!!!!!!!!
+	skip_shit(asmb->line, &j, " \t");
+	if (asmb->line[j] != '\0')
 		ft_error("Error");
 }
 
 /*
 ** function that gets prog_name and comment, and also checks if strings are valid or not.
 */
+
+void	comment_delete(char *str)
+{
+	while (*str && (*str != ';' && *str != '#'))
+		str++;
+	if (*str != '\0')
+		ft_bzero(str, ft_strlen(str));
+}
+
+char	check_line(char *s)
+{
+	if (s)
+	{
+		while (*s && (*s == ' ' || *s == '\t'))
+			s++;
+		if (*s == '\0')
+			return (1);
+	}
+	return (0);
+}
 
 void	get_header(t_asm *asmb)
 {
@@ -160,6 +169,7 @@ void	get_header(t_asm *asmb)
 	flag = 0;
 	while (get_next_line(asmb->fd, &asmb->line) > 0)
 	{
+		comment_delete(asmb->line);
 		if (is_bot_name(asmb->line))
 		{
 			(flag & 1) ? ft_error("Error") : (flag = flag | 1);
@@ -170,7 +180,7 @@ void	get_header(t_asm *asmb)
 			(flag & 2) ? ft_error("Error") : (flag = flag | 2);
 			get_str(asmb, GET_COMMENT); // GET_COMMENT means that we are going to get name.
 		}
-		else if (!is_comment(asmb->line))
+		else if (!check_line(asmb->line))
 			ft_error("Error");
 		ft_strdel(&asmb->line);
 		if (flag == 3)
@@ -292,7 +302,7 @@ char	*my_strsub(char *src, int start, int end)
 
 void	get_label(t_list **labels, char *s, int *j)
 {
-	int tmp;
+	int		tmp;
 	char	*tmp_s;
 
 	tmp = *j;
@@ -311,12 +321,13 @@ void	get_labels(t_asm *asmb, t_command *new, int *j)
 	while (asmb->line)
 	{
 		asmb->last_line_size = ft_strlen(asmb->line);
+		comment_delete(asmb->line);
 		s = asmb->line;
 		skip_shit(s, j, " \t");
 		if (str_has(s, LABEL))
 			get_label(&new->labels, s, j);
 		skip_shit(s, j, " \t");
-		if (s[*j] != '\0' && !is_comment(s + *j))
+		if (s[*j] != '\0')
 			return ;
 		*j = 0;
 		ft_strdel(&asmb->line);
@@ -345,17 +356,14 @@ void	get_command(t_asm *asmb, t_command *new, int *j) // gets command_name and o
 ** functions which gets arguments after cmd.
 */
 
-void	array_map(char **arr, char* (*f)(const char *))
+void	array_map(char **arr, void (*f)(char **))
 {
-	char	*tmp;
 	int		i;
 
 	i = 0;
 	while (arr[i])
 	{
-		tmp = (*f)(arr[i]);
-		free(arr[i]);
-		arr[i] = tmp;
+		(*f)(&arr[i]);
 		i++;
 	}
 }
@@ -530,7 +538,6 @@ void	foreach_arg(char **arr, t_command *command)
 	}
 }
 
-
 /*
 ** SEGFAULT CAN BE HERE!!!!!!!!!!!!!!!!!!!!!!
 */
@@ -544,7 +551,7 @@ void	check_arguments(t_command *command)
 	arg = command->args;
 	while (arg)
 	{
-		(len > 3) ? ft_error("Error") : 0; 							// for counting quantity of arguments.
+		(len > 3) ? ft_error("Error") : 0; 									// for counting quantity of arguments.
 		(!ARG(command->opcode, len, arg->type)) ? ft_error("Error") : 0;
 		len++;
 		arg = arg->next;
@@ -552,49 +559,30 @@ void	check_arguments(t_command *command)
 	(COUNT_ARGS(command->opcode) != len) ? ft_error("Error") : 0;
 }
 
-void	get_arguments(t_asm *asmb, t_command *new, int j)
+void	skip_args(char *s, char **arr, int *j)
 {
-	char	*tmp;
-	char	**arr;
-	int		t1;
-	int		t2;
-	int		i;
+	int i;
 
-	t1 = ((int)ft_strchr(asmb->line, ';'));
-	t2 = ((int)ft_strchr(asmb->line, '#'));
-	if (t1 != 0 && t2 != 0) 														// if string contains both, we choose the one that occurs earlier.
-		tmp = my_strsub(asmb->line, j, ((t1 < t2) ? t1 : t2) - (int)asmb->line);
-	else if ((t1 == 0) ^ (t2 == 0)) 												// if string contains one of these.
-		tmp = my_strsub(asmb->line, j, ((t1 == 0) ? t2 : t1) - (int)asmb->line);
-	else
-		tmp = my_strsub(asmb->line, j, ft_strlen(asmb->line));
-	if (!(arr = ft_strsplit(tmp, SEPARATOR_CHAR)))
+	i = 0;
+	while (arr[i])
+	{
+		*j = ft_strstr(s + *j, arr[i]) - s + ft_strlen(arr[i]);
+		i++;
+	}
+}
+
+void	get_arguments(t_asm *asmb, t_command *new, int *j)
+{
+	char	**arr;
+
+	if (!(arr = ft_strsplit(asmb->line + *j, SEPARATOR_CHAR)))
 		ft_error("Error");
 	array_map(arr, ft_strtrim);
 	foreach_arg(arr, new);
-	free(tmp);
-	i = 0;
-	while (arr[i])
-		free(arr[i++]);
+	skip_args(asmb->line, arr, j);
+	array_map(arr, ft_strdel);
 	free(arr);
 	check_arguments(new);
-}
-
-void	get_lca(t_asm *asmb) // lca means label + command + arguments
-{
-	t_command	*new;
-	int			j;
-
-	j = 0;
-	new = push_new_command(&asmb->command);
-	get_labels(asmb, new, &j);
-	if (str_has(asmb->line, COMMAND))
-	{
-		get_command(asmb, new, &j);
-		get_arguments(asmb, new, j);
-	}
-	else if (asmb->line && !is_comment(asmb->line + j))
-		ft_error("Error");
 }
 
 void	get_codage(t_command *command)
@@ -650,7 +638,6 @@ void	get_val_from_pointer(t_command *head, t_command *command, t_arg *arg)
 			if (ft_strequ(label->content, arg->str_value))
 			{
 				arg->num_value = head->bb - command->bb;
-				ft_strdel(&arg->str_value);
 				arg->flag = 0;
 				return ;
 			}
@@ -701,14 +688,32 @@ unsigned int	compute_variables(t_command *command)
 	return (command->bb + command->bytes);
 }
 
+void	get_lca(t_asm *asmb) // lca means label + command + arguments
+{
+	t_command	*new;
+	int			j;
+
+	j = 0;
+	if (str_has(asmb->line, LABEL) || str_has(asmb->line, COMMAND))
+	{
+		new = push_new_command(&asmb->command);
+		get_labels(asmb, new, &j);
+		if (str_has(asmb->line, COMMAND))
+		{
+			get_command(asmb, new, &j);
+			get_arguments(asmb, new, &j);
+		}
+	}
+	if (asmb->line)
+		(!check_line(asmb->line + j)) ? ft_error("Error") : 0;
+}
+
 void	get_commands(t_asm *asmb)
 {
 	while (get_next_line(asmb->fd, &asmb->line) > 0)
 	{
-		if (str_has(asmb->line, LABEL) || str_has(asmb->line, COMMAND))
-			get_lca(asmb);
-		else if (!is_comment(asmb->line))
-			ft_error("Error");
+		comment_delete(asmb->line);
+		get_lca(asmb);
 		if (asmb->line)
 		{
 			asmb->last_line_size = ft_strlen(asmb->line);
@@ -755,9 +760,8 @@ stripped and annotated version of the code to the standard output\n");
 			read(asmb->fd, 0, 0) == -1)
 			ft_error(ERR_FILE);
 		parsing(asmb);
-
+		system("leaks a.out;");
 		prohodochka(asmb);
-
 		// (asmb->flag_a) ? show_bot(asmb) : create_binary(asmb);
 		// close(asmb->fd);
 	}
