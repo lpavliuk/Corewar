@@ -22,11 +22,13 @@ code:		live %42			# 5
 		zjmp %-200			# 3
 		sti  r15,%0,r14			# 6
 		zjmp %-200
-sti:
+leha:
+leha:
+leha:
 avantdebt:	sti   r1,%:code,%1  # 		# mets a jour le live
 		sti   r1,%:code,%15 # 		# mets a jour le live
 		sti   r1,%:code,%29 # 		# mets a jour le live
-		sti   r1,%:sti,%43 # 		# mets a jour le live
+		sti   r1,%:code,%43 # 		# mets a jour le live
 		sti   r1,%:code,%57 # 		# mets a jour le live
 		sti   r1,%:code,%71 # 		# mets a jour le live
 init:		ld   %393216,r4		 	#7	

@@ -61,6 +61,7 @@ static void	write_header(t_asm *asmb)
 
 static void	write_codage(t_command *command)
 {
+	ft_printf("\n%20c", ' ');
 	if (command->codage)
 		ft_printf("%-4d%-6d", command->opcode, command->codage);
 	else
@@ -74,16 +75,20 @@ void		show_bot(t_asm *asmb, t_command *command)
 	{
 		if (command->labels && command->labels->content)
 		{
-			ft_printf("%-11d:", command->bb);
-			ft_printf("%4c%s:\n", ' ', command->labels->content);
+			while (command->labels)
+			{
+				ft_printf("%-11d:", command->bb);
+				ft_printf("%4c%s:\n", ' ', command->labels->content);
+				command->labels = command->labels->next;
+			}
+			if (!command->opcode)
+				break ;
 		}
 		ft_printf("%-5d(%-3d) :", command->bb, command->bytes);
 		ft_printf("%8c%-10s", ' ', command->name);
 		write_str_or_num(1, command->args);
-		ft_printf("\n%20c", ' ');
 		write_codage(command);
 		write_str_or_num(16, command->args);
-		ft_printf("\n%20c", ' ');
 		write_codage(command);
 		write_str_or_num(0, command->args);
 		ft_printf("\n\n");

@@ -50,7 +50,8 @@ unsigned int		reverse_bytes(unsigned int x, char bytes)
 
 static void			input_executable(t_command *command, t_arg *args, int fd)
 {
-	write(fd, &command->opcode, 1);
+	if (command->opcode)
+		write(fd, &command->opcode, 1);
 	if (command->codage)
 		write(fd, &command->codage, 1);
 	while (args)
