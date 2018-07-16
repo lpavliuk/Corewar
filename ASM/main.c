@@ -218,35 +218,30 @@ int		index_of(char *needle, int len)
 	return (-1);
 }
 
-/*
-** ATTENTION: GAVNOKOD
-*/
-
 char	str_has(char *str, char flag)
 {
 	int i;
-	int	len;
 
-	i = 0;
 	if (!str)
 		return (0);
-	skip_shit(str, &i, " \t");
+	while (*str && (*str == ' ' || *str == '\t'))
+		str++;
 	if (flag == LABEL)
 	{
-		while (str[i] && str[i] != ':')
-			if (ft_strchr(LABEL_CHARS, str[i++]) == NULL)
+		while (*str && *str != ':')
+			if (!ft_strchr(LABEL_CHARS, *str++))
 				return (0);
-		return ((str[i] == ':') ? 1 : 0);
+		return ((*str == ':') ? 1 : 0);
 	}
 	else if (flag == COMMAND)
 	{
-		if (str_has(str, LABEL))
-			i = ft_strchr(str, ':') - str + 1;
-		skip_shit(str, &i, " \t");
-		len = 0;
-		while (str[i + len] && str[i + len] != ' ' && str[i + len] != '\t')
-			len++;
-		return ((index_of(str + i, len) != -1) ? 1 : 0);
+		(str_has(str, LABEL)) ? (str = ft_strchr(str, ':') + 1) : 0;
+		while (*str && (*str == ' ' || *str == '\t'))
+			str++;
+		i = 0;
+		while (str[i] && str[i] != ' ' && str[i] != '\t')
+			i++;
+		return ((i > 0 && index_of(str, i) != -1) ? 1 : 0);
 	}
 	return (0);
 }
@@ -727,8 +722,9 @@ void		parsing(t_asm *asmb)
 {
 	get_header(asmb);
 	get_commands(asmb);
-	if (asmb->command)
-		asmb->prog_size = compute_variables(asmb->command); // SEGFAULT CAN BE HERE.
+	if (!asmb->command)
+		ft_error("Error");
+	asmb->prog_size = compute_variables(asmb->command); // SEGFAULT CAN BE HERE.
 }
 
 void	check_argvs(t_asm *asmb, char **av, int ac)
