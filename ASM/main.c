@@ -185,28 +185,23 @@ void	get_header(t_asm *asmb)
 
 char	check_last_line(t_asm *asmb)
 {
-	char	buf[asmb->last_line_size + 1];
+	char	s[asmb->last_line_size + 1];
 	int		i;
-	char	*s;
 
 	i = 0;
-	ft_bzero(buf, asmb->last_line_size);
-	lseek(asmb->fd, asmb->last_line_size + 1, SEEK_CUR);
-	read(asmb->fd, &buf, asmb->last_line_size);
-	s = buf;
-	ft_printf("%d\n", asmb->last_line_size);
-	ft_printf("%s\n", s);
-	while (s[i] && s[i] != ';' && s[i] != '#')
-		i++;
-	if (s[i] == ';' || s[i] == '#')
-		return (1);
-	else
+	ft_bzero(s, asmb->last_line_size + 1);
+	lseek(asmb->fd, -asmb->last_line_size, SEEK_CUR);
+	read(asmb->fd, &s, asmb->last_line_size);
+	skip_shit(s, &i, " \t");
+	if (s[i] != '\0' && s[i] != ';' && s[i] != '#')
 	{
-		i--;
-		if (i >= 0 && (s[i] == ' ' || s[i] == '\n' || s[i] == '\t'))
+		i = ft_strlen(s) - 1;
+		if (i >= 0 && s[i] == '\n')
 			return (1);
+		else
+			return (0);
 	}
-	return (0);
+	return (1);
 }
 
 int		index_of(char *needle, int len)
@@ -637,9 +632,9 @@ void	get_bytes(t_command *command)
 
 	if (command->opcode) // because if opcode == 0, command doesn't exist.
 	{
-		arg = command->args;
 		command->bytes++;
-		(command->codage != 0) ? command->bytes++ : 0;
+		arg = command->args;
+		(CODAGE(command->opcode)) ? command->bytes++ : 0;
 		while (arg)
 		{
 			command->bytes += arg->arg_size;
@@ -668,6 +663,7 @@ void	get_val_from_pointer(t_command *head, t_command *command, t_arg *arg)
 		}
 		head = head->next;
 	}
+	ft_error("Error"); // if there are not such label.
 }
 
 void			compute_tdirs(t_command *command)
@@ -724,7 +720,7 @@ void	get_commands(t_asm *asmb)
 			ft_strdel(&asmb->line);
 		}
 	}
-	(!check_last_line(asmb)) ? ft_error("Error") : 0; // check_last_line is a function that checks if a file ends with '\n'.
+	(!check_last_line(asmb)) ? ft_error("Error") : 0;
 }
 
 void		parsing(t_asm *asmb)
