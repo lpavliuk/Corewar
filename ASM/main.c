@@ -56,7 +56,10 @@ stripped and annotated version of the code to the standard output\n");
 		if (!asmb->file_name ||
 			(asmb->fd = open(asmb->file_name, O_RDONLY)) < 0 ||
 			read(asmb->fd, 0, 0) == -1)
-			ft_error("Error file\n");
+		{
+			ft_printf("Can't read source file %s\n", asmb->file_name);
+			exit(0);
+		}
 		parsing(asmb);
 		(asmb->flag_a) ? show_bot(asmb, asmb->command) : create_binary(asmb, asmb->command);
 		close(asmb->fd);
