@@ -6,7 +6,7 @@
 /*   By: opavliuk <opavliuk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 12:40:45 by opavliuk          #+#    #+#             */
-/*   Updated: 2018/07/12 14:34:27 by tkiselev         ###   ########.fr       */
+/*   Updated: 2018/07/14 15:34:01 by tkiselev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <stdarg.h>
 # include <wchar.h>
+# include <stdint.h>
 
 # define BUFF_SIZE 42
 
@@ -116,6 +117,8 @@ size_t			ft_count(intmax_t n, short int base);
 size_t			ft_sqrt(size_t n);
 int				get_next_line(const int fd, char **line);
 char			*ft_strjoinfree(char const *s1, char const *s2, char n);
+void			ft_list_pushback(t_list **head, char *line);
+char			ft_is_uint(char *str);
 
 /*
 ** ****************************************************************************

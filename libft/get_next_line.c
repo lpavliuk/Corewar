@@ -6,90 +6,77 @@
 /*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 17:10:05 by opavliuk          #+#    #+#             */
-/*   Updated: 2018/04/16 22:50:50 by opavliuk         ###   ########.fr       */
+/*   Updated: 2018/07/13 08:38:17 by tkiselev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static t_list	*check_list(t_list **gnl, const int fd)
+static	char		*ft_realloc(char *ptr, int size)
 {
-	t_list *tmp;
+	int				i;
+	char			*new_ptr;
 
-	if ((*gnl)->content == NULL)
-		(*gnl)->content_size = -1;
-	tmp = *gnl;
-	while (tmp)
+	i = 0;
+	if (!(new_ptr = ft_strnew(size)))
+		return (0);
+	if (ptr)
 	{
-		if ((int)tmp->content_size == fd)
-			return (tmp);
-		tmp = tmp->next;
+		while (ptr[i] != '\0')
+		{
+			new_ptr[i] = ptr[i];
+			i++;
+		}
+		free(ptr);
 	}
-	tmp = ft_lstnew(NULL, 0);
-	tmp->content = ft_strnew(BUFF_SIZE);
-	tmp->content_size = fd;
-	ft_lstadd(gnl, tmp);
-	return (tmp);
+	return (new_ptr);
 }
 
-static int		check_line(t_list *elem, char **line)
+static	int			ft_put_n(char *buffer, char **line, int *size)
 {
-	char *n;
+	int				flag;
+	int				n;
 
-	if ((n = ft_strchr(elem->content, '\n')) != NULL)
+	n = 0;
+	flag = 0;
+	if (buffer[0] == '\0')
+		return (0);
+	while (buffer[n] != '\0' && buffer[n] != '\n')
+		n++;
+	(*size) += n;
+	*line = ft_realloc(*line, *size);
+	ft_memccpy(*line + ft_strlen(*line), buffer, '\n', n);
+	if (buffer[n] == '\n')
 	{
-		ft_memset(n, '\0', 1);
-		(*line) = ft_strdup(elem->content);
-		ft_strncpy(elem->content, &n[1], BUFF_SIZE + 1);
-		return (1);
+		flag = 1;
+		n++;
+		ft_memmove(buffer, buffer + n, ft_strlen(buffer) - n);
+		ft_bzero(buffer + ft_strlen(buffer) - n, n);
 	}
-	(*line) = ft_strdup(elem->content);
-	ft_strclr(elem->content);
-	return (0);
-}
-
-static void		check_content(t_list *elem, char **line)
-{
-	char *n;
-	char *mod;
-
-	n = ft_strchr(elem->content, '\n');
-	if (n != NULL)
-		ft_memset(n, '\0', 1);
-	mod = *line;
-	(*line) = ft_strjoin((*line), elem->content);
-	free(mod);
-	if (n)
-		ft_strncpy(elem->content, &n[1], BUFF_SIZE + 1);
 	else
-		ft_strclr(elem->content);
+		ft_bzero(buffer, n);
+	return (flag);
 }
 
-int				get_next_line(const int fd, char **line)
+int					get_next_line(const int fd, char **line)
 {
-	static t_list	*gnl;
-	t_list			*elem;
-	int				k;
+	int				bytes;
+	int				size;
+	static	char	buffer[BUFF_SIZE];
 
-	if (fd < 0 || !line)
+	size = 0;
+	if (!line || (read(fd, buffer, 0)) == -1)
 		return (-1);
 	*line = NULL;
-	k = 0;
-	if (!gnl)
-		gnl = ft_lstnew(NULL, 0);
-	elem = check_list(&gnl, fd);
-	if (read(fd, elem->content, 0) < 0)
-		return (-1);
-	if (check_line(elem, line))
+	if (ft_put_n(buffer, line, &size) == 1)
 		return (1);
-	while ((k = read(elem->content_size, elem->content, BUFF_SIZE)) > 0)
+	while ((bytes = read(fd, buffer, BUFF_SIZE)) > 0)
 	{
-		if (ft_strchr(elem->content, '\n') != NULL)
-			break ;
-		check_content(elem, line);
+		if (bytes != BUFF_SIZE)
+			ft_bzero(buffer + bytes, BUFF_SIZE - bytes);
+		if ((ft_put_n(buffer, line, &size)) == 1)
+			return (1);
 	}
-	check_content(elem, line);
-	if (k == 0 && ft_strlen(*line) == 0)
-		return (0);
-	return ((k == -1) ? -1 : 1);
+	return (((*line) == NULL) ? 0 : 1);
 }
+

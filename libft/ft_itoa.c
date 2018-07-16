@@ -57,11 +57,9 @@ static char		*ft_string(char *str, int n, size_t c)
 
 char			*ft_itoa(int n)
 {
-	size_t	i;
 	size_t	c;
 	char	*str;
 
-	i = 0;
 	c = 0;
 	c = ft_count(n, 10);
 	str = (char *)malloc(sizeof(char) * (c + 1));
