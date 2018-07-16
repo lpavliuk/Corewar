@@ -166,7 +166,7 @@ typedef struct			s_asm
 	char				*line;
 	char				prog_name[PROG_NAME_LENGTH + 1];
 	char				*file_name;
-	char				flag_a : 1;
+	unsigned char		flag_a : 1;
 	char				comment[COMMENT_LENGTH + 1];
 	int					new_fd;
 	int					fd;
