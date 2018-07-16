@@ -58,7 +58,7 @@ stripped and annotated version of the code to the standard output\n");
 			read(asmb->fd, 0, 0) == -1)
 			ft_error("Error file\n");
 		parsing(asmb);
-		// (asmb->flag_a) ? show_bot(asmb) : create_binary(asmb);
+		(asmb->flag_a) ? show_bot(asmb, asmb->command) : create_binary(asmb, asmb->command);
 		close(asmb->fd);
 	}
 	return (0);
