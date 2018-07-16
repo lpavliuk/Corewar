@@ -113,5 +113,5 @@ void			get_header(t_asm *asmb)
 		if (flag == 3)
 			break ;
 	}
-	(flag != 3) ? ft_error("Error\n") : 0;
+	(flag != 3) ? ft_error("Error") : 0;
 }

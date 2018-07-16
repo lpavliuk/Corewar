@@ -1,13 +1,17 @@
-.name "as"
+#
+# Warrior qui a gagne
+# l'annee derniere
+#     VOALA
+#
+.name		"Celebration Funebre v0.99pl42"
 .comment	"Jour J"
 
-#skaldk
-		ld 	%0,r3
+		ld   %0,r3		
 label:		zjmp %:avantdebt
 		zjmp %0				# pour eviter ecrasement
 						# de l'instruction suivante
 code:		live %42			# 5
-		sti  r15,%0,r14     # 6
+		sti  r15,%0,r14			# 6
 		zjmp %-200			# 3
 		live %42			# 5
 		sti  r15,%0,r14			# 6
@@ -22,11 +26,11 @@ code:		live %42			# 5
 		zjmp %-200			# 3
 		sti  r15,%0,r14			# 6
 		zjmp %-200
-sti:
+	
 avantdebt:	sti   r1,%:code,%1  # 		# mets a jour le live
 		sti   r1,%:code,%15 # 		# mets a jour le live
 		sti   r1,%:code,%29 # 		# mets a jour le live
-		sti   r1,%:sti,%43 # 		# mets a jour le live
+		sti   r1,%:code,%43 # 		# mets a jour le live
 		sti   r1,%:code,%57 # 		# mets a jour le live
 		sti   r1,%:code,%71 # 		# mets a jour le live
 init:		ld   %393216,r4		 	#7	
@@ -46,7 +50,7 @@ level11:	live %4
 
 level110:	live %42
 		ldi  %8,%:code,r15		#set des octets 9-12
-		ld   -186,r14			#=$A-6-8
+		ld   %-186,r14			#=$A-6-8
 		ld   %0,r2
 		zjmp  %:label
 			
@@ -57,7 +61,8 @@ level101:	live %42
 		ld   %-190,r14			#=$A-6-4
 		ld   %0,r2
 		zjmp %:label
-level111:		live %42
+		
+level111:	live %42	
 		ldi  %12,%:code,r15		#set des octets 13-16
 		ld   %-182,r14			# $A -6 -12
 		ld   %0,r2
@@ -68,6 +73,6 @@ level100:	live %42
 		ld   %-194,r14			# $A -6 -0
 		ld   %0,r2			#
 		zjmp %:label			#
-label:
 
-#slkdl
+
+

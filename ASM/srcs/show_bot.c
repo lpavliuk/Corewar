@@ -74,7 +74,7 @@ void		show_bot(t_asm *asmb, t_command *command)
 	{
 		if (command->labels && command->labels->content)
 		{
-			ft_printf("%-11d:%4c%s:\n", command->bb);
+			ft_printf("%-11d:", command->bb);
 			ft_printf("%4c%s:\n", ' ', command->labels->content);
 		}
 		ft_printf("%-5d(%-3d) :", command->bb, command->bytes);
