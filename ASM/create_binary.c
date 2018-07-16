@@ -104,5 +104,6 @@ int		main(void)
 	}
 
 	close(asmb->new_fd);
+	
 	return (0);
 }

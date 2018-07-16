@@ -148,21 +148,11 @@ typedef struct		s_command
 {
 	char				*name;
 	char				opcode;
-<<<<<<< HEAD
-	char				*label;
-	unsigned int		arg1;
-	char 				size_arg1;
-	unsigned int		arg2;
-	char 				size_arg2;
-	unsigned int		arg3;
-	char 				size_arg3;
-=======
 	unsigned int		bytes;
 	unsigned int		bb; // means bytes_before.
 	unsigned char		codage;
 	t_list				*labels;
 	t_arg				*args;
->>>>>>> 01a93003f8651be4a0727ea3073a1f5f5166ecd3
 	struct s_command	*next;
 }					t_command;
 
