@@ -52,14 +52,34 @@ static	void	check_arguments(t_command *command)
 	(COUNT_ARGS(command->opcode) != len) ? ft_error("Error") : 0;
 }
 
+/*
+** k - it is a temporary variable that represents the beginning of the next argument.
+** q - is is a temporary variable that represents quantity of ',' between two arguments.
+** i - is is a temporary variable that represents quantity of arguments.
+*/
+
 static	void	skip_args(char *s, char **arr, int *j)
 {
 	int			i;
+	int			k;
+	int			q;
 
 	i = 0;
+	k = 0;
 	while (arr[i])
 	{
 		*j = ft_strstr(s + *j, arr[i]) - s + ft_strlen(arr[i]);
+		if (arr[i + 1])
+		{
+			k = ft_strstr(s + *j, arr[i + 1]) - s;
+			q = 0;
+			while (*j < k)
+			{
+				(s[*j] == SEPARATOR_CHAR) ? q++ : 0;
+				(*j)++;
+			}
+			(q != 1) ? ft_error("Error") : 0;
+		}
 		i++;
 	}
 }

@@ -54,7 +54,7 @@ char		str_has(char *str, char flag)
 		while (*str && (*str == ' ' || *str == '\t'))
 			str++;
 		i = 0;
-		while (str[i] && str[i] != ' ' && str[i] != '\t')
+		while (str[i] && ft_isalpha(str[i]))
 			i++;
 		return ((i > 0 && index_of(str, i) != -1) ? 1 : 0);
 	}

@@ -78,7 +78,7 @@ static	void	get_str(t_asm *asmb, char flag)
 	copy_to_dst(asmb, dest, size, &j);
 	(!asmb->line || asmb->line[j] != '\"') ? ft_error("Error") : j++;
 	skip_shit(asmb->line, &j, " \t");
-	if (asmb->line[j] != '\0')
+	if (asmb->line[j] != '\0' && asmb->line[j] != ';' && asmb->line[j] != '#')
 		ft_error("Error");
 }
 
@@ -96,7 +96,6 @@ void			get_header(t_asm *asmb)
 	flag = 0;
 	while (get_next_line(asmb->fd, &asmb->line) > 0)
 	{
-		comment_delete(asmb->line);
 		if (is_bot_name(asmb->line))
 		{
 			(flag & 1) ? ft_error("Error") : (flag = flag | 1);
@@ -107,8 +106,11 @@ void			get_header(t_asm *asmb)
 			(flag & 2) ? ft_error("Error") : (flag = flag | 2);
 			get_str(asmb, GET_COMMENT);
 		}
-		else if (!check_line(asmb->line))
-			ft_error("Error");
+		else
+		{
+			comment_delete(asmb->line);
+			(!check_line(asmb->line)) ? ft_error("Error") : 0;
+		}
 		ft_strdel(&asmb->line);
 		if (flag == 3)
 			break ;
