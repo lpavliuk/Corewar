@@ -82,11 +82,22 @@ char		*my_strsub(char *src, int start, int end)
 
 void		check_argvs(t_asm *asmb, char **av, int ac)
 {
+	char	*tmp;
+
 	while (--ac > 0)
 	{
 		if (ft_strequ(av[ac], "-a"))
 			asmb->flag_a = 1;
 		else if (!asmb->file_name)
 			asmb->file_name = ft_strdup(av[ac]);
+	}
+	if (asmb->file_name)
+	{
+		if (ft_strrchr(asmb->file_name, '/'))
+		{
+			tmp = ft_strdup(ft_strrchr(asmb->file_name, '/') + 1);
+			ft_strdel(&asmb->file_name);
+			asmb->file_name tmp;
+		}
 	}
 }
