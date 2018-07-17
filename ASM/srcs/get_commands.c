@@ -21,7 +21,7 @@ static	t_command	*push_new_command(t_command **head)
 	while (tmp && tmp->next)
 		tmp = tmp->next;
 	if (!(new = (t_command*)malloc(sizeof(t_command))))
-		ft_error("Error");
+		ft_error(ERR_MALLOC);
 	new->next = NULL;
 	new->args = NULL;
 	new->labels = NULL;
@@ -48,10 +48,10 @@ static	void		get_command(t_asm *asmb, t_command *new, int *j)
 		s[*j] != '\t' && (s[*j] < '0' || s[*j] > '9'))
 		(*j)++;
 	if (s[*j] != ' ' && s[*j] != '\t' && s[*j] != '%' && s[*j] != '-')
-		ft_error("Error");
+		ft_error(ERR_STRING);
 	new->name = my_strsub(s, tmp, *j);
 	new->opcode = index_of(new->name, ft_strlen(new->name)) + 1;
-	(new->opcode == -1) ? ft_error("Error") : 0;
+	(new->opcode == -1) ? ft_error(ERR_COMMAND_NAME) : 0;
 }
 
 /*
@@ -75,7 +75,7 @@ static	void		get_lca(t_asm *asmb)
 		}
 	}
 	if (asmb->line)
-		(!check_line(asmb->line + j)) ? ft_error("Error") : 0;
+		(!check_line(asmb->line + j)) ? ft_error(ERR_STRING) : 0;
 }
 
 void				get_commands(t_asm *asmb)
@@ -90,5 +90,5 @@ void				get_commands(t_asm *asmb)
 			ft_strdel(&asmb->line);
 		}
 	}
-	(!check_last_line(asmb)) ? ft_error("Error") : 0;
+	(!check_last_line(asmb)) ? ft_error(ERR_EOF) : 0;
 }

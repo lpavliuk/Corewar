@@ -82,7 +82,7 @@ static	void		get_val_from_pointer(t_command *head,
 		}
 		head = head->next;
 	}
-	ft_error("Error");
+	ft_error(ERR_NO_SUCH_LABEL);
 }
 
 static	void		compute_tdirs(t_command *command)

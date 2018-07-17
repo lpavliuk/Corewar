@@ -69,7 +69,7 @@ char		*my_strsub(char *src, int start, int end)
 
 	size = end - start;
 	if (!(s = (char *)malloc(size + 1)))
-		ft_error("Error");
+		ft_error(ERR_MALLOC);
 	ft_bzero(s, size + 1);
 	i = 0;
 	while (i < size)

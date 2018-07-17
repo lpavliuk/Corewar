@@ -29,7 +29,7 @@ static	void	foreach_arg(char **arr, t_command *command)
 		flag = 0;
 		type = get_type(arr[i]);
 		if (type == UNDEFINED_TYPE)
-			ft_error("Error");
+			ft_error(ERR_UNDEFINED_ARG);
 		add_argument(command, type, get_data(type, arr[i], &flag), flag);
 		i++;
 	}
@@ -44,12 +44,13 @@ static	void	check_arguments(t_command *command)
 	arg = command->args;
 	while (arg)
 	{
-		(len > 3) ? ft_error("Error") : 0;
-		(!ARG(command->opcode, len, arg->type)) ? ft_error("Error") : 0;
+		(len > 3) ? ft_error(ERR_TOO_MUCH_ARGS) : 0;
+		if (!ARG(command->opcode, len, arg->type))
+			ft_error(ERR_NOT_COMPATIBLE_ARG);
 		len++;
 		arg = arg->next;
 	}
-	(COUNT_ARGS(command->opcode) != len) ? ft_error("Error") : 0;
+	(COUNT_ARGS(command->opcode) != len) ? ft_error(ERR_COUNT_ARGS) : 0;
 }
 
 /*
@@ -78,7 +79,7 @@ static	void	skip_args(char *s, char **arr, int *j)
 				(s[*j] == SEPARATOR_CHAR) ? q++ : 0;
 				(*j)++;
 			}
-			(q != 1) ? ft_error("Error") : 0;
+			(q != 1) ? ft_error(ERR_TOO_MUCH_SEPARATORS) : 0;
 		}
 		i++;
 	}
@@ -101,7 +102,7 @@ void			get_arguments(t_asm *asmb, t_command *new, int *j)
 	char		**arr;
 
 	if (!(arr = ft_strsplit(asmb->line + *j, SEPARATOR_CHAR)))
-		ft_error("Error");
+		ft_error(ERR_MALLOC);
 	array_map(arr, ft_strtrim);
 	foreach_arg(arr, new);
 	skip_args(asmb->line, arr, j);

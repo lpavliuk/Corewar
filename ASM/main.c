@@ -17,7 +17,7 @@ t_asm		*init_asmb(void)
 	t_asm	*s;
 
 	if (!(s = (t_asm*)malloc(sizeof(t_asm))))
-		ft_error("Error [init_asmb()]: memory was not allocated");
+		ft_error(ERR_MALLOC);
 	ft_bzero(s->prog_name, PROG_NAME_LENGTH + 1);
 	ft_bzero(s->comment, COMMENT_LENGTH + 1);
 	s->file_name = NULL;
@@ -37,7 +37,7 @@ void		parsing(t_asm *asmb)
 	get_header(asmb);
 	get_commands(asmb);
 	if (!asmb->command)
-		ft_error("Error");
+		ft_error(ERR_NOT_ENOUGH_DATA);
 	asmb->prog_size = compute_variables(asmb->command);
 }
 
@@ -62,7 +62,8 @@ stripped and annotated version of the code to the standard output\n");
 		}
 		norm_file_name(&asmb->file_name);
 		parsing(asmb);
-		(asmb->flag_a) ? show_bot(asmb, asmb->command) : create_binary(asmb, asmb->command);
+		// disassembly_output(asmb);
+		// (asmb->flag_a) ? show_bot(asmb, asmb->command) : create_binary(asmb, asmb->command);
 		close(asmb->fd);
 	}
 	return (0);

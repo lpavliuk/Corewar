@@ -57,6 +57,28 @@
 # define UINT_VAL				2
 
 /*
+** ERRORS
+*/
+
+# define ERR_MALLOC "Error: memory was not allocated"
+# define ERR_NOT_ENOUGH_DATA "Error: not enough data"
+# define ERR_SEVERAL_NAMES "Error: file has several names"
+# define ERR_SEVERAL_COMMENTS "Error: file has several comments"
+# define ERR_STRING "Error: wrong string"
+# define ERR_HEADER "Error: wrong header"
+# define ERR_NAME_LEN "Error: too long name"
+# define ERR_COMMENT_LEN "Error: too long comment"
+# define ERR_COMMAND_NAME "Error: undefined command"
+# define ERR_EOF "Error: invalid end of file"
+# define ERR_UNDEFINED_ARG "Error: undefined argument"
+# define ERR_NOT_COMPATIBLE_ARG "Error: not compatible argument"
+# define ERR_TOO_MUCH_ARGS "Error: too much arguments"
+# define ERR_TOO_MUCH_SEPARATORS "Error: too much comas"
+# define ERR_COUNT_ARGS "Error: invalid quantity of arguments"
+# define ERR_NEW_FILE "Error: invalid output file"
+# define ERR_NO_SUCH_LABEL "Error: no such label"
+
+/*
 ** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
 */
 
@@ -177,5 +199,6 @@ unsigned int			compute_variables(t_command *command);
 void					get_commands(t_asm *asmb);
 void					show_bot(t_asm *asmb, t_command *command);
 void					create_binary(t_asm *asmb, t_command *command);
+void					disassembly_output(t_asm *asmb);
 
 #endif
