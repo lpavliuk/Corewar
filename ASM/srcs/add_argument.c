@@ -10,15 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../asm.h"
+#include "asm.h"
 
-static	t_arg		*push_new_arg(t_arg **args)
+t_arg				*push_new_arg(t_arg **args)
 {
 	t_arg			*new;
 	t_arg			*tmp;
 
 	if (!(new = (t_arg *)malloc(sizeof(t_arg))))
-		ft_error("Error");
+		ft_error(ERR_MALLOC);
 	new->str_value = NULL;
 	new->num_value = 0;
 	new->arg_size = 0;

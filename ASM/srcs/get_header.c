@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../asm.h"
+#include "asm.h"
 
 static	char	is_bot_name(char *s)
 {
@@ -52,7 +52,7 @@ static	void	copy_to_dst(t_asm *asmb, char *dest, int size, int *j)
 		else if (i < size)
 			dest[i++] = '\n';
 		else
-			ft_error("Error");
+			ft_error((size == COMMENT_LENGTH) ? ERR_COMMENT_LEN : ERR_NAME_LEN);
 		*j = 0;
 		ft_strdel(&asmb->line);
 		get_next_line(asmb->fd, &asmb->line);
@@ -74,12 +74,12 @@ static	void	get_str(t_asm *asmb, char flag)
 	size = (flag == GET_NAME) ? PROG_NAME_LENGTH : COMMENT_LENGTH;
 	dest = (flag == GET_NAME) ? asmb->prog_name : asmb->comment;
 	skip_shit(asmb->line, &j, " \t");
-	(asmb->line[j] != '\"') ? ft_error("Error") : j++;
+	(asmb->line[j] != '\"') ? ft_error(ERR_STRING) : j++;
 	copy_to_dst(asmb, dest, size, &j);
-	(!asmb->line || asmb->line[j] != '\"') ? ft_error("Error") : j++;
+	(!asmb->line || asmb->line[j] != '\"') ? ft_error(ERR_STRING) : j++;
 	skip_shit(asmb->line, &j, " \t");
-	if (asmb->line[j] != '\0')
-		ft_error("Error");
+	if (asmb->line[j] != '\0' && asmb->line[j] != ';' && asmb->line[j] != '#')
+		ft_error(ERR_STRING);
 }
 
 /*
@@ -96,22 +96,24 @@ void			get_header(t_asm *asmb)
 	flag = 0;
 	while (get_next_line(asmb->fd, &asmb->line) > 0)
 	{
-		comment_delete(asmb->line);
 		if (is_bot_name(asmb->line))
 		{
-			(flag & 1) ? ft_error("Error") : (flag = flag | 1);
+			(flag & 1) ? ft_error(ERR_SEVERAL_NAMES) : (flag = flag | 1);
 			get_str(asmb, GET_NAME);
 		}
 		else if (is_bot_comment(asmb->line))
 		{
-			(flag & 2) ? ft_error("Error") : (flag = flag | 2);
+			(flag & 2) ? ft_error(ERR_SEVERAL_COMMENTS) : (flag = flag | 2);
 			get_str(asmb, GET_COMMENT);
 		}
-		else if (!check_line(asmb->line))
-			ft_error("Error");
+		else
+		{
+			comment_delete(asmb->line);
+			(!check_line(asmb->line)) ? ft_error(ERR_STRING) : 0;
+		}
 		ft_strdel(&asmb->line);
 		if (flag == 3)
 			break ;
 	}
-	(flag != 3) ? ft_error("Error\n") : 0;
+	(flag != 3) ? ft_error(ERR_HEADER) : 0;
 }

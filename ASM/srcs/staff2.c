@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../asm.h"
+#include "asm.h"
 
 char		check_last_line(t_asm *asmb)
 {
@@ -54,7 +54,7 @@ char		str_has(char *str, char flag)
 		while (*str && (*str == ' ' || *str == '\t'))
 			str++;
 		i = 0;
-		while (str[i] && str[i] != ' ' && str[i] != '\t')
+		while (str[i] && ft_isalpha(str[i]))
 			i++;
 		return ((i > 0 && index_of(str, i) != -1) ? 1 : 0);
 	}
@@ -69,7 +69,7 @@ char		*my_strsub(char *src, int start, int end)
 
 	size = end - start;
 	if (!(s = (char *)malloc(size + 1)))
-		ft_error("Error");
+		ft_error(ERR_MALLOC);
 	ft_bzero(s, size + 1);
 	i = 0;
 	while (i < size)
@@ -86,7 +86,24 @@ void		check_argvs(t_asm *asmb, char **av, int ac)
 	{
 		if (ft_strequ(av[ac], "-a"))
 			asmb->flag_a = 1;
+		else if (ft_strequ(av[ac], "-b"))
+			asmb->flag_b = 1;
 		else if (!asmb->file_name)
 			asmb->file_name = ft_strdup(av[ac]);
+	}
+}
+
+void		norm_file_name(char **file_name)
+{
+	char	*tmp;
+
+	if (*file_name)
+	{
+		if (ft_strrchr(*file_name, '/'))
+		{
+			tmp = ft_strdup(ft_strrchr(*file_name, '/') + 1);
+			ft_strdel(file_name);
+			*file_name = tmp;
+		}
 	}
 }

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../asm.h"
+#include "asm.h"
 
 static	void	get_label(t_list **labels, char *s, int *j)
 {
