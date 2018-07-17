@@ -33,25 +33,42 @@ t_asm		*init_asmb(void)
 }
 /************************************************/
 
-
-int			main(void)
+static void		read_info(t_asm *asmb)
 {
-	unsigned int 	mag;
-	unsigned char	buffer[2048];
+	char	null[4];
+
+	read(asmb->fd, &asmb->magic, 4);
+	asmb->magic = reverse_bytes(asmb->magic, 4);
+	if (asmb->magic != COREWAR_EXEC_MAGIC)
+		ft_error("Incorrect magic-header in file!");
+	read(asmb->fd, asmb->prog_name, PROG_NAME_LENGTH);
+	read(asmb->fd, null, 4);
+	read(asmb->fd, &asmb->prog_size, 4);
+	asmb->prog_size = reverse_bytes(asmb->prog_size, 4);
+	read(asmb->fd, asmb->comment, COMMENT_LENGTH);
+}
+
+static void		read_executable(t_asm *asmb)
+{
+
+}
+
+int				main(void)
+{
+	unsigned char	buffer[5];
 	t_asm			*asmb;
 
+	/*********** DELETE IT ****************/
 	asmb = init_asmb();
-	ft_bzero(buffer, 2048);
 	asmb->fd = open("toto.cor", O_RDONLY);
-	ft_printf("fd: %d\n", asmb->fd);
-	read(asmb->fd, &mag, 4);
-	mag = reverse_bytes(mag, 4);
-	ft_printf("%d\n", mag);
-	if (mag == asmb->magic)
-		ft_printf("OK!\n");
-	else
-		ft_printf("KO!\n");
-	// asmb->magic = reverse_bytes(asmb->magic, 4);
-	// mag = (unsigned char *)&asmb->magic;
+	/**************************************/
+
+	ft_bzero(buffer, 5);
+	read_info(asmb);
+	read_executable(asmb);
+
+	ft_printf("name: %s\n", asmb->prog_name);
+	ft_printf("size: %d\n", asmb->prog_size);
+	ft_printf("comment: %s\n", asmb->comment);
 	return (0);
 }
