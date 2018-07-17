@@ -177,5 +177,6 @@ unsigned int			compute_variables(t_command *command);
 void					get_commands(t_asm *asmb);
 void					show_bot(t_asm *asmb, t_command *command);
 void					create_binary(t_asm *asmb, t_command *command);
+unsigned int			reverse_bytes(unsigned int x, char bytes);
 
 #endif

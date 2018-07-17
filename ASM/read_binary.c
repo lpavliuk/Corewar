@@ -36,14 +36,22 @@ t_asm		*init_asmb(void)
 
 int			main(void)
 {
-	char		buffer[2048];
-	t_asm		*asmb;
+	unsigned int 	mag;
+	unsigned char	buffer[2048];
+	t_asm			*asmb;
 
 	asmb = init_asmb();
 	ft_bzero(buffer, 2048);
 	asmb->fd = open("toto.cor", O_RDONLY);
 	ft_printf("fd: %d\n", asmb->fd);
-	read(asmb->fd, buffer, 4);
-	ft_printf("%s\n", buffer);
+	read(asmb->fd, &mag, 4);
+	mag = reverse_bytes(mag, 4);
+	ft_printf("%d\n", mag);
+	if (mag == asmb->magic)
+		ft_printf("OK!\n");
+	else
+		ft_printf("KO!\n");
+	// asmb->magic = reverse_bytes(asmb->magic, 4);
+	// mag = (unsigned char *)&asmb->magic;
 	return (0);
 }
