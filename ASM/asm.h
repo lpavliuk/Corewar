@@ -86,11 +86,8 @@
 # define COUNT_ARGS(i)	g_table[i - 1].args_count
 # define ARG(i, j, k)	g_table[i - 1].args[j].arg[(int)k]
 # define OPCODE(i) 		g_table[i].opcode
-# define CYCLES(i) 		g_table[i - 1].cycles
 # define CODAGE(i) 		g_table[i - 1].codage
-# define CARRY(i)		g_table[i - 1].carry
 # define LABEL_SIZE(i)	g_table[i - 1].label_size
-# define HEX(i)			g_table[i - 1].hex
 
 # define MAX_TABLE 16
 
@@ -200,5 +197,6 @@ void					get_commands(t_asm *asmb);
 void					show_bot(t_asm *asmb, t_command *command);
 void					create_binary(t_asm *asmb, t_command *command);
 void					disassembly_output(t_asm *asmb);
+unsigned int			reverse_bytes(unsigned int x, char bytes);
 
 #endif
