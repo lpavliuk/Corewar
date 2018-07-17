@@ -12,7 +12,7 @@
 
 #include "../asm.h"
 
-static	t_command	*push_new_command(t_command **head)
+t_command			*push_new_command(t_command **head)
 {
 	t_command		*new;
 	t_command		*tmp;

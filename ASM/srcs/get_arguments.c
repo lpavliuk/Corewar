@@ -54,9 +54,12 @@ static	void	check_arguments(t_command *command)
 }
 
 /*
-** k - it is a temporary variable that represents the beginning of the next argument.
-** q - is is a temporary variable that represents quantity of ',' between two arguments.
-** i - is is a temporary variable that represents quantity of arguments.
+** k - it is a temporary variable that represents
+** the beginning of the next argument.
+** q - is is a temporary variable that represents
+** quantity of ',' between two arguments.
+** i - is is a temporary variable that represents
+** quantity of arguments.
 */
 
 static	void	skip_args(char *s, char **arr, int *j)

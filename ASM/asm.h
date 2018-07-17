@@ -20,7 +20,6 @@
 # define T_DIR_SIZE				2
 # define T_IND_SIZE				2
 
-
 # define MAX_ARGS_NUMBER		4
 # define MAX_PLAYERS			4
 # define MEM_SIZE				(4 * 1024)
@@ -77,6 +76,7 @@
 # define ERR_COUNT_ARGS "Error: invalid quantity of arguments"
 # define ERR_NEW_FILE "Error: invalid output file"
 # define ERR_NO_SUCH_LABEL "Error: no such label"
+# define ERR_FLAGS "Error: too much flags"
 
 /*
 ** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
@@ -164,13 +164,13 @@ typedef struct			s_asm
 	char				prog_name[PROG_NAME_LENGTH + 1];
 	char				*file_name;
 	unsigned char		flag_a : 1;
+	unsigned char		flag_b : 1;
 	char				comment[COMMENT_LENGTH + 1];
 	int					new_fd;
 	int					fd;
 	int					last_line_size;
 	t_command			*command;
 }						t_asm;
-
 
 void					ft_error(char *str);
 void					skip_shit(char *str, int *j, char *symbols);
@@ -198,5 +198,11 @@ void					show_bot(t_asm *asmb, t_command *command);
 void					create_binary(t_asm *asmb, t_command *command);
 void					disassembly_output(t_asm *asmb);
 unsigned int			reverse_bytes(unsigned int x, char bytes);
+t_arg					*push_new_arg(t_arg **args);
+t_command				*push_new_command(t_command **head);
+void					read_binary(t_asm *asmb);
+char					write_t_reg(t_command *command, int i, int fd);
+char					write_t_dir(t_command *command, int i, int fd);
+char					write_t_ind(t_command *command, int i, int fd);
 
 #endif

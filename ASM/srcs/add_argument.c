@@ -12,7 +12,7 @@
 
 #include "../asm.h"
 
-static	t_arg		*push_new_arg(t_arg **args)
+t_arg				*push_new_arg(t_arg **args)
 {
 	t_arg			*new;
 	t_arg			*tmp;

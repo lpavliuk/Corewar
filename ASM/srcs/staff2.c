@@ -86,10 +86,11 @@ void		check_argvs(t_asm *asmb, char **av, int ac)
 	{
 		if (ft_strequ(av[ac], "-a"))
 			asmb->flag_a = 1;
+		else if (ft_strequ(av[ac], "-b"))
+			asmb->flag_b = 1;
 		else if (!asmb->file_name)
 			asmb->file_name = ft_strdup(av[ac]);
 	}
-
 }
 
 void		norm_file_name(char **file_name)

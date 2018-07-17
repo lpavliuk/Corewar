@@ -12,7 +12,7 @@
 
 #include "asm.h"
 
-t_asm		*init_asmb(void)
+static t_asm	*init_asmb(void)
 {
 	t_asm	*s;
 
@@ -24,6 +24,7 @@ t_asm		*init_asmb(void)
 	s->command = NULL;
 	s->line = NULL;
 	s->flag_a = 0;
+	s->flag_b = 0;
 	s->prog_size = 0;
 	s->new_fd = 0;
 	s->fd = 0;
@@ -32,7 +33,7 @@ t_asm		*init_asmb(void)
 	return (s);
 }
 
-void		parsing(t_asm *asmb)
+static void		parsing(t_asm *asmb)
 {
 	get_header(asmb);
 	get_commands(asmb);
@@ -41,7 +42,19 @@ void		parsing(t_asm *asmb)
 	asmb->prog_size = compute_variables(asmb->command);
 }
 
-int			main(int ac, char **av)
+static void		action(t_asm *asmb)
+{
+	if (asmb->flag_a && !asmb->flag_b)
+		show_bot(asmb, asmb->command);
+	else if (asmb->flag_b && !asmb->flag_a)
+		read_binary(asmb);
+	else if (asmb->flag_b && asmb->flag_a)
+		ft_error(ERR_FLAGS);
+	else
+		create_binary(asmb, asmb->command);
+}
+
+int				main(int ac, char **av)
 {
 	t_asm	*asmb;
 
@@ -61,9 +74,8 @@ stripped and annotated version of the code to the standard output\n");
 			exit(0);
 		}
 		norm_file_name(&asmb->file_name);
-		parsing(asmb);
-		// disassembly_output(asmb);
-		// (asmb->flag_a) ? show_bot(asmb, asmb->command) : create_binary(asmb, asmb->command);
+		(!asmb->flag_b) ? parsing(asmb) : 0;
+		action(asmb);
 		close(asmb->fd);
 	}
 	return (0);
