@@ -97,7 +97,7 @@ void		check_argvs(t_asm *asmb, char **av, int ac)
 		{
 			tmp = ft_strdup(ft_strrchr(asmb->file_name, '/') + 1);
 			ft_strdel(&asmb->file_name);
-			asmb->file_name tmp;
+			asmb->file_name = tmp;
 		}
 	}
 }
