@@ -82,8 +82,6 @@ char		*my_strsub(char *src, int start, int end)
 
 void		check_argvs(t_asm *asmb, char **av, int ac)
 {
-	char	*tmp;
-
 	while (--ac > 0)
 	{
 		if (ft_strequ(av[ac], "-a"))
@@ -91,13 +89,20 @@ void		check_argvs(t_asm *asmb, char **av, int ac)
 		else if (!asmb->file_name)
 			asmb->file_name = ft_strdup(av[ac]);
 	}
-	if (asmb->file_name)
+
+}
+
+void		norm_file_name(char **file_name)
+{
+	char	*tmp;
+
+	if (*file_name)
 	{
-		if (ft_strrchr(asmb->file_name, '/'))
+		if (ft_strrchr(*file_name, '/'))
 		{
-			tmp = ft_strdup(ft_strrchr(asmb->file_name, '/') + 1);
-			ft_strdel(&asmb->file_name);
-			asmb->file_name = tmp;
+			tmp = ft_strdup(ft_strrchr(*file_name, '/') + 1);
+			ft_strdel(file_name);
+			*file_name = tmp;
 		}
 	}
 }

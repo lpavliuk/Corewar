@@ -60,6 +60,7 @@ stripped and annotated version of the code to the standard output\n");
 			ft_printf("Can't read source file %s\n", asmb->file_name);
 			exit(0);
 		}
+		norm_file_name(&asmb->file_name);
 		parsing(asmb);
 		(asmb->flag_a) ? show_bot(asmb, asmb->command) : create_binary(asmb, asmb->command);
 		close(asmb->fd);

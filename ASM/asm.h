@@ -165,6 +165,7 @@ char					check_last_line(t_asm *asmb);
 char					str_has(char *str, char flag);
 char					*my_strsub(char *src, int start, int end);
 void					check_argvs(t_asm *asmb, char **av, int ac);
+void					norm_file_name(char **file_name);
 char					get_type(char *str);
 void					get_header(t_asm *asmb);
 void					get_labels(t_asm *asmb, t_command *new, int *j);
