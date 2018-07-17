@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../asm.h"
+#include "asm.h"
 
 void			create_file(t_asm *asmb)
 {
@@ -61,7 +61,6 @@ void			write_command(int fd, t_command *command)
 			write(fd, "r", 1);
 		else if (arg->type == T_DIR)
 			write(fd, "%", 1);
-		ft_printf("num: %d\n", arg->num_value);
 		ft_putnbr_fd(arg->num_value, fd);
 		if (arg->next)
 			write(fd, ", ", 2);

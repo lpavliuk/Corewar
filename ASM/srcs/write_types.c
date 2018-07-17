@@ -15,15 +15,14 @@
 char			write_t_reg(t_command *command, int i, int fd)
 {
 	t_arg			*arg;
-	unsigned int	buf;
+	unsigned char	buf;
 
 	if (!ARG(command->opcode, i, T_REG))
 		ft_error(ERR_NOT_COMPATIBLE_ARG);
 	arg = push_new_arg(&command->args);
 	if (read(fd, &buf, T_REG_SIZE) == 0)
 		return (1);
-	arg->num_value = buf;
-	ft_printf("arg: %d\n", arg->num_value);
+	arg->num_value = (int)buf;
 	arg->type = T_REG;
 	return (0);
 }

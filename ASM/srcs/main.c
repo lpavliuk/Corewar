@@ -59,9 +59,10 @@ int				main(int ac, char **av)
 	t_asm	*asmb;
 
 	if (ac == 1)
-		ft_putstr("Usage: ./asm [-a] <sourcefile.s>\n    \
--a : Instead of creating a .cor file, outputs a \
-stripped and annotated version of the code to the standard output\n");
+		ft_putstr("Usage: ./asm [-a, -b] <file>\n    \
+-a <file.s>   : Instead of creating a .cor file, outputs a \
+stripped and annotated version of the code to the standard output.\n    \
+-b <file.cor> : Disassembler for binary .cor file.\n");
 	else
 	{
 		asmb = init_asmb();

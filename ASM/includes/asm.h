@@ -13,7 +13,7 @@
 #ifndef ASM_H
 # define ASM_H
 
-# include "../libft/libft.h"
+# include "../../libft/libft.h"
 # include <fcntl.h>
 
 # define T_REG_SIZE				1

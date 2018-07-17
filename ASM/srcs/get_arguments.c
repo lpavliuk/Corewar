@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../asm.h"
+#include "asm.h"
 
 /*
 ** We pass flag just in order to determine if this argument is INT or CHAR *.
