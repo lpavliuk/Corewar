@@ -17,8 +17,7 @@ t_asm		*init_asmb(void)
 {
 	t_asm	*s;
 
-	if (!(s = (t_asm*)malloc(sizeof(t_asm))))
-		ft_error("Error [init_asmb()]: memory was not allocated");
+	s = (t_asm*)malloc(sizeof(t_asm));
 	ft_bzero(s->prog_name, PROG_NAME_LENGTH + 1);
 	ft_bzero(s->comment, COMMENT_LENGTH + 1);
 	s->file_name = NULL;
@@ -37,8 +36,14 @@ t_asm		*init_asmb(void)
 
 int			main(void)
 {
+	char		buffer[2048];
 	t_asm		*asmb;
 
 	asmb = init_asmb();
+	ft_bzero(buffer, 2048);
+	asmb->fd = open("toto.cor", O_RDONLY);
+	ft_printf("fd: %d\n", asmb->fd);
+	read(asmb->fd, buffer, 4);
+	ft_printf("%s\n", buffer);
 	return (0);
 }
