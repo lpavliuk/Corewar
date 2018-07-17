@@ -29,16 +29,18 @@ SRC=./srcs/add_argument.c \
 	./srcs/main.c
 	
 INCLUDES=includes/
+HEADER=includes/asm.h
 OBJ=$(SRC:.c=.o)
 LIB = ../libft/libft.a
+LIB_HEADER=../libft/libft.h
 NAME=asm
 
 all: $(NAME)
 
-%.o: %.c
+%.o: %.c $(INCLUDES) $(LIB)
 	@ $(CC) $(CFLAGS) -o $@ -c $< -I $(INCLUDES)
 
-$(NAME): $(LIB) $(OBJ)
+$(NAME): $(LIB) $(OBJ) $(HEADER) $(LIB_HEADER)
 	@ $(CC) $(CFLAGS) $(OBJ) $(LIB) -o $(NAME)
 	@ printf "\e[37;1m[Program \e[34;1masm \e[37;1mis \e[32;1mREADY!\e[37;1m]\e[0m🎅🏾🤙🏾🥃\n\n"
 	@ ./asm

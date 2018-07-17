@@ -94,10 +94,11 @@ SRC=./ft_memset.c \
 	./ft_is_uint.c
 OBJ=$(SRC:.c=.o)
 NAME=libft.a
+HEADER=libft.h
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(HEADER)
 	@ar rc $(NAME) $(OBJ)
 	@ printf "\e[37;1m[\e[33;1mlibft.a \e[37;1mis \e[32;1mREADY!\e[37;1m]\e[0m📚\n"
 
