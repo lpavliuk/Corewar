@@ -37,23 +37,23 @@ char		str_has(char *str, char flag)
 {
 	int		i;
 
+	i = 0;
 	if (!str)
 		return (0);
 	while (*str && (*str == ' ' || *str == '\t'))
 		str++;
 	if (flag == LABEL)
 	{
-		while (*str && *str != ':')
-			if (!ft_strchr(LABEL_CHARS, *str++))
+		while (str[i] && str[i] != ':')
+			if (!ft_strchr(LABEL_CHARS, str[i++]))
 				return (0);
-		return ((*str == ':') ? 1 : 0);
+		return ((i > 0 && str[i] == ':') ? 1 : 0);
 	}
 	else if (flag == COMMAND)
 	{
 		(str_has(str, LABEL)) ? (str = ft_strchr(str, ':') + 1) : 0;
 		while (*str && (*str == ' ' || *str == '\t'))
 			str++;
-		i = 0;
 		while (str[i] && ft_isalpha(str[i]))
 			i++;
 		return ((i > 0 && index_of(str, i) != -1) ? 1 : 0);
