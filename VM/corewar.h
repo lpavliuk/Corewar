@@ -51,8 +51,8 @@
 // #define REG_SIZE				4
 // #define DIR_SIZE				REG_SIZE
 
-# define REG_CODE				0
-# define DIR_CODE				1
+# define REG_CODE				1
+# define DIR_CODE				2
 # define IND_CODE				3
 
 #define MAX_ARGS_NUMBER			4
@@ -140,6 +140,7 @@ static t_table		g_table[16] = {
 typedef struct		s_bot
 {
 	unsigned int 	player;
+	unsigned int	size;
 	char			name[PROG_NAME_LENGTH + 1];
 	char			comment[COMMENT_LENGTH + 1];
 	unsigned char	*exec;
@@ -150,7 +151,7 @@ typedef struct
 {
 	char			flag_dump : 1;
 	unsigned int	nbr_cycles;
-	char			count_bots;
+	char			count_players;
 	unsigned char	map[MEM_SIZE];
 	t_bot			*bot;
 }					t_vm;
