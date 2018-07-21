@@ -10,15 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 #include "libft.h"
 
-int	output_chars(unsigned char *s, char len)
+static void		output_chars(unsigned char *s, unsigned char len,
+			unsigned char spaces)
 {
-	char	i;
+	unsigned char	i;
 
+	while (spaces-- > 0)
+		write(1, " ", 1);
 	i = 0;
 	while (i < len)
 	{
@@ -29,51 +29,40 @@ int	output_chars(unsigned char *s, char len)
 		i++;
 	}
 	write(1, "\n", 1);
-	return (1);
 }
 
-void	print(unsigned char *tab, size_t size)
+static void		print_hex(unsigned char c)
 {
-	size_t	spaces;
-	size_t	i;
-	size_t	total;
+	char		*base = "0123456789abcdef";
 
-	i = 0;
-	spaces = 0;
-	total = 0;
-	while (i < size)
-	{
-		(spaces == 0) ? (spaces = 40) : 0;
-		ft_printf("%02x", tab[i]) && (spaces -= 2) && (i++);
-		if (i % 2 == 0)
-			write(1, " ", 1) && (spaces--);
-		if (i % 16 == 0)
-			output_chars(tab + total, 16) && (total += 16);
-	}
-	i %= 16;
-	if (i != 0)
-	{
-		while (spaces-- > 0)
-			write(1, " ", 1);
-		output_chars(tab + total, i);
-	}
+	write(1, &base[c / 16], 1);
+	write(1, &base[c % 16], 1);
 }
 
-void	print_memory(const void *addr, size_t size)
+void			print_memory(const void *addr, size_t size)
 {
 	unsigned char	*tab;
+	unsigned char	i;	/* counter for every 16 elements of an array. */
+	unsigned char	spaces; /* counter of spaces for one row. */
 
-	if (!addr || size == 0)
-		return ;
 	tab = (unsigned char *)addr;
-	print(tab, size);
-}
-
-int	main(void)
-{
-	int	tab[10] = {0, 23, 150, 255,
-	              12, 16,  21, 42};
-
-	print_memory(tab, sizeof(tab));
-	return (0);
+	while (size != 0 && tab)
+	{
+		i = 0;
+		spaces = 40;
+		while (i < 16 && size != 0)
+		{
+			print_hex(tab[i]);
+			i++;
+			spaces -= 2;
+			size--;
+			if (i % 2 == 0)	/* two numbers have been written. */
+			{
+				write(1, " ", 1);
+				spaces--;
+			}
+		}
+		output_chars(tab, i, spaces);
+		tab += i;
+	}
 }

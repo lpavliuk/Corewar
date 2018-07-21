@@ -91,7 +91,8 @@ SRC=./ft_memset.c \
 	./write_colors.c \
 	./ft_strjoinfree.c \
 	./ft_list_pushback.c \
-	./ft_is_uint.c
+	./ft_is_uint.c \
+	./print_memory.c
 OBJ=$(SRC:.c=.o)
 NAME=libft.a
 HEADER=libft.h

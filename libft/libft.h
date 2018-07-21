@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+u/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
@@ -119,6 +119,7 @@ int				get_next_line(const int fd, char **line);
 char			*ft_strjoinfree(char const *s1, char const *s2, char n);
 void			ft_list_pushback(t_list **head, char *line);
 char			ft_is_uint(char *str);
+void			print_memory(const void *addr, size_t size);
 
 /*
 ** ****************************************************************************
