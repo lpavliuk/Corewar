@@ -47,9 +47,9 @@
 // # define T_DIR					1
 // # define T_IND					2
 
-// #define IND_SIZE				2
-// #define REG_SIZE				4
-// #define DIR_SIZE				REG_SIZE
+#define T_REG_SIZE				1
+#define T_DIR_SIZE				2
+#define T_IND_SIZE				2
 
 # define REG_CODE				1
 # define DIR_CODE				2
@@ -77,9 +77,9 @@
 ** get/send this size of bytes
 */
 
-#define T_REG					1
-#define T_DIR					2
-#define T_IND					4
+// #define T_REG					1
+// #define T_DIR					2
+// #define T_IND					4
 
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)

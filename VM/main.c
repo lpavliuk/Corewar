@@ -42,7 +42,6 @@ void		ft_error(char *s)
 	exit(0);
 }
 
-
 /*
 ** end STAFF
 */
@@ -163,9 +162,17 @@ void		get_executable(int fd, t_bot *new)
 		ft_error("Error");
 	if (read(fd, new->exec, new->size) != new->size)
 		ft_error("Error");
+	
 	if (read(fd, &tmp, 1) != 0)
 		ft_error("Error");
 }
+
+/*
+** Here I make bit-by-bit operation & for the last two bits in codage,
+** as you may have guessed, with the number of 192 (128 + 64),
+** and check whether these bits are on / off.
+** After that I make a bitwise shift left on two bits.
+*/
 
 char		*decipher_codage(unsigned char codage)
 {
@@ -188,6 +195,13 @@ char		*decipher_codage(unsigned char codage)
 	}
 	return (arr);
 }
+
+/*
+** This is the function that makes an array of types
+** which must be presented after particular opcode,
+** however such a function doesn't have at it's disposal
+** such thing as codage.
+*/
 
 char		*pseudo_codage(char opcode)
 {
@@ -223,13 +237,13 @@ void		check_arguments(char opcode, char *types, t_bot *bot, int *i)
 		{
 			if (*i >= bot->size || bot->exec[*i] > REG_NUMBER)
 				ft_error("Error");
-			*i += T_REG;
+			*i += T_REG_SIZE;
 		}
 		else if (types[count] == IND_CODE)
 		{
 			if ((*i + 1) >= bot->size)
 				ft_error("Error");
-			*i += T_DIR;
+			*i += T_DIR_SIZE;
 		}
 		else if (types[count] == DIR_CODE)
 		{
@@ -274,14 +288,134 @@ void		check_executable(t_bot *bot)
 	}
 }
 
+/*
+** This function makes a copy of an original executable of file,
+** with reversed bytes.
+*/
+
+// unsigned char		*reverse_exec(t_bot *bot)
+// {
+// 	unsigned char	*new_exec;
+// 	int				i;
+
+// 	new_exec = (unsigned char *)ft_memalloc(bot->size + 1);
+// 	(!new_exec) ? ft_error("Error") : 0;
+// 	i = 0;
+// 	while (i < bot->size)
+// 	{
+		
+// 	}
+// 	return (new_exec);
+// }
+
+char			get_arg_size(char opcode, char type)
+{
+	if (type == REG_CODE)
+		return (T_REG_SIZE);
+	else if (type == IND_CODE)
+		return (T_IND_SIZE);
+	else
+	{
+		if (LABEL_SIZE(opcode) == 4)
+			return (4);
+		else
+			return (T_DIR_SIZE);
+	}
+}
+
+char		*my_strsub(void *src, int start, int end)
+{
+	char	*s;
+	int		i;
+	int		size;
+
+	size = end - start;
+	if (!(s = (char *)malloc(size + 1)))
+		ft_error("Error");
+	ft_bzero(s, size + 1);
+	i = 0;
+	while (i < size)
+	{
+		s[i] = ((char *)src)[start + i];
+		i++;
+	}
+	return (s);
+}
+
+unsigned int		get_arg(unsigned char *src, char size)
+{
+	unsigned int	res;
+
+	res = 0;
+
+	return (res);
+}
+unsigned char		**get_arguments(char opcode, char *types, unsigned char *src)
+{
+	unsigned char	**arguments;
+	char			args_counter;
+	char			i;
+	char			arg_size;
+
+	args_counter = ft_strlen(types);
+	arguments = (unsigned char **)malloc(sizeof(unsigned char *) * (args_counter + 1));
+	arguments[args_counter] = NULL;
+	args_counter = 0;
+	i = 0;
+	while (types[args_counter])
+	{
+		arg_size = get_arg_size(opcode, types[args_counter]);
+		args_counter++;
+	}
+	return (arguments);
+}
+
+void				add_block(t_bot *bot, unsigned char *new_exec, int *i)
+{
+	unsigned char	**arguments;
+	char			opcode;
+	char			*types;
+	char			args_counter;
+
+	opcode = bot->exec[*i];
+	new_exec[(*i)++] = opcode;
+	if (CODAGE(opcode))
+	{
+		types = decipher_codage(bot->exec[*i]);
+		new_exec[*i] = bot->exec[*i];
+		(*i)++;
+	}
+	else
+		types = pseudo_codage(opcode);
+	arguments = get_arguments(opcode, types, bot->exec + *i);
+}
+
+unsigned char		*reverse_exec(t_bot *bot)
+{
+	unsigned char	*new_exec;
+	int				i;
+
+	new_exec = (unsigned char *)ft_memalloc(bot->size + 1);
+	(!new_exec) ? ft_error("Error") : 0;
+	i = 0;
+	while (i < bot->size)
+		add_block(bot, new_exec, &i);
+	return (new_exec);
+}
+
 void		bot_parsing(int fd, t_bot *new)
 {
+	unsigned char	*tmp;
+
 	check_magic_header(fd);
 	get_name(fd, new);
 	get_size(fd, new);
 	get_comment(fd, new);
 	get_executable(fd, new);
 	check_executable(new);
+	tmp = reverse_exec(new);
+	ft_strdel(&new->exec);
+	new->exec = tmp;
 }
 
 void		get_bot(t_vm *vm, unsigned int player, char *filename)
