@@ -137,23 +137,37 @@ static t_table		g_table[16] = {
 ** exec - executable
 */
 
+typedef struct			s_process
+{
+	unsigned int		position;
+	unsigned char		carry : 1;
+	unsigned char		live : 1;
+	unsigned int		registries[REG_NUMBER];
+	char				opcode;
+	unsigned int		cycles_to_perform;
+	struct s_process	*next;
+}						t_process;
+
 typedef struct		s_bot
 {
-	unsigned int 	player;
-	unsigned int	size;
-	char			name[PROG_NAME_LENGTH + 1];
-	char			comment[COMMENT_LENGTH + 1];
-	unsigned char	*exec;
-	struct s_bot	*next;
-}					t_bot;
+	unsigned int 		player;
+	unsigned int		size;
+	char				name[PROG_NAME_LENGTH + 1];
+	char				comment[COMMENT_LENGTH + 1];
+	unsigned char		*exec;
+	unsigned int		lives;	/* Quantity of lives for current period. */
+	unsigned int		last_live;
+	t_process			*process;
+	struct s_bot		*next;
+}						t_bot;
 
 typedef struct
 {
-	unsigned char	flag_dump : 1;
-	unsigned int	nbr_cycles;
-	char			count_players;
-	unsigned char	map[MEM_SIZE];
-	t_bot			*bot;
-}					t_vm;
+	unsigned char		flag_dump : 1;
+	unsigned int		nbr_cycles;
+	char				count_players;
+	unsigned char		map[MEM_SIZE];
+	t_bot				*bot;
+}						t_vm;
 
 #endif
