@@ -12,9 +12,6 @@
 
 #include "corewar.h"
 #include <stdio.h>
-/*
-** start STAFF
-*/
 
 t_vm		*init_vm(void)
 {
@@ -41,10 +38,6 @@ void		ft_error(char *s)
 	ft_printf("%s\n", s);
 	exit(0);
 }
-
-/*
-** end STAFF
-*/
 
 t_bot		*push_new_bot(t_bot **head, unsigned int player)
 {
@@ -117,16 +110,15 @@ void		check_magic_header(int fd)
 void		get_name(int fd, t_bot *new)
 {
 	unsigned char	buf[4];
-	char		i;
+	unsigned char	i;
 
 	if (read(fd, &new->name, PROG_NAME_LENGTH) != PROG_NAME_LENGTH)
 		ft_error("Error");
 	if (read(fd, &buf, 4) != 4)
 		ft_error("Error");
-	i = 4;
-	while (--i >= 0)
-		if (buf[i] != 0)
-			ft_error("Error");
+	i = 0;
+	while (i < 4)
+		(buf[i] != 0) ? ft_error("Error") : i++;
 }
 
 void		get_size(int fd, t_bot *new)
@@ -141,16 +133,15 @@ void		get_size(int fd, t_bot *new)
 void		get_comment(int fd, t_bot *new)
 {
 	unsigned char	buf[4];
-	char		i;
+	unsigned char	i;
 
 	if (read(fd, &new->comment, COMMENT_LENGTH) != COMMENT_LENGTH)
 		ft_error("Error");
 	if (read(fd, &buf, 4) != 4)
 		ft_error("Error");
-	i = 4;
-	while (--i >= 0)
-		if (buf[i] != 0)
-			ft_error("Error");
+	i = 0;
+	while (i < 4)
+		(buf[i] != 0) ? ft_error("Error") : i++;
 }
 
 void		get_executable(int fd, t_bot *new)
@@ -162,8 +153,7 @@ void		get_executable(int fd, t_bot *new)
 		ft_error("Error");
 	if (read(fd, new->exec, new->size) != new->size)
 		ft_error("Error");
-	
-	if (read(fd, &tmp, 1) != 0)
+	if (read(fd, &tmp, 1) != 0)	/* Perhaps it doesn't work. */
 		ft_error("Error");
 }
 
@@ -201,34 +191,41 @@ char		*decipher_codage(unsigned char codage)
 ** which must be presented after particular opcode,
 ** however such a function doesn't have at it's disposal
 ** such thing as codage.
+**
+** We loop through an array of arguments in the table,
+** loop through of types in that argument,
+** and check if this argument can be here,
+** we save this type of argument.
 */
 
 char		*pseudo_codage(char opcode)
 {
-	char	*arr;
-	char	i;
-	char	j;
+	char			*arr;
+	unsigned char	i;
+	unsigned char	j;
 
-	i = 3;
+	i = 0;
 	(!(arr = (char *)ft_memalloc(4))) ? ft_error("Error") : 0;
-	while (--i >= 0)
+	while (i < 3)
 	{
-		j = 3;
-		while (--j >= 0)
+		j = 0;
+		while (j < 3)
 		{
 			if (ARG(opcode, i, j))
 			{
 				arr[i] = j + 1;
 				break ;
 			}
+			j++;
 		}
+		i++;
 	}
 	return (arr);
 }
 
-void		check_arguments(char opcode, char *types, t_bot *bot, int *i)
+void		check_arguments(char opcode, char *types, t_bot *bot, unsigned int *i)
 {
-	char	count;
+	unsigned char	count;
 
 	count = 0;
 	while (types[count])
@@ -255,7 +252,7 @@ void		check_arguments(char opcode, char *types, t_bot *bot, int *i)
 	}
 }
 
-void		check_command(t_bot *new, int *i)
+void		check_command(t_bot *new, unsigned int *i)
 {
 	char	*codage;
 	char	opcode;
@@ -274,9 +271,18 @@ void		check_command(t_bot *new, int *i)
 	ft_strdel(&codage);
 }
 
+/*
+** This function checks executable of a bot.
+**
+** Specifically this function checks whether i points on opcode or not.
+** i - it is a counter for the whole executable 
+** which will skip in function check_command
+** command + codage + arguments.
+*/
+
 void		check_executable(t_bot *bot)
 {
-	int	i;
+	unsigned int	i;
 
 	i = 0;
 	while (i < bot->size)
@@ -287,26 +293,6 @@ void		check_executable(t_bot *bot)
 			ft_error("Error");
 	}
 }
-
-/*
-** This function makes a copy of an original executable of file,
-** with reversed bytes.
-*/
-
-// unsigned char		*reverse_exec(t_bot *bot)
-// {
-// 	unsigned char	*new_exec;
-// 	int				i;
-
-// 	new_exec = (unsigned char *)ft_memalloc(bot->size + 1);
-// 	(!new_exec) ? ft_error("Error") : 0;
-// 	i = 0;
-// 	while (i < bot->size)
-// 	{
-		
-// 	}
-// 	return (new_exec);
-// }
 
 char			get_arg_size(char opcode, char type)
 {
@@ -323,99 +309,111 @@ char			get_arg_size(char opcode, char type)
 	}
 }
 
-char		*my_strsub(void *src, int start, int end)
-{
-	char	*s;
-	int		i;
-	int		size;
+/*
+** This function gets a value of some sequence of bytes
+** specified in arg_size and returns reversed value.
+*/
 
-	size = end - start;
-	if (!(s = (char *)malloc(size + 1)))
-		ft_error("Error");
-	ft_bzero(s, size + 1);
-	i = 0;
-	while (i < size)
+unsigned int	get_arg(unsigned char *exec, unsigned int size, unsigned int i, char arg_size)
+{
+	unsigned int	arg;
+	unsigned char	str[4];
+	unsigned char	j;
+
+	ft_bzero(str, 4);
+	arg = 0;
+	j = 0;
+	while (j < arg_size)
 	{
-		s[i] = ((char *)src)[start + i];
-		i++;
+		((i + j) >= size) ? ft_error("Error") : 0;
+		str[j] = exec[i + j];
+		j++;
 	}
-	return (s);
+	((unsigned char *)&arg)[0] = ((unsigned char *)&str)[0];
+	((unsigned char *)&arg)[1] = ((unsigned char *)&str)[1];
+	((unsigned char *)&arg)[2] = ((unsigned char *)&str)[2];
+	((unsigned char *)&arg)[3] = ((unsigned char *)&str)[3];
+	return (reverse_bytes(arg, arg_size));
 }
 
-unsigned int		get_arg(unsigned char *src, char size)
-{
-	unsigned int	res;
 
-	res = 0;
 
-	return (res);
-}
-unsigned char		**get_arguments(char opcode, char *types, unsigned char *src)
-{
-	unsigned char	**arguments;
-	char			args_counter;
-	char			i;
-	char			arg_size;
 
-	args_counter = ft_strlen(types);
-	arguments = (unsigned char **)malloc(sizeof(unsigned char *) * (args_counter + 1));
-	arguments[args_counter] = NULL;
-	args_counter = 0;
-	i = 0;
-	while (types[args_counter])
-	{
-		arg_size = get_arg_size(opcode, types[args_counter]);
-		args_counter++;
-	}
-	return (arguments);
-}
+// void			record_arg(unsigned char *exec, unsigned int arg, char arg_size, unsigned int *i)
+// {
+// 	unsigned char	str[4];
+// 	unsigned char	j;
 
-void				add_block(t_bot *bot, unsigned char *new_exec, int *i)
-{
-	unsigned char	**arguments;
-	char			opcode;
-	char			*types;
-	char			args_counter;
+// 	ft_bzero(str, 4);
+// 	str[0] = ((unsigned char *)&arg)[0];
+// 	str[1] = ((unsigned char *)&arg)[1];
+// 	str[2] = ((unsigned char *)&arg)[2];
+// 	str[3] = ((unsigned char *)&arg)[3];
+// 	j = 0;
+// 	while (j < arg_size)
+// 	{
+// 		exec[*i] = str[j];
+// 		(*i)++;
+// 		j++;
+// 	}
+// }
 
-	opcode = bot->exec[*i];
-	new_exec[(*i)++] = opcode;
-	if (CODAGE(opcode))
-	{
-		types = decipher_codage(bot->exec[*i]);
-		new_exec[*i] = bot->exec[*i];
-		(*i)++;
-	}
-	else
-		types = pseudo_codage(opcode);
-	arguments = get_arguments(opcode, types, bot->exec + *i);
-}
+// void			add_command_args(t_bot *bot, unsigned char *new_exec, unsigned int *i)
+// {
+// 	char			opcode;
+// 	char			*types;
+// 	char			arg_size;
+// 	unsigned int	arg;
+// 	unsigned char	t_counter;
 
-unsigned char		*reverse_exec(t_bot *bot)
-{
-	unsigned char	*new_exec;
-	int				i;
+// 	opcode = bot->exec[*i];
+// 	new_exec[(*i)++] = opcode;
+// 	if (CODAGE(opcode))
+// 	{
+// 		types = decipher_codage(bot->exec[*i]);
+// 		new_exec[*i] = bot->exec[*i];
+// 		(*i)++;
+// 	}
+// 	else
+// 		types = pseudo_codage(opcode);
+// 	t_counter = 0;
+// 	while (types[t_counter])
+// 	{
+// 		arg_size = get_arg_size(opcode, types[t_counter]);
+// 		arg = get_arg(bot->exec, bot->size, *i, arg_size);
+// 		record_arg(new_exec, arg, arg_size, i);
+// 		t_counter++;
+// 	}
+// 	ft_strdel(&types);
+// }
 
-	new_exec = (unsigned char *)ft_memalloc(bot->size + 1);
-	(!new_exec) ? ft_error("Error") : 0;
-	i = 0;
-	while (i < bot->size)
-		add_block(bot, new_exec, &i);
-	return (new_exec);
-}
+/*
+** This function makes a copy of an original executable of file,
+** with reversed bytes.
+*/
+
+// unsigned char	*reverse_exec(t_bot *bot)
+// {
+// 	unsigned char	*new_exec;	/* new executable string with reversed arguments which will be returned. */
+// 	unsigned int	i;			/* i represents a counter for the whole exec. */
+
+// 	new_exec = (unsigned char *)ft_memalloc(bot->size + 1);
+// 	(!new_exec) ? ft_error("Error") : 0;
+// 	i = 0;
+// 	while (i < bot->size)	/* Here i is always on the opcode. */
+// 		add_command_args(bot, new_exec, &i);
+// 	return (new_exec);
+// }
+
 
 void		bot_parsing(int fd, t_bot *new)
 {
-	unsigned char	*tmp;
-
 	check_magic_header(fd);
 	get_name(fd, new);
 	get_size(fd, new);
 	get_comment(fd, new);
 	get_executable(fd, new);
 	check_executable(new);
-	tmp = reverse_exec(new);
-	ft_strdel(&new->exec);
-	new->exec = tmp;
 }
 
 void		get_bot(t_vm *vm, unsigned int player, char *filename)
@@ -442,11 +440,17 @@ void		get_number_bot(t_vm *vm, char **args, int count, int *i)
 	{
 		player = ft_atoi(args[*i]);
 		(player > 4 || player == 0) ? ft_error("Error") : (*i)++;
-		(*i < count) ? get_bot(vm, player, args[*i]) : usage();
+		(*i < count) ? get_bot(vm, player * -1, args[*i]) : usage();
 	}
 	else
 		usage();
 }
+
+/*
+** We go through an array of args and check whether
+** argument is -dump or -n or simply .cor file,
+** and call corresponding functions.
+*/
 
 void		get_args(t_vm *vm, int count, char **args)
 {
@@ -470,6 +474,46 @@ void		get_args(t_vm *vm, int count, char **args)
 	}
 }
 
+void			output_exec(const void *addr, size_t size, unsigned int cols)
+{
+	char			*base = "0123456789abcdef";
+	unsigned char	*tab;
+	unsigned int	i;
+
+	tab = (unsigned char *)addr;
+	i = 0;
+	while (size != 0 && tab)
+	{
+		write(1, &base[tab[i] / 16], 1);
+		write(1, &base[tab[i] % 16], 1);
+		i++;
+		size--;
+		if ((i % cols) == 0)
+			write(1, "\n", 1);
+		else if (size != 0)
+			write(1, " ", 1);
+	}
+}
+
+void		fill_map(unsigned char *map, t_bot *bot, char count_players)
+{
+	unsigned int	i;
+	unsigned int	total;
+
+	total = 0;
+	while (bot)
+	{
+		i = 0;
+		while (i < bot->size)
+		{
+			map[total + i] = bot->exec[i];
+			i++;
+		}
+		total += MEM_SIZE / count_players;
+		bot = bot->next;
+	}
+}
+
 int			main(int ac, char **av)
 {
 	t_vm		*vm;
@@ -478,6 +522,8 @@ int			main(int ac, char **av)
 	{
 		vm = init_vm();
 		get_args(vm, ac, av);
+		fill_map(vm->map, vm->bot, vm->count_players);
+		output_exec(vm->map, MEM_SIZE, 64);
 	}
 	else
 		usage();

@@ -46,7 +46,6 @@ name:	live	%42		# entree
 	# lld 5, r1
 	# lld %5, r4
 	# lld %:hello, r5
-	lld :hello, r54
 
 	zjmp	%4500000000000000000000
 ls:

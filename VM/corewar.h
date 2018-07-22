@@ -149,7 +149,7 @@ typedef struct		s_bot
 
 typedef struct
 {
-	char			flag_dump : 1;
+	unsigned char	flag_dump : 1;
 	unsigned int	nbr_cycles;
 	char			count_players;
 	unsigned char	map[MEM_SIZE];
