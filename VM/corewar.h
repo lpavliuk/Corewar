@@ -15,71 +15,41 @@
 
 # include "../libft/libft.h"
 # include <fcntl.h>
+# include "visualizator/visualize.h"
 
-// # define T_REG_SIZE				1
-// # define T_DIR_SIZE				2
-// # define T_IND_SIZE				2
-
-// # define MAX_ARGS_NUMBER		4
-// # define MAX_PLAYERS			4
-// # define MEM_SIZE				(4 * 1024)
-// # define IDX_MOD				(MEM_SIZE / 8)
-// # define CHAMP_MAX_SIZE			(MEM_SIZE / 6)
-
-// # define COMMENT_CHAR			'#'
-// # define LABEL_CHAR				':'
-// # define DIRECT_CHAR			'%'
-// # define SEPARATOR_CHAR			','
-
-// # define LABEL_CHARS			"abcdefghijklmnopqrstuvwxyz_0123456789"
-
-// # define NAME_CMD				".name"
-// # define COMMENT_CMD			".comment"
-
-// # define REG_NUMBER				16
-
-// # define PROG_NAME_LENGTH		(128)
-// # define COMMENT_LENGTH			(2048)
-// # define COREWAR_EXEC_MAGIC		0xea83f3
-
-// # define UNDEFINED_TYPE			-1
-// # define T_REG					0
-// # define T_DIR					1
-// # define T_IND					2
-
-#define T_REG_SIZE				1
-#define T_DIR_SIZE				2
-#define T_IND_SIZE				2
+# define T_REG_SIZE				1
+# define T_DIR_SIZE				2
+# define T_IND_SIZE				2
 
 # define REG_CODE				1
 # define DIR_CODE				2
 # define IND_CODE				3
 
-#define MAX_ARGS_NUMBER			4
-#define MAX_PLAYERS				4
-#define MEM_SIZE				(4*1024)
-#define IDX_MOD					(MEM_SIZE / 8)
-#define CHAMP_MAX_SIZE			(MEM_SIZE / 6)
+# define MAX_ARGS_NUMBER		4
+# define MAX_PLAYERS			4
+# define MEM_SIZE				(4*1024)
+# define IDX_MOD				(MEM_SIZE / 8)
+# define CHAMP_MAX_SIZE			(MEM_SIZE / 6)
 
-#define LABEL_CHARS				"abcdefghijklmnopqrstuvwxyz_0123456789"
+# define LABEL_CHARS			"abcdefghijklmnopqrstuvwxyz_0123456789"
 
-#define NAME_CMD_STRING			".name"
-#define COMMENT_CMD_STRING		".comment"
+# define NAME_CMD_STRING		".name"
+# define COMMENT_CMD_STRING		".comment"
 
-#define REG_NUMBER				16
+# define REG_NUMBER				16
 
-#define CYCLE_TO_DIE			1536
-#define CYCLE_DELTA				50
-#define NBR_LIVE				21
-#define MAX_CHECKS				10
+# define CYCLE_TO_DIE			1536
+# define CYCLE_DELTA			50
+# define NBR_LIVE				21
+# define MAX_CHECKS				10
 
 /*
 ** get/send this size of bytes
 */
 
-// #define T_REG					1
-// #define T_DIR					2
-// #define T_IND					4
+// # define T_REG				1
+// # define T_DIR				2
+// # define T_IND				4
 
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)
@@ -155,19 +125,24 @@ typedef struct		s_bot
 	char				name[PROG_NAME_LENGTH + 1];
 	char				comment[COMMENT_LENGTH + 1];
 	unsigned char		*exec;
-	unsigned int		lives;	/* Quantity of lives for current period. */
-	unsigned int		last_live;
-	t_process			*process;
+	unsigned int		lives;		/* Quantity of lives for current period. */
+	unsigned int		last_live;	/* Cycle on which this bot has executed shout his player/id/name. */
+	t_process			*process;	/* All processes created by this bot. */
 	struct s_bot		*next;
 }						t_bot;
 
 typedef struct
 {
+	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
-	unsigned int		nbr_cycles;
+	unsigned int		nbr_cycles;			/* As i have understood, it is the same as cycle to die, which we specify at launch, if it is not specified, nbr_cycles = cycle_to_die. */
+	unsigned int		cur_cycle;			/* Current cycle. */
+	unsigned int		process_count;		/* Quantity of all processes on map. */
 	char				count_players;
 	unsigned char		map[MEM_SIZE];
 	t_bot				*bot;
 }						t_vm;
+
+void					visualize(t_vm *vm);
 
 #endif

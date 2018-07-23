@@ -20,9 +20,12 @@ t_vm		*init_vm(void)
 	if (!(new = (t_vm *)malloc(sizeof(t_vm))))
 		exit(0);
 	ft_bzero(new->map, MEM_SIZE);
+	new->flag_visual = 0;
 	new->flag_dump = 0;
-	new->nbr_cycles = 0;
+	new->nbr_cycles = CYCLE_TO_DIE;
 	new->count_players = 0;
+	new->cur_cycle = 0;
+	new->process_count = 0;
 	new->bot = NULL;
 	return (new);
 }
@@ -57,6 +60,8 @@ t_bot		*push_new_bot(t_bot **head, unsigned int player)
 	ft_bzero(new->comment, COMMENT_LENGTH + 1);
 	new->exec = NULL;
 	new->next = NULL;
+	new->lives = 0;
+	new->last_live = 0;
 	if (!*head)
 		*head = new;
 	else
@@ -336,76 +341,6 @@ unsigned int	get_arg(unsigned char *exec, unsigned int size, unsigned int i, cha
 	return (reverse_bytes(arg, arg_size));
 }
 
-
-
-
-// void			record_arg(unsigned char *exec, unsigned int arg, char arg_size, unsigned int *i)
-// {
-// 	unsigned char	str[4];
-// 	unsigned char	j;
-
-// 	ft_bzero(str, 4);
-// 	str[0] = ((unsigned char *)&arg)[0];
-// 	str[1] = ((unsigned char *)&arg)[1];
-// 	str[2] = ((unsigned char *)&arg)[2];
-// 	str[3] = ((unsigned char *)&arg)[3];
-// 	j = 0;
-// 	while (j < arg_size)
-// 	{
-// 		exec[*i] = str[j];
-// 		(*i)++;
-// 		j++;
-// 	}
-// }
-
-// void			add_command_args(t_bot *bot, unsigned char *new_exec, unsigned int *i)
-// {
-// 	char			opcode;
-// 	char			*types;
-// 	char			arg_size;
-// 	unsigned int	arg;
-// 	unsigned char	t_counter;
-
-// 	opcode = bot->exec[*i];
-// 	new_exec[(*i)++] = opcode;
-// 	if (CODAGE(opcode))
-// 	{
-// 		types = decipher_codage(bot->exec[*i]);
-// 		new_exec[*i] = bot->exec[*i];
-// 		(*i)++;
-// 	}
-// 	else
-// 		types = pseudo_codage(opcode);
-// 	t_counter = 0;
-// 	while (types[t_counter])
-// 	{
-// 		arg_size = get_arg_size(opcode, types[t_counter]);
-// 		arg = get_arg(bot->exec, bot->size, *i, arg_size);
-// 		record_arg(new_exec, arg, arg_size, i);
-// 		t_counter++;
-// 	}
-// 	ft_strdel(&types);
-// }
-
-/*
-** This function makes a copy of an original executable of file,
-** with reversed bytes.
-*/
-
-// unsigned char	*reverse_exec(t_bot *bot)
-// {
-// 	unsigned char	*new_exec;	/* new executable string with reversed arguments which will be returned. */
-// 	unsigned int	i;			/* i represents a counter for the whole exec. */
-
-// 	new_exec = (unsigned char *)ft_memalloc(bot->size + 1);
-// 	(!new_exec) ? ft_error("Error") : 0;
-// 	i = 0;
-// 	while (i < bot->size)	/* Here i is always on the opcode. */
-// 		add_command_args(bot, new_exec, &i);
-// 	return (new_exec);
-// }
-
-
 void		bot_parsing(int fd, t_bot *new)
 {
 	check_magic_header(fd);
@@ -465,6 +400,8 @@ void		get_args(t_vm *vm, int count, char **args)
 			get_dump(vm, args, count, &i);
 		else if (ft_strequ(args[i], "-n"))
 			get_number_bot(vm, args, count, &i);
+		else if (ft_strequ(args[i], "-v"))
+			vm->flag_visual = 1;
 		else
 		{
 			player--;
@@ -474,26 +411,26 @@ void		get_args(t_vm *vm, int count, char **args)
 	}
 }
 
-void			output_exec(const void *addr, size_t size, unsigned int cols)
-{
-	char			*base = "0123456789abcdef";
-	unsigned char	*tab;
-	unsigned int	i;
+// void			output_exec(const void *addr, size_t size, unsigned int cols)
+// {
+// 	char			*base = "0123456789abcdef";
+// 	unsigned char	*tab;
+// 	unsigned int	i;
 
-	tab = (unsigned char *)addr;
-	i = 0;
-	while (size != 0 && tab)
-	{
-		write(1, &base[tab[i] / 16], 1);
-		write(1, &base[tab[i] % 16], 1);
-		i++;
-		size--;
-		if ((i % cols) == 0)
-			write(1, "\n", 1);
-		else if (size != 0)
-			write(1, " ", 1);
-	}
-}
+// 	tab = (unsigned char *)addr;
+// 	i = 0;
+// 	while (size != 0 && tab)
+// 	{
+// 		write(1, &base[tab[i] / 16], 1);
+// 		write(1, &base[tab[i] % 16], 1);
+// 		i++;
+// 		size--;
+// 		if ((i % cols) == 0)
+// 			write(1, "\n", 1);
+// 		else if (size != 0)
+// 			write(1, " ", 1);
+// 	}
+// }
 
 void		fill_map(unsigned char *map, t_bot *bot, char count_players)
 {
@@ -523,7 +460,7 @@ int			main(int ac, char **av)
 		vm = init_vm();
 		get_args(vm, ac, av);
 		fill_map(vm->map, vm->bot, vm->count_players);
-		output_exec(vm->map, MEM_SIZE, 64);
+		(vm->flag_visual) ? visualize(vm) : 0;
 	}
 	else
 		usage();
