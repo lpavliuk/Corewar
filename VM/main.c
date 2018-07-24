@@ -13,13 +13,30 @@
 #include "corewar.h"
 #include <stdio.h>
 
+/*
+** Color 5 because it is an initial number that represents the color of pixel.
+*/
+
+void		ft_bzero_map(void)
+{
+	unsigned short	i;
+
+	i = 0;
+	while (i < MEM_SIZE)
+	{
+		g_map[i].value = 0;
+		g_map[i].color = 5;
+		i++;
+	}
+}
+
 t_vm		*init_vm(void)
 {
 	t_vm	*new;
 
 	if (!(new = (t_vm *)malloc(sizeof(t_vm))))
 		exit(0);
-	ft_bzero(new->map, MEM_SIZE);
+	ft_bzero_map();
 	new->flag_visual = 0;
 	new->flag_dump = 0;
 	new->nbr_cycles = CYCLE_TO_DIE;
@@ -316,22 +333,22 @@ char			get_arg_size(char opcode, char type)
 
 /*
 ** This function gets a value of some sequence of bytes
-** specified in arg_size and returns reversed value.
+** size of which specified in arg_size and returns reversed value.
 */
 
-unsigned int	get_arg(unsigned char *exec, unsigned int size, unsigned int i, char arg_size)
+unsigned int	get_arg(unsigned int i, char arg_size)
 {
 	unsigned int	arg;
 	unsigned char	str[4];
 	unsigned char	j;
 
-	ft_bzero(str, 4);
-	arg = 0;
 	j = 0;
+	arg = 0;
+	ft_bzero(str, 4);
 	while (j < arg_size)
 	{
-		((i + j) >= size) ? ft_error("Error") : 0;
-		str[j] = exec[i + j];
+		((i + j) >= MEM_SIZE) ? ft_error("Error") : 0;
+		str[j] = g_map[i + j].value;
 		j++;
 	}
 	((unsigned char *)&arg)[0] = ((unsigned char *)&str)[0];
@@ -411,42 +428,25 @@ void		get_args(t_vm *vm, int count, char **args)
 	}
 }
 
-// void			output_exec(const void *addr, size_t size, unsigned int cols)
-// {
-// 	char			*base = "0123456789abcdef";
-// 	unsigned char	*tab;
-// 	unsigned int	i;
-
-// 	tab = (unsigned char *)addr;
-// 	i = 0;
-// 	while (size != 0 && tab)
-// 	{
-// 		write(1, &base[tab[i] / 16], 1);
-// 		write(1, &base[tab[i] % 16], 1);
-// 		i++;
-// 		size--;
-// 		if ((i % cols) == 0)
-// 			write(1, "\n", 1);
-// 		else if (size != 0)
-// 			write(1, " ", 1);
-// 	}
-// }
-
-void		fill_map(unsigned char *map, t_bot *bot, char count_players)
+void		fill_map(t_bot *bot, char count_players)
 {
 	unsigned int	i;
 	unsigned int	total;
+	unsigned char	bot_counter;
 
 	total = 0;
+	bot_counter = 1;
 	while (bot)
 	{
 		i = 0;
 		while (i < bot->size)
 		{
-			map[total + i] = bot->exec[i];
+			g_map[total + i].color = bot_counter;
+			g_map[total + i].value = bot->exec[i];
 			i++;
 		}
 		total += MEM_SIZE / count_players;
+		bot_counter++;
 		bot = bot->next;
 	}
 }
@@ -459,7 +459,7 @@ int			main(int ac, char **av)
 	{
 		vm = init_vm();
 		get_args(vm, ac, av);
-		fill_map(vm->map, vm->bot, vm->count_players);
+		fill_map(vm->bot, vm->count_players);
 		(vm->flag_visual) ? visualize(vm) : 0;
 	}
 	else

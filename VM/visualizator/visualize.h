@@ -19,6 +19,12 @@
 # define X_BEGIN 3
 # define Y_BEGIN 2
 
+/*
+** COLOR + foreground color + background color
+*/
+
+# define COLOR_LAYOUT COLOR_PAIR(6)
+
 typedef struct
 {
 	WINDOW	*window;
@@ -28,5 +34,10 @@ typedef struct
 	int		cursor_y;
 	int		cursor_x;
 }			t_win;
+
+typedef struct	s_vm 	t_vm;
+typedef struct	s_pixel t_pixel;
+
+void					visualize(t_vm *vm);
 
 #endif

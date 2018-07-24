@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   asm.h                                              :+:      :+:    :+:   */
+/*   corewar.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ASM_H
-# define ASM_H
+#ifndef COREWAR_H
+# define COREWAR_H
 
 # include "../libft/libft.h"
 # include <fcntl.h>
@@ -54,7 +54,6 @@
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)
 # define COREWAR_EXEC_MAGIC		0xea83f3
-
 
 /*
 ** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
@@ -131,7 +130,7 @@ typedef struct		s_bot
 	struct s_bot		*next;
 }						t_bot;
 
-typedef struct
+typedef struct			s_vm
 {
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
@@ -139,10 +138,15 @@ typedef struct
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	char				count_players;
-	unsigned char		map[MEM_SIZE];
 	t_bot				*bot;
 }						t_vm;
 
-void					visualize(t_vm *vm);
+typedef struct			s_pixel
+{
+	unsigned char		value;
+	unsigned char		color;
+}						t_pixel;
+
+t_pixel					g_map[MEM_SIZE];
 
 #endif
