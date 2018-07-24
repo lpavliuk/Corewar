@@ -141,76 +141,87 @@ avant:		ld	%-5, r5
 		ld	%12, r4
 avant2:		ld	%10, r3
 avant_live:	live %1
-		sti	r4, %:fin, r3
-		sub	r3, r5, r3
-		sti	r4, %:fin, r3
-		sub	r3, r5, r3
-		sti	r4, %:fin, r3
-		sub	r3, r5, r3
-		sti	r4, %:fin, r3
-		sub	r3, r5, r3
-		sti	r4, %:fin, r3
-		sub	r3, r5, r3
-		xor	r3,%435,r15
-		zjmp	%:avant2
-		and	r6, %0, r6
-		zjmp	%:avant_live
-fin:		zjmp	%:avant_live
-kmissile:	live	%42
-		fork	%:kfork1
-		live	%42
-		fork	%:kfork2
-		live	%42
-		fork	%:kfork4
-		ld	%12,r2
-		ld	%192,r5
-		and	r6,%0,r6
-		zjmp	%:kdebut
+		# sti	r4, %:fin, r3
+		# sub	r3, r5, r3
+		# sti	r4, %:fin, r3
+		# sub	r3, r5, r3
+		# sti	r4, %:fin, r3
+		# sub	r3, r5, r3
+		# sti	r4, %:fin, r3
+		# sub	r3, r5, r3
+		# sti	r4, %:fin, r3
+		# sub	r3, r5, r3
+		# xor	r3,%435,r15
+		# zjmp	%:avant2
+		# and	r6, %0, r6
+
+fin:
+kmissile:
+kfork1:
+kfork2:
+kfork3:
+kfork4:
+kfork5:
+kfork6:
+kdebut:
+kfin:
+# 		zjmp	%:avant_live
+# fin:		zjmp	%:avant_live
+# kmissile:	live	%42
+# 		fork	%:kfork1
+# 		live	%42
+# 		fork	%:kfork2
+# 		live	%42
+# 		fork	%:kfork4
+# 		ld	%12,r2
+# 		ld	%192,r5
+# 		and	r6,%0,r6
+# 		zjmp	%:kdebut
 		
-kfork1:		live	%42
-		fork	%:kfork3
-		live	%42
-		fork	%:kfork6
-		ld	%0,r2
-		ld	%180,r5
-		and	r6,%0,r6
-		zjmp	%:kdebut
+# kfork1:		live	%42
+# 		fork	%:kfork3
+# 		live	%42
+# 		fork	%:kfork6
+# 		ld	%0,r2
+# 		ld	%180,r5
+# 		and	r6,%0,r6
+# 		zjmp	%:kdebut
 	
-kfork2:		live	%42
-		fork	%:kfork5
-		live	%42
-		ld	%8,r2
-		ld	%188,r5
-		and	r6,%0,r6
-		zjmp	%:kdebut
+# kfork2:		live	%42
+# 		fork	%:kfork5
+# 		live	%42
+# 		ld	%8,r2
+# 		ld	%188,r5
+# 		and	r6,%0,r6
+# 		zjmp	%:kdebut
 	
-kfork3:		live	%42
-		fork	%:live100
-		ld	%4,r2
-		ld	%184,r5
-		and	r6,%0,r6
-		zjmp	%:kdebut
+# kfork3:		live	%42
+# 		fork	%:live100
+# 		ld	%4,r2
+# 		ld	%184,r5
+# 		and	r6,%0,r6
+# 		zjmp	%:kdebut
 
-kfork4:		ld	%16,r2
-		ld	%196,r5
-		and	r6,%0,r6
-		zjmp	%:kdebut
+# kfork4:		ld	%16,r2
+# 		ld	%196,r5
+# 		and	r6,%0,r6
+# 		zjmp	%:kdebut
 
-kfork5:		ld	%20,r2
-		ld	%200,r5
-		and	r6,%0,r6
-		zjmp	%:kdebut
+# kfork5:		ld	%20,r2
+# 		ld	%200,r5
+# 		and	r6,%0,r6
+# 		zjmp	%:kdebut
 
-kfork6:		ld	%24,r2
-		ld	%204,r5
-		and	r6,%0,r6
-		zjmp	%:kdebut
+# kfork6:		ld	%24,r2
+# 		ld	%204,r5
+# 		and	r6,%0,r6
+# 		zjmp	%:kdebut
 
-kdebut:		ldi	%:kdebut,r2,r3 
-		sti	r3,r5,%:kfin   
-		live	%42
-		and	r6,%0,r6
-kfin:		zjmp	%180
+# kdebut:		ldi	%:kdebut,r2,r3 
+# 		sti	r3,r5,%:kfin   
+# 		live	%42
+# 		and	r6,%0,r6
+# kfin:		zjmp	%180
 
 
 
