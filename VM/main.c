@@ -39,10 +39,11 @@ t_vm		*init_vm(void)
 	ft_bzero_map();
 	new->flag_visual = 0;
 	new->flag_dump = 0;
-	new->nbr_cycles = CYCLE_TO_DIE;
-	new->count_players = 0;
+	new->cycle_to_die = CYCLE_TO_DIE;
+	new->nbr_cycles = 0;
 	new->cur_cycle = 0;
 	new->process_count = 0;
+	new->count_players = 0;
 	new->bot = NULL;
 	return (new);
 }
@@ -76,9 +77,11 @@ t_bot		*push_new_bot(t_bot **head, unsigned int player)
 	ft_bzero(new->name, PROG_NAME_LENGTH + 1);
 	ft_bzero(new->comment, COMMENT_LENGTH + 1);
 	new->exec = NULL;
-	new->next = NULL;
 	new->lives = 0;
+	new->lives_period = 0;
 	new->last_live = 0;
+	new->process = NULL;
+	new->next = NULL;
 	if (!*head)
 		*head = new;
 	else

@@ -15,7 +15,7 @@
 
 # include "../libft/libft.h"
 # include <fcntl.h>
-# include "visualizator/visualize.h"
+# include <curses.h>
 
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
@@ -124,9 +124,10 @@ typedef struct		s_bot
 	char				name[PROG_NAME_LENGTH + 1];
 	char				comment[COMMENT_LENGTH + 1];
 	unsigned char		*exec;
-	unsigned int		lives;		/* Quantity of lives for current period. */
-	unsigned int		last_live;	/* Cycle on which this bot has executed shout his player/id/name. */
-	t_process			*process;	/* All processes created by this bot. */
+	unsigned long		lives;				/* Quantity of lives for the whole game. */
+	unsigned int		lives_period;		/* Quantity of lives for current period. */
+	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */
+	t_process			*process;			/* All processes created by this bot. */
 	struct s_bot		*next;
 }						t_bot;
 
@@ -134,7 +135,8 @@ typedef struct			s_vm
 {
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
-	unsigned int		nbr_cycles;			/* As i have understood, it is the same as cycle to die, which we specify at launch, if it is not specified, nbr_cycles = cycle_to_die. */
+	unsigned int		cycle_to_die;
+	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	char				count_players;
@@ -148,5 +150,31 @@ typedef struct			s_pixel
 }						t_pixel;
 
 t_pixel					g_map[MEM_SIZE];
+
+/*>>>>>>>>>> Visualisation <<<<<<<<<<*/
+
+# define X_BEGIN 3
+# define Y_BEGIN 2
+
+# define KEY_Q		113
+# define KEY_W		119
+# define KEY_E		101
+# define KEY_R		114
+# define KEY_SPACE	32
+# define RESIZE		410
+
+typedef struct
+{
+	WINDOW				*window;
+	int					height;
+	int					width;
+	int					sidebar_pad;	/* Sidebar padding - quantity of columns to sidebar */
+	int					cursor_y;
+	int					cursor_x;
+	short int			speed;			/* Speed of visualisation. */
+	unsigned char		paused : 1;
+}						t_win;
+
+void					visualize(t_vm *vm);
 
 #endif
