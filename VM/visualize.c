@@ -21,8 +21,6 @@ t_win		*init_win(void)
 	win->height = 68;
 	win->width = 254;
 	win->sidebar_pad = 196;
-	win->cursor_x = X_BEGIN;
-	win->cursor_y = Y_BEGIN;
 	win->window = NULL;
 	win->speed = 50;
 	win->paused = 1;
@@ -31,6 +29,7 @@ t_win		*init_win(void)
 
 void	preparation()
 {
+	curs_set(0);
 	(!has_colors()) ? (endwin(), exit(0)) : start_color();
 	init_color(COLOR_MAGENTA, 408, 408, 408);
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);				/* First bot */
@@ -40,6 +39,8 @@ void	preparation()
 	init_pair(5, COLOR_BLACK, COLOR_BLACK);				/* Initial pixel color */
 	init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA);			/* Layout color */
 	init_pair(7, COLOR_WHITE, COLOR_BLACK);				/* Generic white color */
+	init_pair(8, COLOR_RED, COLOR_BLACK);
+	init_pair(9, COLOR_GREEN, COLOR_BLACK);
 }
 
 void	draw_table(t_win *win)
@@ -59,7 +60,37 @@ void	draw_table(t_win *win)
 	wattroff(win->window, COLOR_PAIR(6));
 }
 
-void			draw_map(t_win *win, unsigned char cols)
+/*
+** Here we need to add such thing as when process shout "live" this process highlights in white color.
+*/
+
+void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
+{
+	t_bot			*bot;
+	t_process		*process;
+	unsigned char	y;
+	unsigned char	x;
+
+	bot = vm->bot;
+	while (bot)
+	{
+		process = bot->process;
+		while (process)
+		{
+			y = Y_BEGIN + (process->position / 64);
+			x = process->position % 64;
+			x = X_BEGIN + x * 3;
+			wattron(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
+			mvwaddch(win->window, y, x, base[g_map[process->position].value / 16]);
+			mvwaddch(win->window, y, x + 1, base[g_map[process->position].value % 16]);
+			wattroff(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
+			process = process->next;
+		}
+		bot = bot->next;
+	}
+}
+
+void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 {
 	char			*base;
 	unsigned short	i;
@@ -83,11 +114,19 @@ void			draw_map(t_win *win, unsigned char cols)
 		else
 			mvwaddch(win->window, win->cursor_y, win->cursor_x++, ' ');
 	}
+	show_processes(win, vm, cols, base);
 }
 
-void	sidebar_initial(t_win *win, t_vm *vm)
+void	show_status(t_win *win, int y, int x)
 {
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "** %s **", ((win->paused) ? "PAUSED" : "RUNNING"));
+	wattron(win->window, COLOR_PAIR((win->paused) ? 8 : 9) | A_BOLD);
+	mvwprintw(win->window, y, x, "** %s ** ", ((win->paused) ? "PAUSED" : "RUNNING"));
+	wattroff(win->window, COLOR_PAIR((win->paused) ? 8 : 9));
+}
+
+void	sidebar_header(t_win *win, t_vm *vm)
+{
+	show_status(win, Y_BEGIN, X_BEGIN + win->sidebar_pad);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Cycles/second limit : %d", win->speed);
 	CURSOR_Y += 3;
@@ -117,10 +156,6 @@ void	sidebar_players(t_win *win, t_vm *vm)
 	}
 }
 
-/*
-** This function returns cost of one live.
-*/
-
 double		get_cost_live(t_bot *bot, char len, char flag)
 {
 	double	res;
@@ -135,6 +170,18 @@ double		get_cost_live(t_bot *bot, char len, char flag)
 		bot = bot->next;
 	}
 	return (len / res);
+}
+
+int		ft_round(double n)
+{
+	int res;
+
+	res = (int)n;
+	n -= (double)res;
+	if (n >= 0.5)
+		return (res + 1);
+	else
+		return (res);
 }
 
 void	show_line(t_win *win, t_bot *bot, char flag)
@@ -152,9 +199,9 @@ void	show_line(t_win *win, t_bot *bot, char flag)
 		mvwaddch(win->window, CURSOR_Y, CURSOR_X + --len, '-');
 	while (bot)
 	{
-		tmp = cost_live * bot->lives_cur_period;
+		tmp = ft_round(cost_live * bot->lives_cur_period);
 		wattron(win->window, COLOR_PAIR(bot->player_counter));
-		while (tmp > 0)
+		while (tmp > 0 && len < 50)
 		{
 			mvwaddch(win->window, CURSOR_Y, CURSOR_X, '-');
 			CURSOR_X++;
@@ -182,7 +229,7 @@ void	sidebar_statistics(t_win *win, t_vm *vm)
 	CURSOR_Y += 2;
 }
 
-void	sidebar_other(t_win *win, t_vm *vm)
+void	sidebar_footer(t_win *win, t_vm *vm)
 {
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "CYCLE_TO_DIE : %d", vm->cycle_to_die);
 	CURSOR_Y += 2;
@@ -197,47 +244,49 @@ void	show_sidebar(t_win *win, t_vm *vm)
 {
 	win->cursor_y = Y_BEGIN;
 	win->cursor_x = win->sidebar_pad + X_BEGIN;
-
 	wattron(win->window, COLOR_PAIR(7) | A_BOLD);
-
-	sidebar_initial(win, vm);
+	sidebar_header(win, vm);
 	sidebar_players(win, vm);
 	sidebar_statistics(win, vm);
-	sidebar_other(win, vm);
-
+	sidebar_footer(win, vm);
 	wattroff(win->window, COLOR_PAIR(7) | A_BOLD);
 }
 
 void	prepare_window(t_win *win, t_vm *vm)
 {
+	win->cursor_x = X_BEGIN;
+	win->cursor_y = Y_BEGIN;
 	clear();
 	draw_table(win);
-	draw_map(win, 64);
+	draw_map(win, vm, 64);
 	show_sidebar(win, vm);
 	refresh();
 	wrefresh(win->window);
 }
 
-void	compute_speed(int key, short int *speed)
+void	compute_speed(t_win *win, int key)
 {
 	if (key == KEY_Q || key == KEY_W) /* q / w */
 	{
-		if (key == KEY_Q && *speed > 10)
-			*speed -= 10;
-		else if (key == KEY_W && *speed > 1)
-			*speed -= 1;
+		if (key == KEY_Q && win->speed > 10)
+			win->speed -= 10;
+		else if (key == KEY_W && win->speed > 1)
+			win->speed -= 1;
 		else
-			*speed = 1;
+			win->speed = 1;
 	}
 	else if (key == KEY_E || key == KEY_R) /* e / r */
 	{
-		if (key == KEY_R && *speed < 990)
-			*speed += 10;
-		else if (key == KEY_E && *speed < 1000)
-			*speed += 1;
+		if (key == KEY_R && win->speed < 990)
+			win->speed += 10;
+		else if (key == KEY_E && win->speed < 1000)
+			win->speed += 1;
 		else
-			*speed = 1000;
+			win->speed = 1000;
 	}
+	wattron(win->window, COLOR_PAIR(7) | A_BOLD);
+	mvwprintw(win->window, CURSOR_Y + 2, CURSOR_X + win->sidebar_pad + 22, "%-4d", win->speed);
+	wattroff(win->window, COLOR_PAIR(7) | A_BOLD);
 }
 
 void	dispatcher(t_win *win, t_vm *vm, int key, char *flag)
@@ -250,34 +299,32 @@ void	dispatcher(t_win *win, t_vm *vm, int key, char *flag)
 		{
 			*flag = 1;
 			nodelay(stdscr, true);
+			win->paused = 0;
+			show_status(win, Y_BEGIN, X_BEGIN + win->sidebar_pad);
 		}
 		else
 		{
 			*flag = 0;
 			nodelay(stdscr, false);
+			win->paused = 1;
+			show_status(win, Y_BEGIN, X_BEGIN + win->sidebar_pad);
 		}
 	}
 	else if (key == KEY_Q || key == KEY_W || key == KEY_E || key == KEY_R)
-	{
-		compute_speed(key, &win->speed);
-		wattron(win->window, COLOR_PAIR(7) | A_BOLD);
-		mvwprintw(win->window, CURSOR_Y + 2, CURSOR_X + win->sidebar_pad + 22, "%-4d", win->speed);
-		wattroff(win->window, COLOR_PAIR(7) | A_BOLD);
-	}
+		compute_speed(win, key);
 }
 
 void	redraw(t_win *win, t_vm *vm, int key)
 {
 	static char	flag = 0;
 
-	// usleep(5000 - win->speed);
 	win->cursor_x = X_BEGIN;
 	win->cursor_y = Y_BEGIN;
 	dispatcher(win, vm, key, &flag);
 	if (flag)
 	{
 		// step(vm);
-		draw_map(win, 64);
+		draw_map(win, vm, 64);
 		show_sidebar(win, vm);
 	}
 	wrefresh(win->window);

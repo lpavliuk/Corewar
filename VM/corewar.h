@@ -108,7 +108,7 @@ static t_table		g_table[16] = {
 
 typedef struct			s_process
 {
-	unsigned int		position;
+	unsigned int		position;	/* INDEX */
 	unsigned char		carry : 1;
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER];
@@ -116,7 +116,6 @@ typedef struct			s_process
 	unsigned int		cycles_to_perform;
 	struct s_process	*next;
 }						t_process;
-
 
 typedef struct		s_bot
 {
