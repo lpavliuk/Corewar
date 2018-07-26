@@ -8,24 +8,16 @@
 name:
 		# sti r1,%:zero0,%1
 		sti r1,%:jump,%1
-		sti r1,%:write,%1
-		sti r1,%:write1,%1
-		sti r1,%:write2,%1
-		sti r1,%:write3,%1
-		# sti r1,%:zero,%1
+		sti r1,%:zero,%1
 		sti r1,%:forkin,%1
 		sti r1,%:for,%1
 		sti r1,%:f,%1
-		sti r1,%:jump2,%1
-		sti r1,%:write2,%1
-		sti r1,%:write21,%1
-		sti r1,%:write22,%1
-		sti r1,%:write23,%1
+		# sti r1,%:jump2,%1
 		sti r1,%:start,%1
-		# sti r1,%:zero,%1
-		sti r1,%:forkin2,%1
-		sti r1,%:for2,%1
-		sti r1,%:f2,%1
+		sti r1,%:zero0,%1
+		# sti r1,%:forkin2,%1
+		# sti r1,%:for2,%1
+		# sti r1,%:f2,%1
 		sti r1,%0,%8
 
 	    live %1
@@ -41,16 +33,20 @@ name:
 		# ld %393216,r12
 		# ld %917504,r13
 		# ld   %11,r2
-		fork %:name
-start:
+		fork %:zero
+start:	
 		live %1
-		fork %:f2
-f:
+
+#########  1  #############
+
+f:	
 		live %1
 		fork %:forkin
 
 for:
 		live %1
+		sti r1,%:write,%1
+		sti r1,%:write1,%1
 		fork %:write1
 
 write:		
@@ -71,6 +67,8 @@ write1:
 
 forkin:
 		live %1
+		sti r1,%:write2,%1
+		sti r1,%:write3,%1
 		fork %:write3
 
 write2: 
@@ -94,113 +92,118 @@ jump:
 		sti  r15,%0,r14			# 6
 		zjmp %153
 
-######### 2 ################
+# ######### 2 ################
 
-f2:
-		live %1
-		fork %:forkin2
+# f2:
+# 		live %1
+# 		fork %:forkin2
 
-for2:
-		live %1
-		fork %:write21
+# for2:
+# 		live %1
+# 		sti r1,%:write2,%1
+# 		sti r1,%:write21,%1
+# 		fork %:write21
 
-write2:		
-		live %1
-		ld   %59, r14	
-		ldi  %0, %:jump2, r15
+# write2:		
+# 		live %1
+# 		ld   %-191, r14	
+# 		ldi  %0, %:jump2, r15
 
-		and r8,%0,r8
-		zjmp %:jump2
-
-write21: 
-		live %1
-		ld   %63, r14	
-		ldi  %4, %:jump2, r15
-
-		and r8,%0,r8
-		zjmp %:jump2
-
-forkin2:
-		live %1
-		fork %:write23
-
-write22: 
-		live %1
-		ld   %67, r14	
-		ldi  %8, %:jump2, r15
-		
-		and r8,%0,r8
-		zjmp %:jump2
-
-write23: 
-		live %1
-		ld   %71, r14	
-		ldi  %12, %:jump2, r15
-		
-		and r8,%0,r8
-		zjmp %:jump2
-
-jump2:
-		live %1				# 5
-		sti  r15,%0,r14			# 6
-		zjmp %53
-# zero: 
-#         live %1
-# 		fork  %:zero0
 # 		and r8,%0,r8
-# 		zjmp %:name
+# 		zjmp %:jump2
 
-# zero0: 	live %1
-# 		st   r11, 299
-# 		st   r11, 298
-# 		st   r11, 297
-# 		st   r11, 296
-# 		st   r11, 295
-# 		st   r11, 294
-# 		st   r11, 293
-# 		st   r11, 292
-# 		st   r11, 291
-# 		st   r11, 290
-# 		st   r11, 289
-# 		st   r11, 288
-# 		st   r11, 287
-# 		st   r11, 286
-# 		st   r11, 285
-# 		st   r11, 284
-# 		st   r11, 283
-# 		st   r11, 282
-# 		st   r11, 281
-# 		st   r11, 280
-# 		st   r11, 279
-# 		st   r11, 278
-# 		st   r11, 277
-# 		st   r11, 276
-# 		st   r11, 275
-# 		st   r11, 274
-# 		st   r11, 273
-# 		st   r11, 272
-# 		st   r11, 271
-# 		st   r11, 270
-# 		st   r11, 269
-# 		st   r11, 268
-# 		st   r11, 267
-# 		st   r11, 266
-# 		st   r11, 265
-# 		st   r11, 264
-# 		st   r11, 263
-# 		st   r11, 262
-# 		st   r11, 261
-# 		st   r11, 260
-# 		st   r11, 259
-# 		st   r11, 258
-# 		st   r11, 257
-# 		st   r11, 256
-# 		st   r11, 255
-# 		st   r11, 254
-# 		st   r11, 253
+# write21: 
+# 		live %1
+# 		ld   %-187, r14	
+# 		ldi  %4, %:jump2, r15
+
+# 		and r8,%0,r8
+# 		zjmp %:jump2
+
+# forkin2:
+# 		live %1
+# 		sti r1,%:write22,%1
+# 		sti r1,%:write23,%1
+# 		fork %:write23
+
+# write22: 
+# 		live %1
+# 		ld   %-183, r14	
+# 		ldi  %8, %:jump2, r15
+		
+# 		and r8,%0,r8
+# 		zjmp %:jump2
+
+# write23: 
+# 		live %1
+# 		ld   %-179, r14	
+# 		ldi  %12, %:jump2, r15
+		
+# 		and r8,%0,r8
+# 		zjmp %:jump2
+
+# jump2:
+# 		live %1				# 5
+# 		sti  r15,%0,r14			# 6
+# 		zjmp %-200
+
+zero: 
+        live %1
+		fork  %:zero0
+
+		zjmp %:zero
+
+zero0: 	live %1
+		st   r11, 299
+		st   r11, 298
+		st   r11, 297
+		st   r11, 296
+		st   r11, 295
+		st   r11, 294
+		st   r11, 293
+		st   r11, 292
+		st   r11, 291
+		st   r11, 290
+		st   r11, 289
+		st   r11, 288
+		st   r11, 287
+		st   r11, 286
+		st   r11, 285
+		st   r11, 284
+		st   r11, 283
+		st   r11, 282
+		st   r11, 281
+		st   r11, 280
+		st   r11, 279
+		st   r11, 278
+		st   r11, 277
+		st   r11, 276
+		st   r11, 275
+		st   r11, 274
+		st   r11, 273
+		st   r11, 272
+		st   r11, 271
+		st   r11, 270
+		st   r11, 269
+		st   r11, 268
+		st   r11, 267
+		st   r11, 266
+		st   r11, 265
+		st   r11, 264
+		st   r11, 263
+		st   r11, 262
+		st   r11, 261
+		st   r11, 260
+		st   r11, 259
+		st   r11, 258
+		st   r11, 257
+		st   r11, 256
+		st   r11, 255
+		st   r11, 254
+		st   r11, 253
         
-#         add  r8,r8,r8
-# 		zjmp  %:zero0
+        add  r8,r8,r8
+		zjmp  %:zero0
 
 
         # fork  %:forkin
