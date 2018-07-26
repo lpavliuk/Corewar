@@ -3,15 +3,19 @@
 
 # MAX 682 Mb
 
-name:   sti r1,%:zero0,%1
-		# sti r1,%:zero1,%1
+name:   
+		sti r1,%:zero0,%1
+		sti r1,%:jump,%1
+		sti r1,%:write,%1
+		sti r1,%:write1,%1
+		sti r1,%:write2,%1
+		sti r1,%:zero,%1
 		sti r1,%:forkin,%1
-		sti r1,%:forkin1,%1
-		sti r1,%:forkin2,%1
+		sti r1,%:for,%1
+		sti r1,%:f,%1
 		sti r1,%0,%8
 
 	    live %1
-
 # load:
 		# ldi %:live,%1,r15
 		ld %16777216,r7 #  saves 01 00 00 00 to r2
@@ -24,78 +28,50 @@ name:   sti r1,%:zero0,%1
 		# ld %393216,r12
 		# ld %917504,r13
 		# ld   %11,r2
-		# ld   %12,r5
-        fork  %:forkin
+		and r8,%0,r8
+		fork %:zero
+	
+write:		
+		live %1
+		ld   %-100, r14	
+		ldi  %0, %:jump, r15
 
-# zero0: 	live %1
-# 		st   r11, -90
-# 		st   r11, -99
-# 		st   r11, -108
-# 		st   r11, -117
-# 		st   r11, -126
-# 		st   r11, -135
-# 		st   r11, -144
-# 		st   r11, -153
-# 		st   r11, -162
-# 		st   r11, -171
-# 		st   r11, -180
-# 		st   r11, -189
-# 		st   r11, -198
-# 		st   r11, -207
-# 		st   r11, -216
-# 		st   r11, -225
-# 		st   r11, -234
-# 		st   r11, -243
-# 		st   r11, -252
-# 		st   r11, -261
-# 		st   r11, -270
-# 		st   r11, -279
-# 		st   r11, -288
-# 		st   r11, -297
-# 		st   r11, -306
-# 		st   r11, -315
-# 		st   r11, -324
-# 		st   r11, -333
-# 		st   r11, -342
-# 		st   r11, -351
-# 		st   r11, -360
-# 		st   r11, -369
-# 		st   r11, -378
-# 		st   r11, -387
-# 		st   r11, -396
-# 		st   r11, -405
-# 		st   r11, -414
-# 		st   r11, -423
-# 		st   r11, -432
-# 		st   r11, -441
-# 		st   r11, -450
-# 		st   r11, -459
-# 		st   r11, -468
-# 		st   r11, -477
-# 		st   r11, -486
-# 		st   r11, -495
-# 		st   r11, -504
-# 		st   r11, -513
-        
-#         add  r8,r8,r8
-# 		zjmp  %:zero0
+		zjmp %:jump
 
-forkin:	
-        live %1
+write1: 
+		live %1
+		ld   %-96, r14	
+		ldi  %4, %:jump, r15
 
-forkin1: 
+		zjmp %:jump
+
+forkin:
+		live %1
+		fork %:write3
+
+write2: 
+		live %1
+		ld   %-92, r14	
+		ldi  %8, %:jump, r15
+		
+		zjmp %:jump
+
+write3: 
+		live %1
+		ld   %-88, r14	
+		ldi  %12, %:jump, r15
+		
+		zjmp %:jump
+
+jump:
+		live %1				# 5
+		sti  r15,%0,r14			# 6
+		zjmp %-120
+
+zero: 
         live %1
 		fork  %:zero0
-
-forkin2: 
-        live %1
-		fork  %:forkin1
         zjmp  %:name
-
-# cpy:  
-#         live %1
-#         ld %184549376,r10
-#         ld %
 
 zero0: 	live %1
 		st   r11, 299
@@ -148,4 +124,81 @@ zero0: 	live %1
         
         add  r8,r8,r8
 		zjmp  %:zero0
+
+f:
+		live %1
+		fork %:forkin
+
+for:
+		live %1
+		fork %:write1
+
+
+
+        # fork  %:forkin
+# zero0: 	live %1
+# 		st   r11, -90
+# 		st   r11, -99
+# 		st   r11, -108
+# 		st   r11, -117
+# 		st   r11, -126
+# 		st   r11, -135
+# 		st   r11, -144
+# 		st   r11, -153
+# 		st   r11, -162
+# 		st   r11, -171
+# 		st   r11, -180
+# 		st   r11, -189
+# 		st   r11, -198
+# 		st   r11, -207
+# 		st   r11, -216
+# 		st   r11, -225
+# 		st   r11, -234
+# 		st   r11, -243
+# 		st   r11, -252
+# 		st   r11, -261
+# 		st   r11, -270
+# 		st   r11, -279
+# 		st   r11, -288
+# 		st   r11, -297
+# 		st   r11, -306
+# 		st   r11, -315
+# 		st   r11, -324
+# 		st   r11, -333
+# 		st   r11, -342
+# 		st   r11, -351
+# 		st   r11, -360
+# 		st   r11, -369
+# 		st   r11, -378
+# 		st   r11, -387
+# 		st   r11, -396
+# 		st   r11, -405
+# 		st   r11, -414
+# 		st   r11, -423
+# 		st   r11, -432
+# 		st   r11, -441
+# 		st   r11, -450
+# 		st   r11, -459
+# 		st   r11, -468
+# 		st   r11, -477
+# 		st   r11, -486
+# 		st   r11, -495
+# 		st   r11, -504
+# 		st   r11, -513
+        
+# 		zjmp  %:zero0
+# forkin:	
+#         live %1
+
+# forkin1: 
+#         live %1
+# 		fork  %:zero0
+
+
+# cpy:  
+#         live %1
+#         ld %184549376,r10
+#         ld %
+
+
 
