@@ -60,28 +60,46 @@ void		ft_error(char *s)
 	exit(0);
 }
 
-t_bot		*push_new_bot(t_bot **head, unsigned int player)
+t_bot		*bot_init(unsigned int id, unsigned char player_counter)
 {
 	t_bot	*new;
-	t_bot	*tmp;
 
-	tmp = *head;
-	while (tmp && tmp->next)
-	{
-		(tmp->player == player) ? ft_error("Error") : 0;
-		tmp = tmp->next;
-	}
 	new = (t_bot *)malloc(sizeof(t_bot));
 	(!new) ? ft_error("Error") : 0;
-	new->player = player;
+	new->player_counter = player_counter;
 	ft_bzero(new->name, PROG_NAME_LENGTH + 1);
 	ft_bzero(new->comment, COMMENT_LENGTH + 1);
 	new->exec = NULL;
-	new->lives = 0;
-	new->lives_period = 0;
+	new->id = id;
+	new->size = 0;
+	new->lives_whole = 0;
+	new->lives_cur_period = 0;
+	new->lives_last_period = 0;
 	new->last_live = 0;
 	new->process = NULL;
 	new->next = NULL;
+	return (new);
+}
+
+t_bot		*push_new_bot(t_bot **head, unsigned int id)
+{
+	unsigned char	player_counter;
+	t_bot			*tmp;
+	t_bot			*new;
+
+	player_counter = 1;
+	tmp = *head;
+	while (tmp)
+	{
+		player_counter++;
+		if (tmp->id == id)
+			ft_error("Error");
+		else if (tmp->next)
+			tmp = tmp->next;
+		else
+			break ;
+	}
+	new = bot_init(id, player_counter);
 	if (!*head)
 		*head = new;
 	else
@@ -371,15 +389,15 @@ void		bot_parsing(int fd, t_bot *new)
 	check_executable(new);
 }
 
-void		get_bot(t_vm *vm, unsigned int player, char *filename)
+void		get_bot(t_vm *vm, unsigned int id, char *filename)
 {
-	int		fd;
+	int			fd;
 	t_bot		*new;
 
 	vm->count_players++;	
 	if (vm->count_players > 4)
 		ft_error("Error");
-	new = push_new_bot(&vm->bot, player);
+	new = push_new_bot(&vm->bot, id);
 	if ((fd = open(filename, O_RDONLY)) < 0 || read(fd, 0, 0) == -1)
 		ft_error("Error");
 	bot_parsing(fd, new);
@@ -388,14 +406,14 @@ void		get_bot(t_vm *vm, unsigned int player, char *filename)
 
 void		get_number_bot(t_vm *vm, char **args, int count, int *i)
 {
-	unsigned int	player;
+	unsigned int	id;
 
 	(*i)++;
 	if (*i < count && ft_is_uint(args[*i]))
 	{
-		player = ft_atoi(args[*i]);
-		(player > 4 || player == 0) ? ft_error("Error") : (*i)++;
-		(*i < count) ? get_bot(vm, player * -1, args[*i]) : usage();
+		id = ft_atoi(args[*i]);
+		(id > 4 || id == 0) ? ft_error("Error") : (*i)++;
+		(*i < count) ? get_bot(vm, id * -1, args[*i]) : usage();
 	}
 	else
 		usage();
@@ -409,10 +427,10 @@ void		get_number_bot(t_vm *vm, char **args, int count, int *i)
 
 void		get_args(t_vm *vm, int count, char **args)
 {
-	int		i;
-	unsigned int	player;
+	int				i;
+	unsigned int	id;
 
-	player = 0;
+	id = 0;
 	i = 1;
 	while (i < count)
 	{
@@ -424,8 +442,8 @@ void		get_args(t_vm *vm, int count, char **args)
 			vm->flag_visual = 1;
 		else
 		{
-			player--;
-			get_bot(vm, player, args[i]);
+			id--;
+			get_bot(vm, id, args[i]);
 		}
 		i++;
 	}

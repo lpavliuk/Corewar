@@ -117,15 +117,18 @@ typedef struct			s_process
 	struct s_process	*next;
 }						t_process;
 
+
 typedef struct		s_bot
 {
-	unsigned int 		player;
-	unsigned int		size;
+	unsigned char 		player_counter;
 	char				name[PROG_NAME_LENGTH + 1];
 	char				comment[COMMENT_LENGTH + 1];
 	unsigned char		*exec;
-	unsigned long		lives;				/* Quantity of lives for the whole game. */
-	unsigned int		lives_period;		/* Quantity of lives for current period. */
+	unsigned int 		id;
+	unsigned int		size;
+	unsigned int		lives_whole;		/* Quantity of lives for the whole game. */
+	unsigned int		lives_cur_period;	/* Quantity of lives for current period. */
+	unsigned int		lives_last_period;	/* Quantity of lives for last period. */
 	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */
 	t_process			*process;			/* All processes created by this bot. */
 	struct s_bot		*next;
@@ -162,6 +165,14 @@ t_pixel					g_map[MEM_SIZE];
 # define KEY_R		114
 # define KEY_SPACE	32
 # define RESIZE		410
+
+# define CURR_PERIOD 0
+# define LAST_PERIOD 1
+
+/* CURSOR */
+
+# define CURSOR_X win->cursor_x
+# define CURSOR_Y win->cursor_y
 
 typedef struct
 {
