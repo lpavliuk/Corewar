@@ -11,15 +11,24 @@ name:
 		sti r1,%:write,%1
 		sti r1,%:write1,%1
 		sti r1,%:write2,%1
+		sti r1,%:write3,%1
 		# sti r1,%:zero,%1
 		sti r1,%:forkin,%1
 		sti r1,%:for,%1
 		sti r1,%:f,%1
+		sti r1,%:jump2,%1
+		sti r1,%:write2,%1
+		sti r1,%:write21,%1
+		sti r1,%:write22,%1
+		sti r1,%:write23,%1
+		sti r1,%:start,%1
+		# sti r1,%:zero,%1
+		sti r1,%:forkin2,%1
+		sti r1,%:for2,%1
+		sti r1,%:f2,%1
 		sti r1,%0,%8
 
 	    live %1
-	 
-	    zjmp %:name
 # load: 
 		# ldi %:live,%1,r15
 		ld %16777216,r7 #  saves 01 00 00 00 to r2
@@ -32,23 +41,32 @@ name:
 		# ld %393216,r12
 		# ld %917504,r13
 		# ld   %11,r2
-load:   
-		and r8,%0,r8
-		zjmp %:f
+		fork %:name
+start:
+		live %1
+		fork %:f2
+f:
+		live %1
+		fork %:forkin
 
-	
+for:
+		live %1
+		fork %:write1
+
 write:		
 		live %1
-		ld   %164, r14	
+		ld   %159, r14	
 		ldi  %0, %:jump, r15
 
+		and r8,%0,r8
 		zjmp %:jump
 
 write1: 
 		live %1
-		ld   %168, r14	
+		ld   %163, r14	
 		ldi  %4, %:jump, r15
 
+		and r8,%0,r8
 		zjmp %:jump
 
 forkin:
@@ -57,35 +75,80 @@ forkin:
 
 write2: 
 		live %1
-		ld   %172, r14	
+		ld   %167, r14	
 		ldi  %8, %:jump, r15
 		
+		and r8,%0,r8
 		zjmp %:jump
 
 write3: 
 		live %1
-		ld   %176, r14	
+		ld   %171, r14	
 		ldi  %12, %:jump, r15
 		
+		and r8,%0,r8
 		zjmp %:jump
-
-f:
-		live %1
-		fork %:forkin
-
-for:
-		live %1
-		fork %:write1
-		zjmp %:name
 
 jump:
 		live %1				# 5
 		sti  r15,%0,r14			# 6
-		zjmp %150
+		zjmp %153
 
+######### 2 ################
+
+f2:
+		live %1
+		fork %:forkin2
+
+for2:
+		live %1
+		fork %:write21
+
+write2:		
+		live %1
+		ld   %59, r14	
+		ldi  %0, %:jump2, r15
+
+		and r8,%0,r8
+		zjmp %:jump2
+
+write21: 
+		live %1
+		ld   %63, r14	
+		ldi  %4, %:jump2, r15
+
+		and r8,%0,r8
+		zjmp %:jump2
+
+forkin2:
+		live %1
+		fork %:write23
+
+write22: 
+		live %1
+		ld   %67, r14	
+		ldi  %8, %:jump2, r15
+		
+		and r8,%0,r8
+		zjmp %:jump2
+
+write23: 
+		live %1
+		ld   %71, r14	
+		ldi  %12, %:jump2, r15
+		
+		and r8,%0,r8
+		zjmp %:jump2
+
+jump2:
+		live %1				# 5
+		sti  r15,%0,r14			# 6
+		zjmp %53
 # zero: 
 #         live %1
 # 		fork  %:zero0
+# 		and r8,%0,r8
+# 		zjmp %:name
 
 # zero0: 	live %1
 # 		st   r11, 299
