@@ -8,7 +8,7 @@
 name:
 		# sti r1,%:zero0,%1
 		sti r1,%:jump,%1
-		sti r1,%:zero,%1
+		# sti r1,%:zero,%1
 		sti r1,%:forkin,%1
 		sti r1,%:for,%1
 		sti r1,%:f,%1
@@ -33,10 +33,65 @@ name:
 		# ld %393216,r12
 		# ld %917504,r13
 		# ld   %11,r2
-		fork %:zero
+		fork %:zero0
 start:	
 		live %1
+		fork %:name
 
+		and r8,%0,r8
+		zjmp %:f
+
+zero0: 	live %1
+		st   r11, 399
+		st   r11, 398
+		st   r11, 397
+		st   r11, 396
+		st   r11, 395
+		st   r11, 394
+		st   r11, 393
+		st   r11, 392
+		st   r11, 391
+		st   r11, 390
+		st   r11, 389
+		st   r11, 388
+		st   r11, 387
+		st   r11, 386
+		st   r11, 385
+		st   r11, 384
+		st   r11, 383
+		st   r11, 382
+		st   r11, 381
+		st   r11, 380
+		st   r11, 379
+		st   r11, 378
+		st   r11, 377
+		st   r11, 376
+		st   r11, 375
+		st   r11, 374
+		st   r11, 373
+		st   r11, 372
+		st   r11, 371
+		st   r11, 370
+		st   r11, 369
+		st   r11, 368
+		st   r11, 367
+		st   r11, 366
+		st   r11, 365
+		st   r11, 364
+		st   r11, 363
+		st   r11, 362
+		# st   r11, 261
+		# st   r11, 260
+		# st   r11, 259
+		# st   r11, 258
+		# st   r11, 257
+		# st   r11, 256
+		# st   r11, 255
+		# st   r11, 254
+		# st   r11, 253
+        
+        add  r8,r8,r8
+		zjmp  %:zero0
 #########  1  #############
 
 f:	
@@ -92,7 +147,7 @@ jump:
 		sti  r15,%0,r14			# 6
 		zjmp %153
 
-# ######### 2 ################
+# # ######### 2 ################
 
 # f2:
 # 		live %1
@@ -147,63 +202,13 @@ jump:
 # 		sti  r15,%0,r14			# 6
 # 		zjmp %-200
 
-zero: 
-        live %1
-		fork  %:zero0
+# zero: 
+#         live %1
+# 		fork  %:zero0
 
-		zjmp %:zero
+# 		zjmp %:zero
 
-zero0: 	live %1
-		st   r11, 299
-		st   r11, 298
-		st   r11, 297
-		st   r11, 296
-		st   r11, 295
-		st   r11, 294
-		st   r11, 293
-		st   r11, 292
-		st   r11, 291
-		st   r11, 290
-		st   r11, 289
-		st   r11, 288
-		st   r11, 287
-		st   r11, 286
-		st   r11, 285
-		st   r11, 284
-		st   r11, 283
-		st   r11, 282
-		st   r11, 281
-		st   r11, 280
-		st   r11, 279
-		st   r11, 278
-		st   r11, 277
-		st   r11, 276
-		st   r11, 275
-		st   r11, 274
-		st   r11, 273
-		st   r11, 272
-		st   r11, 271
-		st   r11, 270
-		st   r11, 269
-		st   r11, 268
-		st   r11, 267
-		st   r11, 266
-		st   r11, 265
-		st   r11, 264
-		st   r11, 263
-		st   r11, 262
-		st   r11, 261
-		st   r11, 260
-		st   r11, 259
-		st   r11, 258
-		st   r11, 257
-		st   r11, 256
-		st   r11, 255
-		st   r11, 254
-		st   r11, 253
-        
-        add  r8,r8,r8
-		zjmp  %:zero0
+
 
 
         # fork  %:forkin
