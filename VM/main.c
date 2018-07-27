@@ -25,7 +25,11 @@ void		ft_bzero_map(void)
 	while (i < MEM_SIZE)
 	{
 		g_map[i].value = 0;
+		g_map[i].counter = 0;
 		g_map[i].color = 5;
+		g_map[i].bold = 0;
+		g_map[i].live = 0;
+		g_map[i].empty = 1;
 		i++;
 	}
 }
@@ -76,7 +80,6 @@ t_bot		*bot_init(unsigned int id, unsigned char player_counter)
 	new->lives_cur_period = 0;
 	new->lives_last_period = 0;
 	new->last_live = 0;
-	new->process = NULL;
 	new->next = NULL;
 	return (new);
 }
@@ -447,23 +450,56 @@ void		get_args(t_vm *vm, int count, char **args)
 		}
 		i++;
 	}
+	(vm->count_players == 0) ? usage() : 0;
 }
 
-void		fill_map(t_bot *bot, char count_players)
+t_process	*push_new_process(t_process **head, unsigned int *process_count, t_bot *parent, unsigned int position)
 {
+	t_process	*tmp;
+	t_process	*new;
+
+	tmp = *head;
+	while (tmp && tmp->next)
+		tmp = tmp->next;
+	new = (t_process *)malloc(sizeof(t_process));
+	(!new) ? ft_error("Error") : 0;
+	ft_bzero(new->registries, REG_NUMBER + 1);
+	new->registries[1] = parent->id;
+	new->parent = parent;
+	new->position = position;
+	new->carry = 0;
+	new->live = 0;
+	new->opcode = 0;
+	new->cycles_to_perform = 0;
+	new->next = NULL;
+	if (!*head)
+		*head = new;
+	else
+		tmp->next = new;
+	(*process_count)++;
+	return (new);
+}
+
+void		fill_map(t_vm *vm, char count_players)
+{
+	t_process		*process;
+	t_bot			*bot;
 	unsigned int	i;
 	unsigned int	total;
 	unsigned char	bot_counter;
 
 	total = 0;
 	bot_counter = 1;
+	bot = vm->bot;
 	while (bot)
 	{
 		i = 0;
+		// process = push_new_process(&vm->process, &vm->process_count, bot, total + i);
 		while (i < bot->size)
 		{
 			g_map[total + i].color = bot_counter;
 			g_map[total + i].value = bot->exec[i];
+			g_map[total + i].empty = 0;
 			i++;
 		}
 		total += MEM_SIZE / count_players;
@@ -480,7 +516,7 @@ int			main(int ac, char **av)
 	{
 		vm = init_vm();
 		get_args(vm, ac, av);
-		fill_map(vm->bot, vm->count_players);
+		fill_map(vm, vm->count_players);
 		(vm->flag_visual) ? visualize(vm) : 0;
 	}
 	else

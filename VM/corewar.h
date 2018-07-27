@@ -106,17 +106,6 @@ static t_table		g_table[16] = {
 ** exec - executable
 */
 
-typedef struct			s_process
-{
-	unsigned int		position;	/* INDEX */
-	unsigned char		carry : 1;
-	unsigned char		live : 1;
-	unsigned int		registries[REG_NUMBER];
-	char				opcode;
-	unsigned int		cycles_to_perform;
-	struct s_process	*next;
-}						t_process;
-
 typedef struct		s_bot
 {
 	unsigned char 		player_counter;
@@ -129,9 +118,20 @@ typedef struct		s_bot
 	unsigned int		lives_cur_period;	/* Quantity of lives for current period. */
 	unsigned int		lives_last_period;	/* Quantity of lives for last period. */
 	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */
-	t_process			*process;			/* All processes created by this bot. */
 	struct s_bot		*next;
 }						t_bot;
+
+typedef struct			s_process
+{
+	unsigned int		position;	/* INDEX */
+	unsigned char		carry : 1;
+	unsigned char		live : 1;
+	unsigned int		registries[REG_NUMBER + 1];
+	char				opcode;
+	unsigned int		cycles_to_perform;
+	t_bot				*parent;
+	struct s_process	*next;
+}						t_process;
 
 typedef struct			s_vm
 {
@@ -142,13 +142,18 @@ typedef struct			s_vm
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	char				count_players;
+	t_process			*process;			/* All processes. */
 	t_bot				*bot;
 }						t_vm;
 
 typedef struct			s_pixel
 {
 	unsigned char		value;
-	unsigned char		color;
+	unsigned char		counter;	/* How much iterations this pixel must be in bold */
+	unsigned char		color : 3;	/* We have at our disposal 7 values */
+	unsigned char		bold : 1;	/* We can put this bit in 1 and tell that this particular pixel will be in bold */
+	unsigned char		live : 1;	/* Flag whether this pixel is live-pixel or not. */
+	unsigned char		empty : 1;
 }						t_pixel;
 
 t_pixel					g_map[MEM_SIZE];

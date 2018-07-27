@@ -27,20 +27,28 @@ t_win		*init_win(void)
 	return (win);
 }
 
-void	preparation()
+void	preparation(void)
 {
 	curs_set(0);
 	(!has_colors()) ? (endwin(), exit(0)) : start_color();
 	init_color(COLOR_MAGENTA, 408, 408, 408);
+	/* BOT COLORS */
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);				/* First bot */
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);				/* Second bot */
 	init_pair(3, COLOR_RED, COLOR_BLACK);				/* Third bot */
 	init_pair(4, COLOR_CYAN, COLOR_BLACK);				/* Fourth bot */
+	/* BOT LIVE COLOR */
+	init_pair(11, COLOR_WHITE, COLOR_GREEN);
+	init_pair(12, COLOR_WHITE, COLOR_BLUE);
+	init_pair(13, COLOR_WHITE, COLOR_RED);
+	init_pair(14, COLOR_WHITE, COLOR_CYAN);
+	/* OTHERS */
 	init_pair(5, COLOR_BLACK, COLOR_BLACK);				/* Initial pixel color */
 	init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA);			/* Layout color */
 	init_pair(7, COLOR_WHITE, COLOR_BLACK);				/* Generic white color */
-	init_pair(8, COLOR_RED, COLOR_BLACK);
-	init_pair(9, COLOR_GREEN, COLOR_BLACK);
+	/* STATUS */
+	init_pair(8, COLOR_RED, COLOR_BLACK);				/* Status: paused */
+	init_pair(9, COLOR_GREEN, COLOR_BLACK);				/* Status: running */
 }
 
 void	draw_table(t_win *win)
@@ -61,34 +69,80 @@ void	draw_table(t_win *win)
 }
 
 /*
-** Here we need to add such thing as when process shout "live" this process highlights in white color.
+** Processes that are in bot.
 */
+
+// void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
+// {
+// 	t_bot			*bot;
+// 	t_process		*process;
+// 	unsigned char	y;
+// 	unsigned char	x;
+
+// 	bot = vm->bot;
+// 	while (bot)
+// 	{
+// 		process = bot->process;
+// 		while (process)
+// 		{
+// 			y = Y_BEGIN + (process->position / 64);
+// 			x = process->position % 64;
+// 			x = X_BEGIN + x * 3;
+// 			wattron(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
+// 			mvwaddch(win->window, y, x, base[g_map[process->position].value / 16]);
+// 			mvwaddch(win->window, y, x + 1, base[g_map[process->position].value % 16]);
+// 			wattroff(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
+// 			process = process->next;
+// 		}
+// 		bot = bot->next;
+// 	}
+// }
 
 void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
 {
-	t_bot			*bot;
 	t_process		*process;
 	unsigned char	y;
 	unsigned char	x;
 
-	bot = vm->bot;
-	while (bot)
+	process = vm->process;
+	while (process)
 	{
-		process = bot->process;
-		while (process)
-		{
-			y = Y_BEGIN + (process->position / 64);
-			x = process->position % 64;
-			x = X_BEGIN + x * 3;
-			wattron(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
-			mvwaddch(win->window, y, x, base[g_map[process->position].value / 16]);
-			mvwaddch(win->window, y, x + 1, base[g_map[process->position].value % 16]);
-			wattroff(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
-			process = process->next;
-		}
-		bot = bot->next;
+		y = Y_BEGIN + (process->position / 64);
+		x = process->position % 64;
+		x = X_BEGIN + x * 3;
+		wattron(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
+		mvwaddch(win->window, y, x, base[g_map[process->position].value / 16]);
+		mvwaddch(win->window, y, x + 1, base[g_map[process->position].value % 16]);
+		wattroff(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
+		process = process->next;
 	}
 }
+
+// void		attributes_on(WINDOW *window, t_pixel pixel)
+// {
+// 	wattron(window, COLOR_PAIR(pixel.color));
+// 	if (pixel.empty)
+// 		wattron(window, A_BOLD);
+// 	else if (pixel.live)
+// 	{
+// 		wattron(window, COLOR_PAIR(pixel.color + 10) | A_BOLD);
+// 		pixel.counter--;
+// 		(pixel.counter <= 0) ? (pixel.live = 0) : 0;
+// 	}
+// 	else if (pixel.bold)
+// 	{
+// 		wattron(window, A_BOLD);
+// 		pixel.counter--;
+// 		(pixel.counter <= 0) ? (pixel.bold = 0) : 0;
+// 	}
+// }
+
+// void		attributes_off(WINDOW *window, t_pixel pixel)
+// {
+// 	wattroff(window, A_BOLD);
+// 	wattroff(window, COLOR_PAIR(pixel.color));
+// 	wattroff(window, COLOR_PAIR(pixel.color + 10));
+// }
 
 void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 {
@@ -99,12 +153,10 @@ void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 	base = "0123456789abcdef";
 	while (i < MEM_SIZE)
 	{
-		wattron(win->window, COLOR_PAIR(g_map[i].color));
-		(g_map[i].color == 5) ? (wattron(win->window, A_BOLD)) : 0;
+		attributes_on(win->window, g_map[i]);
 		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i].value / 16]);
 		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i].value % 16]);
-		(g_map[i].color == 5) ? (wattroff(win->window, A_BOLD)) : 0;
-		wattroff(win->window, COLOR_PAIR(g_map[i].color));
+		attributes_off(win->window, g_map[i]);
 		i++;
 		if ((i % cols) == 0)
 		{
@@ -117,16 +169,16 @@ void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 	show_processes(win, vm, cols, base);
 }
 
-void	show_status(t_win *win, int y, int x)
+void	show_status(t_win *win)
 {
 	wattron(win->window, COLOR_PAIR((win->paused) ? 8 : 9) | A_BOLD);
-	mvwprintw(win->window, y, x, "** %s ** ", ((win->paused) ? "PAUSED" : "RUNNING"));
+	mvwprintw(win->window, Y_BEGIN, win->sidebar_pad + X_BEGIN, "** %s ** ", ((win->paused) ? "PAUSED" : "RUNNING"));
 	wattroff(win->window, COLOR_PAIR((win->paused) ? 8 : 9));
 }
 
 void	sidebar_header(t_win *win, t_vm *vm)
 {
-	show_status(win, Y_BEGIN, X_BEGIN + win->sidebar_pad);
+	show_status(win);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Cycles/second limit : %d", win->speed);
 	CURSOR_Y += 3;
@@ -300,15 +352,14 @@ void	dispatcher(t_win *win, t_vm *vm, int key, char *flag)
 			*flag = 1;
 			nodelay(stdscr, true);
 			win->paused = 0;
-			show_status(win, Y_BEGIN, X_BEGIN + win->sidebar_pad);
 		}
 		else
 		{
 			*flag = 0;
 			nodelay(stdscr, false);
 			win->paused = 1;
-			show_status(win, Y_BEGIN, X_BEGIN + win->sidebar_pad);
 		}
+		show_status(win);
 	}
 	else if (key == KEY_Q || key == KEY_W || key == KEY_E || key == KEY_R)
 		compute_speed(win, key);
