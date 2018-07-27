@@ -68,36 +68,6 @@ void	draw_table(t_win *win)
 	wattroff(win->window, COLOR_PAIR(6));
 }
 
-/*
-** Processes that are in bot.
-*/
-
-// void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
-// {
-// 	t_bot			*bot;
-// 	t_process		*process;
-// 	unsigned char	y;
-// 	unsigned char	x;
-
-// 	bot = vm->bot;
-// 	while (bot)
-// 	{
-// 		process = bot->process;
-// 		while (process)
-// 		{
-// 			y = Y_BEGIN + (process->position / 64);
-// 			x = process->position % 64;
-// 			x = X_BEGIN + x * 3;
-// 			wattron(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
-// 			mvwaddch(win->window, y, x, base[g_map[process->position].value / 16]);
-// 			mvwaddch(win->window, y, x + 1, base[g_map[process->position].value % 16]);
-// 			wattroff(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
-// 			process = process->next;
-// 		}
-// 		bot = bot->next;
-// 	}
-// }
-
 void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
 {
 	t_process		*process;
@@ -118,31 +88,33 @@ void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
 	}
 }
 
-// void		attributes_on(WINDOW *window, t_pixel pixel)
-// {
-// 	wattron(window, COLOR_PAIR(pixel.color));
-// 	if (pixel.empty)
-// 		wattron(window, A_BOLD);
-// 	else if (pixel.live)
-// 	{
-// 		wattron(window, COLOR_PAIR(pixel.color + 10) | A_BOLD);
-// 		pixel.counter--;
-// 		(pixel.counter <= 0) ? (pixel.live = 0) : 0;
-// 	}
-// 	else if (pixel.bold)
-// 	{
-// 		wattron(window, A_BOLD);
-// 		pixel.counter--;
-// 		(pixel.counter <= 0) ? (pixel.bold = 0) : 0;
-// 	}
-// }
-
-// void		attributes_off(WINDOW *window, t_pixel pixel)
-// {
-// 	wattroff(window, A_BOLD);
-// 	wattroff(window, COLOR_PAIR(pixel.color));
-// 	wattroff(window, COLOR_PAIR(pixel.color + 10));
-// }
+void		attributes_action(WINDOW *window, t_pixel pixel, char flag)
+{
+	if (flag == ON)
+	{
+		wattron(window, COLOR_PAIR(pixel.color));
+		if (pixel.empty)
+			wattron(window, A_BOLD);
+		else if (pixel.live)
+		{
+			wattron(window, COLOR_PAIR(pixel.color + 10) | A_BOLD);
+			pixel.counter--;
+			(pixel.counter <= 0) ? (pixel.live = 0) : 0;
+		}
+		else if (pixel.bold)
+		{
+			wattron(window, A_BOLD);
+			pixel.counter--;
+			(pixel.counter <= 0) ? (pixel.bold = 0) : 0;
+		}
+	}
+	else if (flag == OFF)
+	{
+		wattroff(window, A_BOLD);
+		wattroff(window, COLOR_PAIR(pixel.color));
+		wattroff(window, COLOR_PAIR(pixel.color + 10));		
+	}
+}
 
 void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 {
@@ -151,12 +123,14 @@ void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 
 	i = 0;
 	base = "0123456789abcdef";
+	CURSOR_Y = Y_BEGIN;
+	CURSOR_X = X_BEGIN;
 	while (i < MEM_SIZE)
 	{
-		attributes_on(win->window, g_map[i]);
+		attributes_action(win->window, g_map[i], ON);
 		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i].value / 16]);
 		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i].value % 16]);
-		attributes_off(win->window, g_map[i]);
+		attributes_action(win->window, g_map[i], OFF);
 		i++;
 		if ((i % cols) == 0)
 		{
@@ -290,6 +264,7 @@ void	sidebar_footer(t_win *win, t_vm *vm)
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "NBR_LIVE : %d", NBR_LIVE);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "MAX_CHECKS : %d", MAX_CHECKS);
+	CURSOR_Y += 2;
 }
 
 void	show_sidebar(t_win *win, t_vm *vm)
@@ -365,6 +340,13 @@ void	dispatcher(t_win *win, t_vm *vm, int key, char *flag)
 		compute_speed(win, key);
 }
 
+void		print_winner(t_win *win, t_vm *vm)
+{
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "The winner is : %s", vm->winner);
+	CURSOR_Y += 2;
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Press any key to finish");
+}
+
 void	redraw(t_win *win, t_vm *vm, int key)
 {
 	static char	flag = 0;
@@ -378,6 +360,8 @@ void	redraw(t_win *win, t_vm *vm, int key)
 		draw_map(win, vm, 64);
 		show_sidebar(win, vm);
 	}
+	if (vm->winner)
+		print_winner(win, vm);
 	wrefresh(win->window);
 }
 
@@ -392,10 +376,8 @@ void	visualize(t_vm *vm)
 	preparation();
 	win = init_win();
 	prepare_window(win, vm);
-	while ((key = getch()))
-	{
+	while ((key = getch()) && !vm->winner)
 		redraw(win, vm, key);
-	}
 	delwin(win->window);
 	endwin();
 }

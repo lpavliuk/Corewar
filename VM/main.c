@@ -48,6 +48,8 @@ t_vm		*init_vm(void)
 	new->cur_cycle = 0;
 	new->process_count = 0;
 	new->count_players = 0;
+	new->winner = NULL;
+	new->process = NULL;
 	new->bot = NULL;
 	return (new);
 }
@@ -494,7 +496,7 @@ void		fill_map(t_vm *vm, char count_players)
 	while (bot)
 	{
 		i = 0;
-		// process = push_new_process(&vm->process, &vm->process_count, bot, total + i);
+		process = push_new_process(&vm->process, &vm->process_count, bot, total + i);
 		while (i < bot->size)
 		{
 			g_map[total + i].color = bot_counter;

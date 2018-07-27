@@ -142,6 +142,7 @@ typedef struct			s_vm
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	char				count_players;
+	char				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
 }						t_vm;
@@ -170,8 +171,11 @@ t_pixel					g_map[MEM_SIZE];
 # define KEY_SPACE	32
 # define RESIZE		410
 
-# define CURR_PERIOD 0
-# define LAST_PERIOD 1
+# define ON 1
+# define OFF 2
+
+# define CURR_PERIOD 1
+# define LAST_PERIOD 2
 
 /* CURSOR */
 
