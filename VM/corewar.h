@@ -206,11 +206,11 @@ void					ft_error(char *s);
 **	Process functions
 */
 
-void	live(t_process *process, t_vm *vm);
+void	ft_live(t_process *process, t_vm *vm);
 
 static void	(*func[16])(t_process *process, t_vm *vm) = {
-	{ live }/*, { ld }, { st }, { add }, { sub }, { and }, { or }, { xor },
-	{ zjmp }, { ldi }, { sti }, { fork_war }, { lld }, { lldi }, { lfork }, { aff }*/
+	ft_live/*, ft_ld, ft_st, ft_add, ft_sub, ft_and, ft_or, ft_xor,
+	ft_zjmp, ft_ldi, ft_sti, ft_fork_war, ft_lld, ft_lldi, ft_lfork, ft_aff}*/
 }
 
 #endif
