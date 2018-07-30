@@ -145,6 +145,7 @@ typedef struct			s_vm
 	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
+	unsigned int		port;
 	char				*ip;
 	char				*winner;
 	t_process			*process;			/* All processes. */
@@ -176,8 +177,8 @@ unsigned char			g_map[MEM_SIZE];
 # define KEY_SPACE	32
 # define RESIZE		410
 
-# define ON 1
-# define OFF 2
+# define ON			1
+# define OFF		2
 
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2
