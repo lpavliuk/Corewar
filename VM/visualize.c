@@ -12,6 +12,28 @@
 
 #include "corewar.h"
 
+/*
+** Color 5 because it is an initial number that represents the color of pixel.
+*/
+
+void		ft_bzero_pixel_map(void)
+{
+	unsigned short	i;
+
+	i = 0;
+	while (i < MEM_SIZE)
+	{
+		g_pixels[i] = (t_pixel *)malloc(sizeof(t_pixel));
+		(!g_pixels[i]) ? ft_error("Error") : 0;
+		g_pixels[i]->counter = 0;
+		g_pixels[i]->color = 5;
+		g_pixels[i]->bold = 0;
+		g_pixels[i]->live = 0;
+		g_pixels[i]->empty = 1;
+		i++;
+	}
+}
+
 t_win		*init_win(void)
 {
 	t_win	*win;
@@ -77,42 +99,42 @@ void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
 	process = vm->process;
 	while (process)
 	{
-		y = Y_BEGIN + (process->position / 64);
-		x = process->position % 64;
+		y = Y_BEGIN + (process->position / cols);
+		x = process->position % cols;
 		x = X_BEGIN + x * 3;
-		wattron(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
-		mvwaddch(win->window, y, x, base[g_map[process->position].value / 16]);
-		mvwaddch(win->window, y, x + 1, base[g_map[process->position].value % 16]);
-		wattroff(win->window, COLOR_PAIR(g_map[process->position].color) | A_REVERSE);
+		wattron(win->window, COLOR_PAIR(g_pixels[process->position]->color) | A_REVERSE);
+		mvwaddch(win->window, y, x, base[g_map[process->position] / 16]);
+		mvwaddch(win->window, y, x + 1, base[g_map[process->position] % 16]);
+		wattroff(win->window, COLOR_PAIR(g_pixels[process->position]->color) | A_REVERSE);
 		process = process->next;
 	}
 }
 
-void		attributes_action(WINDOW *window, t_pixel pixel, char flag)
+void		attributes_action(WINDOW *window, t_pixel *pixel, char flag)
 {
 	if (flag == ON)
 	{
-		wattron(window, COLOR_PAIR(pixel.color));
-		if (pixel.empty)
+		wattron(window, COLOR_PAIR(pixel->color));
+		if (pixel->empty)
 			wattron(window, A_BOLD);
-		else if (pixel.live)
+		else if (pixel->live)
 		{
-			wattron(window, COLOR_PAIR(pixel.color + 10) | A_BOLD);
-			pixel.counter--;
-			(pixel.counter <= 0) ? (pixel.live = 0) : 0;
+			wattron(window, COLOR_PAIR(pixel->color + 10) | A_BOLD);
+			pixel->counter--;
+			(pixel->counter <= 0) ? (pixel->live = 0) : 0;
 		}
-		else if (pixel.bold)
+		else if (pixel->bold)
 		{
 			wattron(window, A_BOLD);
-			pixel.counter--;
-			(pixel.counter <= 0) ? (pixel.bold = 0) : 0;
+			pixel->counter--;
+			(pixel->counter <= 0) ? (pixel->bold = 0) : 0;
 		}
 	}
 	else if (flag == OFF)
 	{
 		wattroff(window, A_BOLD);
-		wattroff(window, COLOR_PAIR(pixel.color));
-		wattroff(window, COLOR_PAIR(pixel.color + 10));		
+		wattroff(window, COLOR_PAIR(pixel->color));
+		wattroff(window, COLOR_PAIR(pixel->color + 10));		
 	}
 }
 
@@ -127,10 +149,10 @@ void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 	CURSOR_X = X_BEGIN;
 	while (i < MEM_SIZE)
 	{
-		attributes_action(win->window, g_map[i], ON);
-		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i].value / 16]);
-		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i].value % 16]);
-		attributes_action(win->window, g_map[i], OFF);
+		attributes_action(win->window, g_pixels[i], ON);
+		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i] / 16]);
+		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i] % 16]);
+		attributes_action(win->window, g_pixels[i], OFF);
 		i++;
 		if ((i % cols) == 0)
 		{
@@ -353,7 +375,8 @@ void	redraw(t_win *win, t_vm *vm, int key)
 
 	win->cursor_x = X_BEGIN;
 	win->cursor_y = Y_BEGIN;
-	dispatcher(win, vm, key, &flag);
+	if (key != -1)
+		dispatcher(win, vm, key, &flag);
 	if (flag)
 	{
 		// step(vm);
@@ -365,12 +388,43 @@ void	redraw(t_win *win, t_vm *vm, int key)
 	wrefresh(win->window);
 }
 
+void		fill_pixel_map(t_bot *bot, char count_players)
+{
+	unsigned int	i;
+	unsigned int	total;
+	unsigned char	bot_counter;
+
+	total = 0;
+	bot_counter = 1;
+	while (bot)
+	{
+		i = 0;
+		while (i < bot->size)
+		{
+			g_pixels[total + i]->color = bot_counter;
+			g_pixels[total + i]->empty = 0;
+			i++;
+		}
+		total += MEM_SIZE / count_players;
+		bot_counter++;
+		bot = bot->next;
+	}
+}
+
+void	create_pixel_map(t_vm *vm)
+{
+	g_pixels = (t_pixel **)malloc(sizeof(t_pixel *) * MEM_SIZE);
+	(!g_pixels) ? ft_error("Error") : ft_bzero_pixel_map();
+	fill_pixel_map(vm->bot, vm->count_players);
+}
+
 void	visualize(t_vm *vm)
 {
 	t_win	*win;
 	int		key;
 
 	key = 0;
+	create_pixel_map(vm);
 	initscr();
 	noecho();
 	preparation();
