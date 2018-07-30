@@ -166,13 +166,13 @@ char	connect_to_server(int socket_fd, char *ip, unsigned short port)
 	return (connect(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
-void	client(t_vm *vm)
+void	client(t_vm *vm, char *str)
 {
 	int		socket_fd;
 
 	socket_fd = create_socket();
 	(connect_to_server(socket_fd, vm->ip, vm->port) < 0) ? ft_error("Error") : 0;
-	send(socket_fd, "Hello, World!\n", 14, 0);
+	send(socket_fd, str, strlen(str), 0);
 	close(socket_fd);
 }
 
@@ -200,7 +200,7 @@ int		main(int argc, char **argv)
 	vm = init_vm();
 	get_args(vm, argc, argv);
 	if (vm->flag_client)
-		client(vm);
+		client(vm, argv[1]);
 	else if (vm->flag_server)
 		server(vm);
 	return (0);
