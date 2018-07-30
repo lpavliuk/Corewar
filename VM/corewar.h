@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 13:45:19 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/30 18:49:11 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/30 19:03:49 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "../libft/libft.h"
 # include <fcntl.h>
 # include <curses.h>
+# define ABS(i) i < 0 ? -i : i
 
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
@@ -59,13 +60,13 @@
 ** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
 */
 
-# define NAME(i)		g_table[i - 1].name
-# define COUNT_ARGS(i)	g_table[i - 1].args_count
-# define ARG(i, j, k)	g_table[i - 1].args[j].arg[(int)k]
-# define OPCODE(i) 		g_table[i].opcode
-# define CODAGE(i) 		g_table[i - 1].codage
-# define LABEL_SIZE(i)	g_table[i - 1].label_size
-# define 
+# define NAME(i)				g_table[i - 1].name
+# define COUNT_ARGS(i)			g_table[i - 1].args_count
+# define ARG(i, j, k)			g_table[i - 1].args[j].arg[(int)k]
+# define OPCODE(i) 				g_table[i].opcode
+# define CODAGE(i) 				g_table[i - 1].codage
+# define LABEL_SIZE(i)			g_table[i - 1].label_size
+# define CYCLES_TO_PERFORM(i)	g_table[i - 1].cycles
 
 # define MAX_TABLE 16
 
@@ -129,7 +130,7 @@ typedef struct			s_process
 	unsigned char		carry : 1;
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER + 1];
-	char				opcode;
+	unsigned char		opcode;
 	unsigned int		cycles_to_perform;
 	t_bot				*parent;
 	struct s_process	*next;
