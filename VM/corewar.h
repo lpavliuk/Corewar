@@ -128,6 +128,7 @@ typedef struct			s_process
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER + 1];
 	char				opcode;
+	unsigned char		codage;
 	unsigned int		cycles_to_perform;
 	t_bot				*parent;
 	struct s_process	*next;
@@ -168,6 +169,7 @@ unsigned char			g_map[MEM_SIZE];
 # define KEY_W		119
 # define KEY_E		101
 # define KEY_R		114
+# define KEY_S		115
 # define KEY_SPACE	32
 # define RESIZE		410
 
