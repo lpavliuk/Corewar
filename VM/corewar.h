@@ -207,7 +207,6 @@ unsigned int			get_arg(unsigned int i, char arg_size);
 unsigned int			reverse_bytes(unsigned int data, char bytes);
 char					get_arg_size(char opcode, char type);
 char					get_arg_size(char opcode, char type);
-
 char					*decipher_codage(unsigned char codage);
 char					*pseudo_codage(char opcode);
 void					get_args(t_vm *vm, int count, char **args);
@@ -219,9 +218,6 @@ void					check_executable(t_bot *bot);
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
-
-
-
 
 /*
 **	Process functions
