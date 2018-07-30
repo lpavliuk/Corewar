@@ -377,7 +377,7 @@ void	redraw(t_win *win, t_vm *vm, int key)
 	win->cursor_y = Y_BEGIN;
 	if (key != -1)
 		dispatcher(win, vm, key, &flag);
-	if (flag)
+	if (flag || key == KEY_S)
 	{
 		// step(vm);
 		draw_map(win, vm, 64);

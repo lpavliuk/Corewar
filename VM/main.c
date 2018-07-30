@@ -193,8 +193,8 @@ void		get_executable(int fd, t_bot *new)
 
 char		*decipher_codage(unsigned char codage)
 {
-	char		*arr;
-	int		i;
+	char			*arr;
+	int				i;
 	unsigned char	tmp;
 
 	i = 0;
@@ -352,7 +352,7 @@ unsigned int	get_arg(unsigned int i, char arg_size)
 	ft_bzero(str, 4);
 	while (j < arg_size)
 	{
-		((i + j) >= MEM_SIZE) ? ft_error("Error") : 0;
+		((i + j) >= MEM_SIZE) ? (i = 0) : 0;
 		str[j] = g_map[i + j];
 		j++;
 	}
@@ -447,6 +447,7 @@ t_process	*push_new_process(t_process **head, unsigned int *process_count, t_bot
 	new->carry = 0;
 	new->live = 0;
 	new->opcode = 0;
+	new->codage = 0;
 	new->cycles_to_perform = 0;
 	new->next = NULL;
 	if (*head)
