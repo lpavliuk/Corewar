@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   corewar.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 13:45:19 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/11 13:45:23 by tkiselev         ###   ########.fr       */
+/*   Updated: 2018/07/30 19:03:49 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "../libft/libft.h"
 # include <fcntl.h>
 # include <curses.h>
+# define ABS(i)					i < 0 ? -i : i
 
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
@@ -59,12 +60,13 @@
 ** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
 */
 
-# define NAME(i)		g_table[i - 1].name
-# define COUNT_ARGS(i)	g_table[i - 1].args_count
-# define ARG(i, j, k)	g_table[i - 1].args[j].arg[(int)k]
-# define OPCODE(i) 		g_table[i].opcode
-# define CODAGE(i) 		g_table[i - 1].codage
-# define LABEL_SIZE(i)	g_table[i - 1].label_size
+# define NAME(i)				g_table[i - 1].name
+# define COUNT_ARGS(i)			g_table[i - 1].args_count
+# define ARG(i, j, k)			g_table[i - 1].args[j].arg[(int)k]
+# define OPCODE(i) 				g_table[i].opcode
+# define CODAGE(i) 				g_table[i - 1].codage
+# define LABEL_SIZE(i)			g_table[i - 1].label_size
+# define CYCLES_TO_PERFORM(i)	g_table[i - 1].cycles
 
 # define MAX_TABLE 16
 
@@ -81,25 +83,26 @@ typedef	struct			s_table
 	char				opcode;
 	char				codage : 1;
 	char				label_size : 4;
+	short				cycles;
 }						t_table;
 
 static t_table		g_table[16] = {
-	{"live", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 1, 0, 4},
-	{"ld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 2, 1, 4},
-	{"st", 2, {{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}}, 3, 1, 4},
-	{"add", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 4, 1, 4},
-	{"sub", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 5, 1, 4},
-	{"and", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 6, 1, 4},
-	{"or", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 7, 1, 4},
-	{"xor", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 8, 1, 4},
-	{"zjmp", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 9, 0, 2},
-	{"ldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 10, 1, 2},
-	{"sti", 3, {{{1, 0, 0}}, {{1, 1, 1}}, {{1, 1, 0}}}, 11, 1, 2},
-	{"fork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 12, 0, 2},
-	{"lld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 13, 1, 4},
-	{"lldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 14, 1, 2},
-	{"lfork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 15, 1, 2},
-	{"aff", 1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 16, 1, 4}
+	{"live",	1,		{{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},	1,	0,	4,	10		},
+	{"ld",		2,		{{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}},	2,	1,	4,	5		},
+	{"st",		2,		{{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}},	3,	1,	4,	5		},
+	{"add",		3,		{{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}},	4,	1,	4,	10		},
+	{"sub",		3,		{{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}},	5,	1,	4,	10		},
+	{"and",		3,		{{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},	6,	1,	4,	6		},
+	{"or",		3,		{{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},	7,	1,	4,	6		},
+	{"xor",		3,		{{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},	8,	1,	4,	6		},
+	{"zjmp",	1,		{{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},	9,	0,	2,	20		},
+	{"ldi",		3,		{{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}},	10,	1,	2,	25		},
+	{"sti",		3,		{{{1, 0, 0}}, {{1, 1, 1}}, {{1, 1, 0}}},	11,	1,	2,	25		},
+	{"fork",	1,		{{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},	12,	0,	2,	800		},
+	{"lld",		2,		{{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}},	13,	1,	4,	10		},
+	{"lldi",	3,		{{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}},	14,	1,	2,	50		},
+	{"lfork",	1,		{{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},	15,	1,	2,	1000	},
+	{"aff",		1,		{{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},	16,	1,	4,	2		}
 };
 
 /*
@@ -127,8 +130,7 @@ typedef struct			s_process
 	unsigned char		carry : 1;
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER + 1];
-	char				opcode;
-	unsigned char		codage;
+	unsigned char		opcode;
 	unsigned int		cycles_to_perform;
 	t_bot				*parent;
 	struct s_process	*next;
@@ -136,15 +138,13 @@ typedef struct			s_process
 
 typedef struct			s_vm
 {
-	char				count_players;
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
-	unsigned char		flag_server : 1;
-	unsigned char		flag_client : 1;
 	unsigned int		cycle_to_die;
 	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
+	char				count_players;
 	unsigned int		port;
 	char				*ip;
 	char				*winner;
@@ -173,7 +173,6 @@ unsigned char			g_map[MEM_SIZE];
 # define KEY_W		119
 # define KEY_E		101
 # define KEY_R		114
-# define KEY_S		115
 # define KEY_SPACE	32
 # define RESIZE		410
 
@@ -219,15 +218,16 @@ void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
 
+
 /*
 **	Process functions
 */
 
-// void	live(t_process *process, t_vm *vm);
+void	ft_live(t_process *process, t_vm *vm);
 
-// static void	(*func[16])(t_process *process, t_vm *vm) = {
-// 	{ live }, { ld }, { st }, { add }, { sub }, { and }, { or }, { xor },
-// 	{ zjmp }, { ldi }, { sti }, { fork_war }, { lld }, { lldi }, { lfork }, { aff }
-// };
+static void	(*func[16])(t_process *process, t_vm *vm) = {
+	ft_live/*, ft_ld, ft_st, ft_add, ft_sub, ft_and, ft_or, ft_xor,
+	ft_zjmp, ft_ldi, ft_sti, ft_fork_war, ft_lld, ft_lldi, ft_lfork, ft_aff}*/
+}
 
 #endif
