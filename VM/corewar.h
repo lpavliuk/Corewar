@@ -114,7 +114,6 @@ typedef struct		s_bot
 	unsigned char		*exec;
 	unsigned int 		id;
 	unsigned int		size;
-	unsigned int		lives_whole;		/* Quantity of lives for the whole game. */
 	unsigned int		lives_cur_period;	/* Quantity of lives for current period. */
 	unsigned int		lives_last_period;	/* Quantity of lives for last period. */
 	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */

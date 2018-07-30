@@ -105,7 +105,6 @@ static t_bot		*bot_init(unsigned int id, unsigned char player_counter)
 	new->exec = NULL;
 	new->id = id;
 	new->size = 0;
-	new->lives_whole = 0;
 	new->lives_cur_period = 0;
 	new->lives_last_period = 0;
 	new->last_live = 0;
