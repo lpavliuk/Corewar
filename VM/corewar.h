@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   asm.h                                              :+:      :+:    :+:   */
+/*   corewar.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ASM_H
-# define ASM_H
+#ifndef COREWAR_H
+# define COREWAR_H
 
 # include "../libft/libft.h"
 # include <fcntl.h>
-# include "visualizator/visualize.h"
+# include <curses.h>
 
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
@@ -54,7 +54,6 @@
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)
 # define COREWAR_EXEC_MAGIC		0xea83f3
-
 
 /*
 ** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
@@ -107,41 +106,93 @@ static t_table		g_table[16] = {
 ** exec - executable
 */
 
-typedef struct			s_process
-{
-	unsigned int		position;
-	unsigned char		carry : 1;
-	unsigned char		live : 1;
-	unsigned int		registries[REG_NUMBER];
-	char				opcode;
-	unsigned int		cycles_to_perform;
-	struct s_process	*next;
-}						t_process;
-
 typedef struct		s_bot
 {
-	unsigned int 		player;
-	unsigned int		size;
+	unsigned char 		player_counter;
 	char				name[PROG_NAME_LENGTH + 1];
 	char				comment[COMMENT_LENGTH + 1];
 	unsigned char		*exec;
-	unsigned int		lives;		/* Quantity of lives for current period. */
-	unsigned int		last_live;	/* Cycle on which this bot has executed shout his player/id/name. */
-	t_process			*process;	/* All processes created by this bot. */
+	unsigned int 		id;
+	unsigned int		size;
+	unsigned int		lives_whole;		/* Quantity of lives for the whole game. */
+	unsigned int		lives_cur_period;	/* Quantity of lives for current period. */
+	unsigned int		lives_last_period;	/* Quantity of lives for last period. */
+	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */
 	struct s_bot		*next;
 }						t_bot;
 
-typedef struct
+typedef struct			s_process
+{
+	unsigned int		position;	/* INDEX */
+	unsigned char		carry : 1;
+	unsigned char		live : 1;
+	unsigned int		registries[REG_NUMBER + 1];
+	char				opcode;
+	unsigned int		cycles_to_perform;
+	t_bot				*parent;
+	struct s_process	*next;
+}						t_process;
+
+typedef struct			s_vm
 {
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
-	unsigned int		nbr_cycles;			/* As i have understood, it is the same as cycle to die, which we specify at launch, if it is not specified, nbr_cycles = cycle_to_die. */
+	unsigned int		cycle_to_die;
+	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	char				count_players;
-	unsigned char		map[MEM_SIZE];
+	char				*winner;
+	t_process			*process;			/* All processes. */
 	t_bot				*bot;
 }						t_vm;
+
+typedef struct			s_pixel
+{
+	unsigned char		value;
+	unsigned char		counter;	/* How much iterations this pixel must be in bold */
+	unsigned char		color : 3;	/* We have at our disposal 7 values */
+	unsigned char		bold : 1;	/* We can put this bit in 1 and tell that this particular pixel will be in bold */
+	unsigned char		live : 1;	/* Flag whether this pixel is live-pixel or not. */
+	unsigned char		empty : 1;
+}						t_pixel;
+
+t_pixel					g_map[MEM_SIZE];
+
+/*>>>>>>>>>> Visualisation <<<<<<<<<<*/
+
+# define X_BEGIN 3
+# define Y_BEGIN 2
+
+# define KEY_Q		113
+# define KEY_W		119
+# define KEY_E		101
+# define KEY_R		114
+# define KEY_SPACE	32
+# define RESIZE		410
+
+# define ON 1
+# define OFF 2
+
+# define CURR_PERIOD 1
+# define LAST_PERIOD 2
+
+/* CURSOR */
+
+# define CURSOR_X win->cursor_x
+# define CURSOR_Y win->cursor_y
+
+typedef struct
+{
+	WINDOW				*window;
+	int					height;
+	int					width;
+	int					sidebar_pad;	/* Sidebar padding - quantity of columns to sidebar */
+	int					cursor_y;
+	int					cursor_x;
+	short int			speed;			/* Speed of visualisation. */
+	unsigned char		paused : 1;
+}						t_win;
 
 void					visualize(t_vm *vm);
 

@@ -13,19 +13,43 @@
 #include "corewar.h"
 #include <stdio.h>
 
+/*
+** Color 5 because it is an initial number that represents the color of pixel.
+*/
+
+void		ft_bzero_map(void)
+{
+	unsigned short	i;
+
+	i = 0;
+	while (i < MEM_SIZE)
+	{
+		g_map[i].value = 0;
+		g_map[i].counter = 0;
+		g_map[i].color = 5;
+		g_map[i].bold = 0;
+		g_map[i].live = 0;
+		g_map[i].empty = 1;
+		i++;
+	}
+}
+
 t_vm		*init_vm(void)
 {
 	t_vm	*new;
 
 	if (!(new = (t_vm *)malloc(sizeof(t_vm))))
 		exit(0);
-	ft_bzero(new->map, MEM_SIZE);
+	ft_bzero_map();
 	new->flag_visual = 0;
 	new->flag_dump = 0;
-	new->nbr_cycles = CYCLE_TO_DIE;
-	new->count_players = 0;
+	new->cycle_to_die = CYCLE_TO_DIE;
+	new->nbr_cycles = 0;
 	new->cur_cycle = 0;
 	new->process_count = 0;
+	new->count_players = 0;
+	new->winner = NULL;
+	new->process = NULL;
 	new->bot = NULL;
 	return (new);
 }
@@ -42,26 +66,45 @@ void		ft_error(char *s)
 	exit(0);
 }
 
-t_bot		*push_new_bot(t_bot **head, unsigned int player)
+t_bot		*bot_init(unsigned int id, unsigned char player_counter)
 {
 	t_bot	*new;
-	t_bot	*tmp;
 
-	tmp = *head;
-	while (tmp && tmp->next)
-	{
-		(tmp->player == player) ? ft_error("Error") : 0;
-		tmp = tmp->next;
-	}
 	new = (t_bot *)malloc(sizeof(t_bot));
 	(!new) ? ft_error("Error") : 0;
-	new->player = player;
+	new->player_counter = player_counter;
 	ft_bzero(new->name, PROG_NAME_LENGTH + 1);
 	ft_bzero(new->comment, COMMENT_LENGTH + 1);
 	new->exec = NULL;
-	new->next = NULL;
-	new->lives = 0;
+	new->id = id;
+	new->size = 0;
+	new->lives_whole = 0;
+	new->lives_cur_period = 0;
+	new->lives_last_period = 0;
 	new->last_live = 0;
+	new->next = NULL;
+	return (new);
+}
+
+t_bot		*push_new_bot(t_bot **head, unsigned int id)
+{
+	unsigned char	player_counter;
+	t_bot			*tmp;
+	t_bot			*new;
+
+	player_counter = 1;
+	tmp = *head;
+	while (tmp)
+	{
+		player_counter++;
+		if (tmp->id == id)
+			ft_error("Error");
+		else if (tmp->next)
+			tmp = tmp->next;
+		else
+			break ;
+	}
+	new = bot_init(id, player_counter);
 	if (!*head)
 		*head = new;
 	else
@@ -316,22 +359,22 @@ char			get_arg_size(char opcode, char type)
 
 /*
 ** This function gets a value of some sequence of bytes
-** specified in arg_size and returns reversed value.
+** size of which specified in arg_size and returns reversed value.
 */
 
-unsigned int	get_arg(unsigned char *exec, unsigned int size, unsigned int i, char arg_size)
+unsigned int	get_arg(unsigned int i, char arg_size)
 {
 	unsigned int	arg;
 	unsigned char	str[4];
 	unsigned char	j;
 
-	ft_bzero(str, 4);
-	arg = 0;
 	j = 0;
+	arg = 0;
+	ft_bzero(str, 4);
 	while (j < arg_size)
 	{
-		((i + j) >= size) ? ft_error("Error") : 0;
-		str[j] = exec[i + j];
+		((i + j) >= MEM_SIZE) ? ft_error("Error") : 0;
+		str[j] = g_map[i + j].value;
 		j++;
 	}
 	((unsigned char *)&arg)[0] = ((unsigned char *)&str)[0];
@@ -351,15 +394,15 @@ void		bot_parsing(int fd, t_bot *new)
 	check_executable(new);
 }
 
-void		get_bot(t_vm *vm, unsigned int player, char *filename)
+void		get_bot(t_vm *vm, unsigned int id, char *filename)
 {
-	int		fd;
+	int			fd;
 	t_bot		*new;
 
 	vm->count_players++;	
 	if (vm->count_players > 4)
 		ft_error("Error");
-	new = push_new_bot(&vm->bot, player);
+	new = push_new_bot(&vm->bot, id);
 	if ((fd = open(filename, O_RDONLY)) < 0 || read(fd, 0, 0) == -1)
 		ft_error("Error");
 	bot_parsing(fd, new);
@@ -368,14 +411,14 @@ void		get_bot(t_vm *vm, unsigned int player, char *filename)
 
 void		get_number_bot(t_vm *vm, char **args, int count, int *i)
 {
-	unsigned int	player;
+	unsigned int	id;
 
 	(*i)++;
 	if (*i < count && ft_is_uint(args[*i]))
 	{
-		player = ft_atoi(args[*i]);
-		(player > 4 || player == 0) ? ft_error("Error") : (*i)++;
-		(*i < count) ? get_bot(vm, player * -1, args[*i]) : usage();
+		id = ft_atoi(args[*i]);
+		(id > 4 || id == 0) ? ft_error("Error") : (*i)++;
+		(*i < count) ? get_bot(vm, id * -1, args[*i]) : usage();
 	}
 	else
 		usage();
@@ -389,10 +432,10 @@ void		get_number_bot(t_vm *vm, char **args, int count, int *i)
 
 void		get_args(t_vm *vm, int count, char **args)
 {
-	int		i;
-	unsigned int	player;
+	int				i;
+	unsigned int	id;
 
-	player = 0;
+	id = 0;
 	i = 1;
 	while (i < count)
 	{
@@ -404,49 +447,65 @@ void		get_args(t_vm *vm, int count, char **args)
 			vm->flag_visual = 1;
 		else
 		{
-			player--;
-			get_bot(vm, player, args[i]);
+			id--;
+			get_bot(vm, id, args[i]);
 		}
 		i++;
 	}
+	(vm->count_players == 0) ? usage() : 0;
 }
 
-// void			output_exec(const void *addr, size_t size, unsigned int cols)
-// {
-// 	char			*base = "0123456789abcdef";
-// 	unsigned char	*tab;
-// 	unsigned int	i;
-
-// 	tab = (unsigned char *)addr;
-// 	i = 0;
-// 	while (size != 0 && tab)
-// 	{
-// 		write(1, &base[tab[i] / 16], 1);
-// 		write(1, &base[tab[i] % 16], 1);
-// 		i++;
-// 		size--;
-// 		if ((i % cols) == 0)
-// 			write(1, "\n", 1);
-// 		else if (size != 0)
-// 			write(1, " ", 1);
-// 	}
-// }
-
-void		fill_map(unsigned char *map, t_bot *bot, char count_players)
+t_process	*push_new_process(t_process **head, unsigned int *process_count, t_bot *parent, unsigned int position)
 {
+	t_process	*tmp;
+	t_process	*new;
+
+	tmp = *head;
+	while (tmp && tmp->next)
+		tmp = tmp->next;
+	new = (t_process *)malloc(sizeof(t_process));
+	(!new) ? ft_error("Error") : 0;
+	ft_bzero(new->registries, REG_NUMBER + 1);
+	new->registries[1] = parent->id;
+	new->parent = parent;
+	new->position = position;
+	new->carry = 0;
+	new->live = 0;
+	new->opcode = 0;
+	new->cycles_to_perform = 0;
+	new->next = NULL;
+	if (!*head)
+		*head = new;
+	else
+		tmp->next = new;
+	(*process_count)++;
+	return (new);
+}
+
+void		fill_map(t_vm *vm, char count_players)
+{
+	t_process		*process;
+	t_bot			*bot;
 	unsigned int	i;
 	unsigned int	total;
+	unsigned char	bot_counter;
 
 	total = 0;
+	bot_counter = 1;
+	bot = vm->bot;
 	while (bot)
 	{
 		i = 0;
+		process = push_new_process(&vm->process, &vm->process_count, bot, total + i);
 		while (i < bot->size)
 		{
-			map[total + i] = bot->exec[i];
+			g_map[total + i].color = bot_counter;
+			g_map[total + i].value = bot->exec[i];
+			g_map[total + i].empty = 0;
 			i++;
 		}
 		total += MEM_SIZE / count_players;
+		bot_counter++;
 		bot = bot->next;
 	}
 }
@@ -459,7 +518,7 @@ int			main(int ac, char **av)
 	{
 		vm = init_vm();
 		get_args(vm, ac, av);
-		fill_map(vm->map, vm->bot, vm->count_players);
+		fill_map(vm, vm->count_players);
 		(vm->flag_visual) ? visualize(vm) : 0;
 	}
 	else

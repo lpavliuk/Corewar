@@ -4,8 +4,7 @@
 
 
 	"
-.name          "\n
-" 
+.name          "\n" 
 
 asd:
 name:	live	%42		# entree
