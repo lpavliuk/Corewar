@@ -20,13 +20,16 @@ t_vm		*init_vm(void)
 	if (!(new = (t_vm *)malloc(sizeof(t_vm))))
 		exit(0);
 	ft_bzero(g_map, MEM_SIZE);
+	new->count_players = 0;
 	new->flag_visual = 0;
 	new->flag_dump = 0;
+	new->flag_server = 0;
+	new->flag_client = 0;
 	new->cycle_to_die = CYCLE_TO_DIE;
 	new->nbr_cycles = 0;
 	new->cur_cycle = 0;
 	new->process_count = 0;
-	new->count_players = 0;
+	new->ip = NULL;
 	new->winner = NULL;
 	new->process = NULL;
 	new->bot = NULL;

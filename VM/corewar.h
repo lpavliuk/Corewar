@@ -136,13 +136,16 @@ typedef struct			s_process
 
 typedef struct			s_vm
 {
+	char				count_players;
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
+	unsigned char		flag_server : 1;
+	unsigned char		flag_client : 1;
 	unsigned int		cycle_to_die;
 	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
-	char				count_players;
+	char				*ip;
 	char				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
