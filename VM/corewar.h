@@ -16,7 +16,7 @@
 # include "../libft/libft.h"
 # include <fcntl.h>
 # include <curses.h>
-# define ABS(i) i < 0 ? -i : i
+# define ABS(i)					i < 0 ? -i : i
 
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
@@ -103,7 +103,7 @@ static t_table		g_table[16] = {
 	{"lldi",	3,		{{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}},	14,	1,	2,	50		},
 	{"lfork",	1,		{{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},	15,	1,	2,	1000	},
 	{"aff",		1,		{{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},	16,	1,	4,	2		}
-}	
+};
 
 /*
 ** exec - executable
@@ -145,6 +145,8 @@ typedef struct			s_vm
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	char				count_players;
+	unsigned int		port;
+	char				*ip;
 	char				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
@@ -174,8 +176,8 @@ unsigned char			g_map[MEM_SIZE];
 # define KEY_SPACE	32
 # define RESIZE		410
 
-# define ON 1
-# define OFF 2
+# define ON			1
+# define OFF		2
 
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2

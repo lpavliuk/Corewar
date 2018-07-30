@@ -29,6 +29,7 @@ t_vm		*init_vm(void)
 	new->nbr_cycles = 0;
 	new->cur_cycle = 0;
 	new->process_count = 0;
+	vm->port = 0;
 	new->ip = NULL;
 	new->winner = NULL;
 	new->process = NULL;
@@ -406,9 +407,77 @@ void		get_number_bot(t_vm *vm, char **args, int count, int *i)
 		usage();
 }
 
+char	is_uchar(char *s)
+{
+	int				num;
+	unsigned char	i;
+
+	num = 0;
+	i = 0;
+	while (ft_is_digit(s[i]) && i < 3)
+		num = num * 10 + s[i++] - '0';
+	return ((i == 0 || s[i] != '\0' || num > 255) ? 0 : 1);
+}
+
+char	is_ushort(char *s)
+{
+	int				num;
+	unsigned char	i;
+
+	num = 0;
+	i = 0;
+	while (ft_is_digit(s[i]) && i < 6)
+		num = num * 10 + s[i++] - '0';
+	return ((i == 0 || s[i] != '\0' || num > 65535) ? 0 : 1);
+}
+
+char		*get_ip(char *s)
+{
+	char			**octets;
+	unsigned char	i;
+	unsigned char	n_commas;
+
+	(!(octets = ft_strsplit(s, '.'))) ? ft_error("Error") : 0;
+	i = 0;
+	while (octets[i])
+		(!is_uchar(octets[i])) ? ft_error("Error") : ft_strdel(octets[i++]);
+	(i != 4) ? ft_error("Error") : free(octets);
+	i = 0;
+	n_commas = 0;
+	while (s[i])
+	{
+		(s[i] == '.') ? (n_commas++) : 0;
+		(n_commas > 3) ? ft_error("Error") : 0;
+		i++;
+	}
+	return (s);
+}
+
+unsigned short		get_port(char *s)
+{
+	if (!is_ushort(s) || ft_atoi(s) == 0)
+		ft_error("Error");
+	return ((unsigned short)ft_atoi(s));
+}
+
+void		get_server_ip_port(t_vm *vm, char *args[], int argv, int &i)
+{
+	vm->flag_server = 1;
+	(*i)++;
+	if (*i >= argv)
+		ft_error("Error");
+	else
+		vm->ip = get_ip(args[*i]);
+	(*i)++;
+	if (*i >= argv)
+		ft_error("Error");
+	else
+		vm->port = get_port(args[*i]);
+}
+
 /*
 ** We go through an array of args and check whether
-** argument is -dump or -n or simply .cor file,
+** argument is -dump, -n, -s (server), -c (client) or simply .cor file,
 ** and call corresponding functions.
 */
 
@@ -427,6 +496,10 @@ void		get_args(t_vm *vm, int count, char **args)
 			get_number_bot(vm, args, count, &i);
 		else if (ft_strequ(args[i], "-v"))
 			vm->flag_visual = 1;
+		else if (ft_strequ(args[i], "-s"))
+			get_server_ip_port(vm, args, count, &i);
+		else if (ft_strequ(args[i], "-c"))
+			vm->flag_client = 1;
 		else
 		{
 			id--;
@@ -491,11 +564,11 @@ int			main(int ac, char **av)
 		vm = init_vm();
 		get_args(vm, ac, av);
 		fill_map(vm, vm->count_players);
-		if (vm->flag_visual)
-			visualize(vm);
-		else
-			while (!vm->winner)
-				;// step(vm);
+		// if (vm->flag_visual)
+		// 	visualize(vm);
+		// else
+		// 	while (!vm->winner)
+		// 		;// step(vm);
 	}
 	else
 		usage();
