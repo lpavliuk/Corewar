@@ -166,8 +166,8 @@ unsigned char			g_map[MEM_SIZE];
 
 /*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 
-# define X_BEGIN 3
-# define Y_BEGIN 2
+# define X_BEGIN	3
+# define Y_BEGIN	2
 
 # define KEY_Q		113
 # define KEY_W		119
@@ -202,16 +202,36 @@ typedef struct
 
 void					visualize(t_vm *vm);
 void					ft_error(char *s);
+void					usage(void);
+unsigned int			get_arg(unsigned int i, char arg_size);
+unsigned int			reverse_bytes(unsigned int data, char bytes);
+char					get_arg_size(char opcode, char type);
+char					get_arg_size(char opcode, char type);
+
+char					*decipher_codage(unsigned char codage);
+char					*pseudo_codage(char opcode);
+void					get_args(t_vm *vm, int count, char **args);
+void					get_server_info(t_vm *vm, char *args[], int argv,
+						int *i);
+t_process				*push_new_process(t_process **head, unsigned int
+						*process_count, t_bot *parent, unsigned int position);
+void					check_executable(t_bot *bot);
+void					check_magic_header(int fd);
+void					bot_parsing(int fd, t_bot *new);
+t_bot					*push_new_bot(t_bot **head, unsigned int id);
+
+
+
 
 /*
 **	Process functions
 */
 
-void	live(t_process *process, t_vm *vm);
+// void	live(t_process *process, t_vm *vm);
 
-static void	(*func[16])(t_process *process, t_vm *vm) = {
-	{ live }/*, { ld }, { st }, { add }, { sub }, { and }, { or }, { xor },
-	{ zjmp }, { ldi }, { sti }, { fork_war }, { lld }, { lldi }, { lfork }, { aff }*/
-}
+// static void	(*func[16])(t_process *process, t_vm *vm) = {
+// 	{ live }, { ld }, { st }, { add }, { sub }, { and }, { or }, { xor },
+// 	{ zjmp }, { ldi }, { sti }, { fork_war }, { lld }, { lldi }, { lfork }, { aff }
+// };
 
 #endif
