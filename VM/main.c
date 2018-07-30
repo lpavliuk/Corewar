@@ -13,34 +13,13 @@
 #include "corewar.h"
 #include <stdio.h>
 
-/*
-** Color 5 because it is an initial number that represents the color of pixel.
-*/
-
-void		ft_bzero_map(void)
-{
-	unsigned short	i;
-
-	i = 0;
-	while (i < MEM_SIZE)
-	{
-		g_map[i].value = 0;
-		g_map[i].counter = 0;
-		g_map[i].color = 5;
-		g_map[i].bold = 0;
-		g_map[i].live = 0;
-		g_map[i].empty = 1;
-		i++;
-	}
-}
-
 t_vm		*init_vm(void)
 {
 	t_vm	*new;
 
 	if (!(new = (t_vm *)malloc(sizeof(t_vm))))
 		exit(0);
-	ft_bzero_map();
+	ft_bzero(g_map, MEM_SIZE);
 	new->flag_visual = 0;
 	new->flag_dump = 0;
 	new->cycle_to_die = CYCLE_TO_DIE;
@@ -374,7 +353,7 @@ unsigned int	get_arg(unsigned int i, char arg_size)
 	while (j < arg_size)
 	{
 		((i + j) >= MEM_SIZE) ? ft_error("Error") : 0;
-		str[j] = g_map[i + j].value;
+		str[j] = g_map[i + j];
 		j++;
 	}
 	((unsigned char *)&arg)[0] = ((unsigned char *)&str)[0];
@@ -457,12 +436,8 @@ void		get_args(t_vm *vm, int count, char **args)
 
 t_process	*push_new_process(t_process **head, unsigned int *process_count, t_bot *parent, unsigned int position)
 {
-	t_process	*tmp;
 	t_process	*new;
 
-	tmp = *head;
-	while (tmp && tmp->next)
-		tmp = tmp->next;
 	new = (t_process *)malloc(sizeof(t_process));
 	(!new) ? ft_error("Error") : 0;
 	ft_bzero(new->registries, REG_NUMBER + 1);
@@ -474,38 +449,31 @@ t_process	*push_new_process(t_process **head, unsigned int *process_count, t_bot
 	new->opcode = 0;
 	new->cycles_to_perform = 0;
 	new->next = NULL;
-	if (!*head)
-		*head = new;
-	else
-		tmp->next = new;
+	if (*head)
+		new->next = *head;
+	*head = new;
 	(*process_count)++;
 	return (new);
 }
 
 void		fill_map(t_vm *vm, char count_players)
 {
-	t_process		*process;
 	t_bot			*bot;
 	unsigned int	i;
 	unsigned int	total;
-	unsigned char	bot_counter;
 
 	total = 0;
-	bot_counter = 1;
 	bot = vm->bot;
 	while (bot)
 	{
 		i = 0;
-		process = push_new_process(&vm->process, &vm->process_count, bot, total + i);
+		push_new_process(&vm->process, &vm->process_count, bot, total + i);
 		while (i < bot->size)
 		{
-			g_map[total + i].color = bot_counter;
-			g_map[total + i].value = bot->exec[i];
-			g_map[total + i].empty = 0;
+			g_map[total + i] = bot->exec[i];
 			i++;
 		}
 		total += MEM_SIZE / count_players;
-		bot_counter++;
 		bot = bot->next;
 	}
 }
@@ -519,7 +487,11 @@ int			main(int ac, char **av)
 		vm = init_vm();
 		get_args(vm, ac, av);
 		fill_map(vm, vm->count_players);
-		(vm->flag_visual) ? visualize(vm) : 0;
+		if (vm->flag_visual)
+			visualize(vm);
+		else
+			while (!vm->winner)
+				;// step(vm);
 	}
 	else
 		usage();
