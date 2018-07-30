@@ -197,4 +197,15 @@ typedef struct
 void					visualize(t_vm *vm);
 void					ft_error(char *s);
 
+/*
+**	Process functions
+*/
+
+void	live(t_process *process, t_vm *vm);
+
+static void	(*func[16])(t_process *process, t_vm *vm) = {
+	{ live }/*, { ld }, { st }, { add }, { sub }, { and }, { or }, { xor },
+	{ zjmp }, { ldi }, { sti }, { fork_war }, { lld }, { lldi }, { lfork }, { aff }*/
+}
+
 #endif
