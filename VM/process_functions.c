@@ -1,81 +1,81 @@
 #include "corewar.h"
 
-void	live(t_process *process, t_vm *vm)
+void	ft_live(t_process *process, t_vm *vm)
 {
 
 }
 
-void	ld(t_process *process, t_vm *vm)
+void	ft_ld(t_process *process, t_vm *vm)
 {
 
 }
 
-void	st(t_process *process, t_vm *vm)
+void	ft_st(t_process *process, t_vm *vm)
 {
 
 }
 
-void	add(t_process *process, t_vm *vm)
+void	ft_add(t_process *process, t_vm *vm)
 {
 
 }
 
-void	sub(t_process *process, t_vm *vm)
+void	ft_sub(t_process *process, t_vm *vm)
 {
 
 }
 
-void	and(t_process *process, t_vm *vm)
+void	ft_and(t_process *process, t_vm *vm)
 {
 
 }
 
-void	or(t_process *process, t_vm *vm)
+void	ft_or(t_process *process, t_vm *vm)
 {
 
 }
 
-void	xor(t_process *process, t_vm *vm)
+void	ft_xor(t_process *process, t_vm *vm)
 {
 
 }
 
-void	zjmp(t_process *process, t_vm *vm)
+void	ft_zjmp(t_process *process, t_vm *vm)
 {
 
 }
 
-void	ldi(t_process *process, t_vm *vm)
+void	ft_ldi(t_process *process, t_vm *vm)
 {
 
 }
 
-void	sti(t_process *process, t_vm *vm)
+void	ft_sti(t_process *process, t_vm *vm)
 {
 
 }
 
-void	fork_war(t_process *process, t_vm *vm)
+void	ft_fork_war(t_process *process, t_vm *vm)
 {
 
 }
 
-void	lld(t_process *process, t_vm *vm)
+void	ft_lld(t_process *process, t_vm *vm)
 {
 
 }
 
-void	lldi(t_process *process, t_vm *vm)
+void	ft_lldi(t_process *process, t_vm *vm)
 {
 
 }
 
-void	lfork(t_process *process, t_vm *vm)
+void	ft_lfork(t_process *process, t_vm *vm)
 {
 
 }
 
-void	aff(t_process *process, t_vm *vm)
+void	ft_aff(t_process *process, t_vm *vm)
 {
 
 }

@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/11 13:45:19 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/30 17:46:38 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/30 18:49:11 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,5 +198,17 @@ typedef struct
 
 void					visualize(t_vm *vm);
 void					ft_error(char *s);
+
+
+/*
+**	Process functions
+*/
+
+void	ft_live(t_process *process, t_vm *vm);
+
+static void	(*func[16])(t_process *process, t_vm *vm) = {
+	ft_live/*, ft_ld, ft_st, ft_add, ft_sub, ft_and, ft_or, ft_xor,
+	ft_zjmp, ft_ldi, ft_sti, ft_fork_war, ft_lld, ft_lldi, ft_lfork, ft_aff}*/
+}
 
 #endif
