@@ -564,11 +564,11 @@ int			main(int ac, char **av)
 		vm = init_vm();
 		get_args(vm, ac, av);
 		fill_map(vm, vm->count_players);
-		if (vm->flag_visual)
-			visualize(vm);
-		else
-			while (!vm->winner)
-				;// step(vm);
+		// if (vm->flag_visual)
+		// 	visualize(vm);
+		// else
+		// 	while (!vm->winner)
+		// 		;// step(vm);
 	}
 	else
 		usage();
