@@ -67,7 +67,7 @@
 # define OPCODE(i) 		g_table[i].opcode
 # define CODAGE(i) 		g_table[i - 1].codage
 # define LABEL_SIZE(i)	g_table[i - 1].label_size
-
+# define PREFORM(i)		g_table[i - 1].cycles
 # define MAX_TABLE 16
 
 typedef struct
@@ -130,7 +130,7 @@ typedef struct			s_process
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER + 1];
 	unsigned char		opcode;
-	unsigned char		codage;
+	unsigned char		codage;		// ?  поки нахуй не здалась
 	unsigned int		cycles_to_perform;
 	t_bot				*parent;
 	struct s_process	*next;
@@ -146,6 +146,7 @@ typedef struct			s_vm
 	unsigned int		cycle_to_die;
 	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
+	unsigned int		last_change_cycle_to_die;
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
 	char				*ip;
