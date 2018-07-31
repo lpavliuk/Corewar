@@ -34,14 +34,13 @@ char				get_arg_size(char opcode, char type)
 ** After that I make a bitwise shift left on two bits.
 */
 
-char				*decipher_codage(unsigned char n_args, unsigned char codage)
+void				decipher_codage(char *arr, unsigned char n_args, unsigned char codage)
 {
-	char			*arr;
 	int				i;
 	unsigned char	tmp;
 
 	i = 0;
-	(!(arr = (char *)ft_memalloc(4))) ? ft_error("Error") : 0;
+	ft_bzero(arr, 4);
 	while (codage && i < n_args)
 	{
 		tmp = codage & 192;
@@ -51,7 +50,6 @@ char				*decipher_codage(unsigned char n_args, unsigned char codage)
 		codage <<= 2;
 		i++;
 	}
-	return (arr);
 }
 
 /*
@@ -66,14 +64,13 @@ char				*decipher_codage(unsigned char n_args, unsigned char codage)
 ** we save this type of argument.
 */
 
-char				*pseudo_codage(char opcode)
+void				pseudo_codage(char *arr, char opcode)
 {
-	char			*arr;
 	unsigned char	i;
 	unsigned char	j;
 
 	i = 0;
-	(!(arr = (char *)ft_memalloc(4))) ? ft_error("Error") : 0;
+	ft_bzero(arr, 4);
 	while (i < 3)
 	{
 		j = 0;
@@ -88,7 +85,6 @@ char				*pseudo_codage(char opcode)
 		}
 		i++;
 	}
-	return (arr);
 }
 
 static t_bot		*bot_init(unsigned int id, unsigned char player_counter)

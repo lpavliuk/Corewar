@@ -18,9 +18,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include "corewar.h"
-
-#define PORT 8888
 
 static t_vm		*init_vm(void)
 {
@@ -46,7 +45,7 @@ static t_vm		*init_vm(void)
 	return (new);
 }
 
-void					get_info_server(t_vm *vm, char *args[], int argv, int *i)
+static void					get_info_server(t_vm *vm, char *args[], int argv, int *i)
 {
 	vm->flag_server = 1;
 	(*i)++;
@@ -56,7 +55,7 @@ void					get_info_server(t_vm *vm, char *args[], int argv, int *i)
 		vm->ip = args[*i];
 }
 
-void					get_info_client(t_vm *vm, char *args[], int argv, int *i)
+static void					get_info_client(t_vm *vm, char *args[], int argv, int *i)
 {
 	vm->flag_client = 1;
 	(*i)++;
@@ -66,7 +65,14 @@ void					get_info_client(t_vm *vm, char *args[], int argv, int *i)
 		vm->ip = args[*i];
 }
 
+void	bzero_sockets(int sockets[], int n_sockets)
+{
+	int i;
 
+	i = 0;
+	while (i < n_sockets)
+		sockets[i++] = 0;
+}
 
 int		create_socket(void)
 {
@@ -88,24 +94,47 @@ char	bind_to_address(int socket_fd, char *ip)
 	return (bind(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
+void	get_clients(int master_socket, int client_sockets[], int n_client_sockets, fd_set read_fds)
+{
+	char	*line;
+	int		new_socket;
+
+	/* Here i need to implement timeout function */
+	line = NULL;
+	while (!ft_strequ(line, "GAME"))
+	{
+		new_socket = accept(master_socket, NULL, NULL);
+
+		get_next_line(0, &line);	/* In order to track whether 'GAME' command has been written. */
+	}
+	(!server->count_players) ? ft_error("Error") : ft_strdel(&line);
+}
+
+t_server	*init_server(void)
+{
+	t_server	*server;
+
+	server = (t_server *)malloc(sizeof(t_server));
+	(!server) ? ft_error("Error") : 0;
+	server->master_socket = create_socket();
+	server->n_client_sockets = 4;
+	bzero_sockets(server->client_sockets, server->n_client_sockets);
+	server->count_players = 0;
+	return (server);
+}
+
 void	server(t_vm *vm)
 {
-	int		master_socket;
-	int		client_socket_fd;
-	char	*response;
+	t_server	*server;
 
-	response = NULL;
-	master_socket = create_socket();
-	(bind_to_address(master_socket, vm->ip)) ? ft_error("Error") : 0;
-	listen(master_socket, 4);
-	while (1)
-	{
-		client_socket_fd = accept(master_socket, NULL, NULL);
-		if (!client_socket_fd)
-			break ;
-		get_next_line(client_socket_fd, &response);
-	}
-	close(master_socket);
+	server = init_server();
+
+	// (bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
+	// listen(server->master_socket, 4);
+
+	// get_clients(server, vm);
+
+	// close(master_socket);
 }
 
 char	connect_to_server(int socket_fd, char *ip)
@@ -127,6 +156,13 @@ void	client(t_vm *vm, char *str)
 	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
 	send(socket_fd, str, strlen(str), 0);
 }
+
+
+
+
+
+
+
 
 void			get_args(t_vm *vm, int count, char **args)
 {
