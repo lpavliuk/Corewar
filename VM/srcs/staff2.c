@@ -48,7 +48,6 @@ char				*decipher_codage(unsigned char n_args, unsigned char codage)
 		(tmp == 192) ? (arr[i] = IND_CODE) : 0;
 		(tmp == 128) ? (arr[i] = DIR_CODE) : 0;
 		(tmp == 64) ? (arr[i] = REG_CODE) : 0;
-		(tmp == 0) ? ft_error("Error") : 0;
 		codage <<= 2;
 		i++;
 	}

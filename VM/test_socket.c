@@ -131,9 +131,7 @@ void	client(t_vm *vm, char *str)
 void			get_args(t_vm *vm, int count, char **args)
 {
 	int				i;
-	unsigned int	id;
 
-	id = 0;
 	i = 1;
 	while (i < count)
 	{
