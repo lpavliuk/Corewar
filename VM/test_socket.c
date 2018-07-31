@@ -155,20 +155,20 @@ void		accept_client(t_server *server)
 
 void		check_clients(t_server *server)
 {
-	t_list			*list;
-
-	// unsigned char	buffer[1025];
+	unsigned char	buffer[12 + PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE];
 	unsigned char	i;
-	int				sd;
+	int		sd;
+	int		n_buffer;	
 
 	i = 0;
+	n_buffer = 12 + PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE;
 	while (i < server->n_client_sockets)
 	{
-		// ft_bzero(buffer, 1025);
+		ft_bzero(buffer, n_buffer);
 		sd = server->client_sockets[i];
 		if (FD_ISSET(sd, &server->read_fds))
 		{
-			if ((read(sd, list, sizeof(list))) <= 0)
+			if ((read(sd, &buffer, n_buffer)) <= 0)
 			{
 				server->count_players--;
 				server->client_sockets[i] = 0;
@@ -176,9 +176,7 @@ void		check_clients(t_server *server)
 			}
 			else
 			{
-				ft_printf("%s\n", list->content);
-				ft_printf("%d\n", list->content_size);
-				ft_printf("%s\n", list->next);
+
 			}
 		}
 		i++;
@@ -277,23 +275,38 @@ char	connect_to_server(int socket_fd, char *ip)
 	return (connect(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
+/*
+** name | comment | size | exec
+*/
+
+unsigned char	*serialize(t_bot *bot)
+{
+	unsigned char	*str;
+	int		str_len;
+
+	str_len = 12 + ft_strlen(bot->name) + ft_strlen(bot->comment) + size; /* We specify 4 bytes which correspond strlen(name), 4 bytes - strlen(comment), 4 bytes - length of size var. */
+	str = (unsigned char *)malloc(str_len);
+	(!str) ? ft_error("Error") : 0;
+	ft_bzero(str, str_len);
+	strncat(str, ft_strlen(bot->name), 4);
+	strncat(str, bot->name, ft_strlen(bot->name));
+	strncat(str, ft_strlen(bot->comment), 4);
+	strncat(str, bot->comment, ft_strlen(bot->comment));
+	strncat(str, size, 4);
+	strncat(str, bot->exec, size);
+	return (str);
+}
+
 void	client(t_vm *vm, char *str)
 {
 	int		socket_fd;
+	unsigned char	*data;
 
+	(vm->count_players != 1) ? ft_error("Error") : 0;
+	data = serialize(vm->bot);
 	socket_fd = create_socket();
 	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
-
-
-
-	t_list	*list = (t_list *)malloc(sizeof(t_list));
-
-	list->content = ft_strdup("Hello");
-	list->content_size = 5;
-	list->next = NULL;
-
-	send(socket_fd, (void *)list, sizeof(list), 0);
-	// send(socket_fd, str, strlen(str), 0);
+	send(socket_fd, data, strlen(data), 0);
 	close(socket_fd);
 }
 
