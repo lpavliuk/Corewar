@@ -54,21 +54,20 @@ static void			check_arguments(char opcode, char *types, t_bot *bot, unsigned int
 
 static void			check_command(t_bot *new, unsigned int *i)
 {
-	char			*codage;
 	char			opcode;
+	char			codage[4];
 
 	opcode = new->exec[*i];
 	(*i)++;
 	if (CODAGE(opcode))
 	{
 		(new->exec[*i] == '\0') ? ft_error("Error") : 0;
-		codage = decipher_codage(COUNT_ARGS(opcode), new->exec[*i]);
+		decipher_codage(codage, COUNT_ARGS(opcode), new->exec[*i]);
 		(*i)++;
 	}
 	else
-		codage = pseudo_codage(opcode);
+		pseudo_codage(codage, opcode);
 	check_arguments(opcode, codage, new, i);
-	ft_strdel(&codage);
 }
 
 /*
