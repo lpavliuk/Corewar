@@ -19,6 +19,8 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <sys/select.h>
+#include <pthread.h>
 #include "corewar.h"
 
 static t_vm		*init_vm(void)
@@ -65,6 +67,15 @@ static void					get_info_client(t_vm *vm, char *args[], int argv, int *i)
 		vm->ip = args[*i];
 }
 
+int		create_socket(void)
+{
+	int		socket_fd;
+
+	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	(socket_fd < 0) ? ft_error("Error") : 0;
+	return (socket_fd);
+}
+
 void	bzero_sockets(int sockets[], int n_sockets)
 {
 	int i;
@@ -74,13 +85,18 @@ void	bzero_sockets(int sockets[], int n_sockets)
 		sockets[i++] = 0;
 }
 
-int		create_socket(void)
+t_server	*init_server(void)
 {
-	int		socket_fd;
+	t_server	*server;
 
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	(socket_fd < 0) ? ft_error("Error") : 0;
-	return (socket_fd);
+	server = (t_server *)malloc(sizeof(t_server));
+	(!server) ? ft_error("Error") : 0;
+	server->master_socket = create_socket();
+	server->n_client_sockets = 4;
+	bzero_sockets(server->client_sockets, server->n_client_sockets);
+	server->count_players = 0;
+	server->flag_start = 0;
+	return (server);
 }
 
 char	bind_to_address(int socket_fd, char *ip)
@@ -94,48 +110,161 @@ char	bind_to_address(int socket_fd, char *ip)
 	return (bind(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
-void	get_clients(int master_socket, int client_sockets[], int n_client_sockets, fd_set read_fds)
+void		add_sockets_to_set(t_server *server, int *max_sd)
 {
-	char	*line;
-	int		new_socket;
+	unsigned char	i;
+	int				sd;
 
-	/* Here i need to implement timeout function */
-	line = NULL;
-	while (!ft_strequ(line, "GAME"))
+	i = 0;
+	FD_ZERO(&server->read_fds);
+	FD_SET(server->master_socket, &server->read_fds);
+	*max_sd = server->master_socket;
+	while (i < server->n_client_sockets)
 	{
-		new_socket = accept(master_socket, NULL, NULL);
-
-		get_next_line(0, &line);	/* In order to track whether 'GAME' command has been written. */
+		sd = server->client_sockets[i];
+		if (sd != 0)
+		{
+			FD_SET(sd, &server->read_fds);
+			if (*max_sd < sd)
+				*max_sd = sd;
+		}
+		i++;
 	}
-	(!server->count_players) ? ft_error("Error") : ft_strdel(&line);
 }
 
-t_server	*init_server(void)
+void		accept_client(t_server *server)
 {
-	t_server	*server;
+	unsigned char	i;
+	int				new_socket;
 
-	server = (t_server *)malloc(sizeof(t_server));
-	(!server) ? ft_error("Error") : 0;
-	server->master_socket = create_socket();
-	server->n_client_sockets = 4;
-	bzero_sockets(server->client_sockets, server->n_client_sockets);
-	server->count_players = 0;
+	(server->count_players >= 4) ? ft_error("Error") : 0;
+	new_socket = accept(server->master_socket, NULL, NULL);
+	(!new_socket) ? ft_error("Error") : 0;
+	i = 0;
+	while (i < server->n_client_sockets)
+	{
+		if (server->client_sockets[i] == 0)
+		{
+			server->client_sockets[i] = new_socket;
+			server->count_players++;
+			return ;
+		}
+		i++;
+	}
+}
+
+void		check_clients(t_server *server)
+{
+	t_list			*list;
+
+	// unsigned char	buffer[1025];
+	unsigned char	i;
+	int				sd;
+
+	i = 0;
+	while (i < server->n_client_sockets)
+	{
+		// ft_bzero(buffer, 1025);
+		sd = server->client_sockets[i];
+		if (FD_ISSET(sd, &server->read_fds))
+		{
+			if ((read(sd, list, sizeof(list))) <= 0)
+			{
+				server->count_players--;
+				server->client_sockets[i] = 0;
+				close(sd);
+			}
+			else
+			{
+				ft_printf("%s\n", list->content);
+				ft_printf("%d\n", list->content_size);
+				ft_printf("%s\n", list->next);
+			}
+		}
+		i++;
+	}
+}
+
+void		dispatcher_sockets(t_server *server)
+{
+	if (FD_ISSET(server->master_socket, &server->read_fds))	/* Someone wants to connect to the server. */
+		accept_client(server);
+	else
+		check_clients(server);
+}
+
+void		*apply_clients(void *data)
+{
+	int				activity;
+	t_server		*server;
+	int				max_sd;		/* max socket descriptor. */
+	struct timeval	timeout;
+
+	timeout.tv_sec = 1;
+	server = (t_server *)data;
+	while (!server->flag_start)
+	{
+		max_sd = 0;
+		add_sockets_to_set(server, &max_sd);
+		activity = select(max_sd + 1, &server->read_fds, NULL, NULL, &timeout);
+		(activity < 0) ? ft_error("Error: select") : 0;
+		dispatcher_sockets(server);
+	}
+	(server->count_players == 0) ? ft_error("Error") : 0;
+	return (data);
+}
+
+void		*check_command_start(void *server)
+{
+	char	*line;
+
+	line = NULL;
+	while (get_next_line(0, &line) > 0)
+	{
+		if (ft_strequ(line, "START"))
+		{
+			ft_strdel(&line);
+			((t_server *)server)->flag_start = 1;
+			return (server);
+		}
+		else
+			ft_strdel(&line);
+	}
 	return (server);
 }
 
-void	server(t_vm *vm)
+void			get_clients(t_server *server)
+{
+	pthread_t	tid[2];
+
+	pthread_create(&tid[0], NULL, check_command_start, server);
+	pthread_create(&tid[1], NULL, apply_clients, server);
+	pthread_join(tid[0], NULL);
+	pthread_join(tid[1], NULL);
+}
+
+/* >>>>>>>>>> SERVER <<<<<<<<<< */
+
+void			server(t_vm *vm)
 {
 	t_server	*server;
 
 	server = init_server();
-
-	// (bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
-	// listen(server->master_socket, 4);
-
-	// get_clients(server, vm);
-
+	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
+	listen(server->master_socket, 4);
+	get_clients(server);
 	// close(master_socket);
 }
+
+
+
+
+
+
+
+
+
+/* >>>>>>>>>> CLIENT <<<<<<<<<< */
 
 char	connect_to_server(int socket_fd, char *ip)
 {
@@ -154,15 +283,19 @@ void	client(t_vm *vm, char *str)
 
 	socket_fd = create_socket();
 	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
-	send(socket_fd, str, strlen(str), 0);
+
+
+
+	t_list	*list = (t_list *)malloc(sizeof(t_list));
+
+	list->content = ft_strdup("Hello");
+	list->content_size = 5;
+	list->next = NULL;
+
+	send(socket_fd, (void *)list, sizeof(list), 0);
+	// send(socket_fd, str, strlen(str), 0);
+	close(socket_fd);
 }
-
-
-
-
-
-
-
 
 void			get_args(t_vm *vm, int count, char **args)
 {
