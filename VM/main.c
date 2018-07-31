@@ -82,7 +82,7 @@ int			main(int ac, char **av)
 		get_args(vm, ac, av);
 		fill_map(vm, vm->count_players);
 		// dispatcher_routes(vm);
-		if (vm->flag_visualize)
+		if (vm->flag_visual)
 			visualize(vm);
 		else
 			while (!vm->winner)
