@@ -126,7 +126,7 @@ typedef struct			s_process
 	unsigned char		carry : 1;
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER + 1];
-	char				opcode;
+	unsigned char		opcode;
 	unsigned char		codage;
 	unsigned int		cycles_to_perform;
 	t_bot				*parent;
