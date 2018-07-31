@@ -114,7 +114,6 @@ typedef struct		s_bot
 	unsigned char		*exec;
 	unsigned int 		id;
 	unsigned int		size;
-	unsigned int		lives_whole;		/* Quantity of lives for the whole game. */
 	unsigned int		lives_cur_period;	/* Quantity of lives for current period. */
 	unsigned int		lives_last_period;	/* Quantity of lives for last period. */
 	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */
@@ -136,13 +135,17 @@ typedef struct			s_process
 
 typedef struct			s_vm
 {
+	char				count_players;
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
+	unsigned char		flag_server : 1;
+	unsigned char		flag_client : 1;
 	unsigned int		cycle_to_die;
 	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
-	char				count_players;
+	unsigned int		port;
+	char				*ip;
 	char				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
@@ -162,8 +165,8 @@ unsigned char			g_map[MEM_SIZE];
 
 /*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 
-# define X_BEGIN 3
-# define Y_BEGIN 2
+# define X_BEGIN	3
+# define Y_BEGIN	2
 
 # define KEY_Q		113
 # define KEY_W		119
@@ -173,8 +176,8 @@ unsigned char			g_map[MEM_SIZE];
 # define KEY_SPACE	32
 # define RESIZE		410
 
-# define ON 1
-# define OFF 2
+# define ON			1
+# define OFF		2
 
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2
@@ -198,5 +201,32 @@ typedef struct
 
 void					visualize(t_vm *vm);
 void					ft_error(char *s);
+void					usage(void);
+unsigned int			get_arg(unsigned int i, char arg_size);
+unsigned int			reverse_bytes(unsigned int data, char bytes);
+char					get_arg_size(char opcode, char type);
+char					get_arg_size(char opcode, char type);
+char					*decipher_codage(unsigned char codage);
+char					*pseudo_codage(char opcode);
+void					get_args(t_vm *vm, int count, char **args);
+void					get_server_info(t_vm *vm, char *args[], int argv,
+						int *i);
+t_process				*push_new_process(t_process **head, unsigned int
+						*process_count, t_bot *parent, unsigned int position);
+void					check_executable(t_bot *bot);
+void					check_magic_header(int fd);
+void					bot_parsing(int fd, t_bot *new);
+t_bot					*push_new_bot(t_bot **head, unsigned int id);
+
+/*
+**	Process functions
+*/
+
+// void	live(t_process *process, t_vm *vm);
+
+// static void	(*func[16])(t_process *process, t_vm *vm) = {
+// 	{ live }, { ld }, { st }, { add }, { sub }, { and }, { or }, { xor },
+// 	{ zjmp }, { ldi }, { sti }, { fork_war }, { lld }, { lldi }, { lfork }, { aff }
+// };
 
 #endif

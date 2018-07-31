@@ -338,7 +338,7 @@ void	compute_speed(t_win *win, int key)
 	wattroff(win->window, COLOR_PAIR(7) | A_BOLD);
 }
 
-void	dispatcher(t_win *win, t_vm *vm, int key, char *flag)
+void	dispatcher_keys(t_win *win, t_vm *vm, int key, char *flag)
 {
 	if (key == RESIZE)	/* RESIZE */
 		prepare_window(win, vm);
@@ -376,7 +376,7 @@ void	redraw(t_win *win, t_vm *vm, int key)
 	win->cursor_x = X_BEGIN;
 	win->cursor_y = Y_BEGIN;
 	if (key != -1)
-		dispatcher(win, vm, key, &flag);
+		dispatcher_keys(win, vm, key, &flag);
 	if (flag || key == KEY_S)
 	{
 		// step(vm);
