@@ -64,8 +64,8 @@
 # define NAME(i)		g_table[i - 1].name
 # define COUNT_ARGS(i)	g_table[i - 1].args_count
 # define ARG(i, j, k)	g_table[i - 1].args[j].arg[(int)k]
-# define OPCODE(i) 		g_table[i].opcode
-# define CODAGE(i) 		g_table[i - 1].codage
+# define OPCODE(i)		g_table[i].opcode
+# define CODAGE(i)		g_table[i - 1].codage
 # define LABEL_SIZE(i)	g_table[i - 1].label_size
 # define PREFORM(i)		g_table[i - 1].cycles
 # define MAX_TABLE 16
