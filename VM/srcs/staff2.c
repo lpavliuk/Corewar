@@ -34,7 +34,7 @@ char				get_arg_size(char opcode, char type)
 ** After that I make a bitwise shift left on two bits.
 */
 
-char				*decipher_codage(unsigned char codage)
+char				*decipher_codage(unsigned char n_args, unsigned char codage)
 {
 	char			*arr;
 	int				i;
@@ -42,9 +42,8 @@ char				*decipher_codage(unsigned char codage)
 
 	i = 0;
 	(!(arr = (char *)ft_memalloc(4))) ? ft_error("Error") : 0;
-	while (codage)
+	while (codage && i < n_args)
 	{
-		(i == 3) ? ft_error("Error") : 0;
 		tmp = codage & 192;
 		(tmp == 192) ? (arr[i] = IND_CODE) : 0;
 		(tmp == 128) ? (arr[i] = DIR_CODE) : 0;

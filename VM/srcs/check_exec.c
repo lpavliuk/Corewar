@@ -62,7 +62,7 @@ static void			check_command(t_bot *new, unsigned int *i)
 	if (CODAGE(opcode))
 	{
 		(new->exec[*i] == '\0') ? ft_error("Error") : 0;
-		codage = decipher_codage(new->exec[*i]);
+		codage = decipher_codage(COUNT_ARGS(opcode), new->exec[*i]);
 		(*i)++;
 	}
 	else

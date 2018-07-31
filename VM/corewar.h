@@ -206,7 +206,7 @@ unsigned int			get_arg(unsigned int i, char arg_size);
 unsigned int			reverse_bytes(unsigned int data, char bytes);
 char					get_arg_size(char opcode, char type);
 char					get_arg_size(char opcode, char type);
-char					*decipher_codage(unsigned char codage);
+char					*decipher_codage(unsigned char n_args, unsigned char codage);
 char					*pseudo_codage(char opcode);
 void					get_args(t_vm *vm, int count, char **args);
 void					get_server_info(t_vm *vm, char *args[], int argv,
