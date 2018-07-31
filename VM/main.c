@@ -61,15 +61,17 @@ void		fill_map(t_vm *vm, char count_players)
 
 // void		dispatcher_routes(t_vm *vm)
 // {
-// 	if (vm->flag_client)
-// 		client();
-// 	else if (vm->flag_server)
-// 		server();
-// 	else if (vm->flag_visual)
-// 		visualize();
-// 	else
-// 		while (!vm->winner)
-// 			step(vm);
+	// if (vm->flag_client && vm->flag_server)
+	// 	ft_error("Error");
+	// else if (vm->flag_client)
+	// 	client();
+	// else if (vm->flag_server)
+	// 	server();
+	// else if (vm->flag_visual)
+	// 	visualize();
+	// else
+	// 	while (!vm->winner)
+	// 		step(vm);
 // }
 
 int			main(int ac, char **av)
