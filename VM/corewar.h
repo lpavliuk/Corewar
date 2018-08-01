@@ -144,13 +144,13 @@ typedef struct			s_vm
 	unsigned char		flag_server : 1;
 	unsigned char		flag_client : 1;
 	unsigned int		cycle_to_die;
-	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
+	unsigned int		dump_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		last_change_cycle_to_die;
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
 	char				*ip;
-	char				*winner;
+	t_bot				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
 }						t_vm;
@@ -166,6 +166,11 @@ typedef struct			s_pixel
 
 t_pixel					**g_pixels;
 unsigned char			g_map[MEM_SIZE];
+
+/*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
+void		print_header(t_vm *vm);
+void		dump_print();
+void		print_winer(t_vm *vm);
 
 /*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 
@@ -221,7 +226,7 @@ void					check_executable(t_bot *bot);
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
-
+int						step(t_vm *vm);
 /*>>>>>>>>>> Network Game Mode <<<<<<<<<<*/
 
 #define PORT 8888

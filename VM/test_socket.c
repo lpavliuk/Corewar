@@ -36,7 +36,7 @@ static t_vm		*init_vm(void)
 	new->flag_server = 0;
 	new->flag_client = 0;
 	new->cycle_to_die = CYCLE_TO_DIE;
-	new->nbr_cycles = 0;
+	new->dump_cycles = 0;
 	new->cur_cycle = 0;
 	new->process_count = 0;
 	new->port = 0;
