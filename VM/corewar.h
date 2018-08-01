@@ -229,9 +229,10 @@ t_bot					*push_new_bot(t_bot **head, unsigned int id);
 typedef struct
 {
 	int					master_socket;
-	int					client_socket[4];
-	unsigned char		n_client_socket;
+	int					client_sockets[4];
+	unsigned char		n_client_sockets;
 	unsigned char		count_players;
+	unsigned char		flag_start : 1;
 	fd_set				read_fds;
 }						t_server;
 

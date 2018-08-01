@@ -31,7 +31,7 @@ static void			get_size(int fd, t_bot *new)
 	if (read(fd, &new->size, 4) != 4)
 		ft_error("Error");
 	new->size = reverse_bytes(new->size, 4);
-	if (new->size > CHAMP_MAX_SIZE)
+	if (new->size > CHAMP_MAX_SIZE || new->size == 0)
 		ft_error("Error");
 }
 
@@ -69,5 +69,5 @@ void				bot_parsing(int fd, t_bot *new)
 	get_size(fd, new);
 	get_comment(fd, new);
 	get_executable(fd, new);
-	check_executable(new);
+	// check_executable(new);
 }
