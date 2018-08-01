@@ -160,7 +160,12 @@ void		accept_client(t_server *server)
 	unsigned char	i;
 	int				new_socket;
 
-	(server->link_vm->count_players >= 4) ? ft_error("Error") : 0;
+	if (server->vm_link->count_players >= 4)
+	{
+		close(accept(server->master_socket, NULL, NULL));
+		return ;
+	}
+	ft_printf("added player\n");
 	new_socket = accept(server->master_socket, NULL, NULL);
 	(!new_socket) ? ft_error("Error") : 0;
 	i = 0;
@@ -169,7 +174,7 @@ void		accept_client(t_server *server)
 		if (server->client_sockets[i] == 0)
 		{
 			server->client_sockets[i] = new_socket;
-			server->count_players++;
+			server->vm_link->count_players++;
 			return ;
 		}
 		i++;
@@ -191,9 +196,10 @@ void		check_clients(t_server *server)
 		sd = server->client_sockets[i];
 		if (FD_ISSET(sd, &server->read_fds))
 		{
-			if ((read(sd, &buffer, n_buffer)) <= 0)
+			if (read(sd, &buffer, n_buffer) <= 0)
 			{
-				server->link_vm->count_players--;
+				ft_printf("delete %d\n", sd);
+				server->vm_link->count_players--;
 				server->client_sockets[i] = 0;
 				close(sd);
 			}
@@ -204,7 +210,7 @@ void		check_clients(t_server *server)
 
 void		dispatcher_sockets(t_server *server)
 {
-	if (FD_ISSET(server->master_socket, &server->read_fds))	/* Someone wants to connect to the server. */
+	if (FD_ISSET(server->master_socket, &server->read_fds))		/* Someone wants to connect to the server. */
 		accept_client(server);
 	else
 		check_clients(server);
@@ -215,7 +221,7 @@ void		*apply_clients(void *data)
 	t_server		*server;
 	struct timeval	timeout;
 	int				activity;
-	int				max_sd;		/* max socket descriptor. */
+	int				max_sd;
 
 	server = (t_server *)data;
 	timeout.tv_sec = 1;
@@ -227,24 +233,32 @@ void		*apply_clients(void *data)
 		(activity < 0) ? ft_error("Error: select") : 0;
 		dispatcher_sockets(server);
 	}
-	(server->link_vm->count_players == 0) ? ft_error("Error") : 0;
+	(server->vm_link->count_players == 0) ? ft_error("Error") : 0;
 	return (data);
 }
 
-void		*check_info_to_players(void *server)
+void		*send_init_info_to_players(void *data)
 {
-	
+	t_server	*server;
+
+	server = (t_server *)data;
+	return (data);
 }
 
-void			get_clients(t_server *server, t_vm *vm)
+void			get_clients(t_server *server)
 {
 	pthread_t	tid[2];
 
-	pthread_create(&tid[0], NULL, send_info_to_players, server);
+	pthread_create(&tid[0], NULL, send_init_info_to_players, server);
 	pthread_create(&tid[1], NULL, apply_clients, server);
 	pthread_join(tid[0], NULL);
 	pthread_join(tid[1], NULL);
 }
+
+// void		get_clients_exec(t_server *server)
+// {
+
+// }
 
 /* >>>>>>>>>> SERVER <<<<<<<<<< */
 
@@ -257,7 +271,12 @@ void			server(t_vm *vm)
 	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
 	listen(server->master_socket, 4);
 	get_clients(server);
-	fill_map(vm, vm->count_players);
+
+	// get_clients_exec(server);
+	// fill_map(vm, vm->count_players);
+
+	// start_game(server);
+
 	// close(master_socket);
 }
 
@@ -283,7 +302,7 @@ char	connect_to_server(int socket_fd, char *ip)
 }
 
 /*
-** name | comment | size | exec
+** name | comment | exec
 */
 
 // unsigned char	*serialize(t_bot *bot)
@@ -291,31 +310,34 @@ char	connect_to_server(int socket_fd, char *ip)
 // 	unsigned char	*str;
 // 	int				str_len;
 
-// 	str_len = 12 + ft_strlen(bot->name) + ft_strlen(bot->comment) + size; /* We specify 4 bytes which correspond strlen(name), 4 bytes - strlen(comment), 4 bytes - length of size var. */
+// 	str_len = PROG_NAME_LENGTH + COMMENT_LENGTH + bot->size;
 // 	str = (unsigned char *)malloc(str_len);
 // 	(!str) ? ft_error("Error") : 0;
 // 	ft_bzero(str, str_len);
-// 	strncat(str, ft_strlen(bot->name), 4);
-// 	strncat(str, bot->name, ft_strlen(bot->name));
-// 	strncat(str, ft_strlen(bot->comment), 4);
-// 	strncat(str, bot->comment, ft_strlen(bot->comment));
-// 	strncat(str, size, 4);
-// 	strncat(str, bot->exec, size);
+// 	strncat(str, bot->name, PROG_NAME_LENGTH);
+// 	strncat(str + PROG_NAME_LENGTH, bot->comment, COMMENT_LENGTH);
+// 	strncat(str + PROG_NAME_LENGTH + COMMENT_LENGTH, bot->exec, bot->size);
 // 	return (str);
 // }
 
 void	client(t_vm *vm, char *str)
 {
 	int		socket_fd;
+
+	socket_fd = create_socket();
+	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
+	send(socket_fd, str, strlen(str), 0);
+	close(socket_fd);
+
+	// int		socket_fd;
 	// unsigned char	*data;
 
 	// (vm->count_players != 1) ? ft_error("Error") : 0;
 	// data = serialize(vm->bot);
-	socket_fd = create_socket();
-	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
-	send(socket_fd, str, strlen(str), 0);
-	// send(socket_fd, data, strlen(data), 0);
-	close(socket_fd);
+	// socket_fd = create_socket();
+	// (connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
+	// send(socket_fd, data, PROG_NAME_LENGTH + COMMENT_LENGTH + vm->bot->size, 0);
+	// close(socket_fd);
 }
 
 void			get_args(t_vm *vm, int count, char **args)
