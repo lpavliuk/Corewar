@@ -203,6 +203,8 @@ void		check_clients(t_server *server)
 				server->client_sockets[i] = 0;
 				close(sd);
 			}
+			else
+				ft_printf("%s\n", buffer);
 		}
 		i++;
 	}
@@ -254,14 +256,14 @@ void        foreach_sockets(t_server *server, unsigned char *str, int bytes)
 
 void		*send_init_info_to_players(void *data)
 {
-	unsigned char sec;
+	char          sec;
 	t_server	  *server;
 
-    sec = 30;
+    sec = 10;
 	server = (t_server *)data;
 	while (sec >= 0)
 	{
-		foreach_sockets(server, &sec, sizeof(unsigned char));
+		foreach_sockets(server, (unsigned char *)&sec, sizeof(unsigned char));
 		foreach_sockets(server, &server->vm_link->count_players, sizeof(unsigned char));
 		sleep(1);
 		sec--;
@@ -297,6 +299,8 @@ void			server(t_vm *vm)
 	listen(server->master_socket, 4);
 	get_clients(server);
 
+    while (1)
+    	ft_printf("GAME!\n");
 	// get_clients_exec(server);
 	// fill_map(vm, vm->count_players);
 
@@ -347,13 +351,28 @@ char	connect_to_server(int socket_fd, char *ip)
 
 void    read_init_info(int socket_fd)
 {
-	unsigned char sec;
+	char          flag_sec;
+	unsigned char str;
 
+    flag_sec = 0;
+    str = 0;
 	while (1)
 	{
-        if (read(socket_fd, &sec, sizeof(unsigned char)) > 0)
+        if (read(socket_fd, &str, sizeof(unsigned char)) > 0)
         {
-        	
+           if (!flag_sec)
+           {
+              sleep(1);
+           	  printf("Time to start the game: %d\n", str);
+           	  flag_sec = 1;
+           	  if (str == 0)
+                 break ;
+           }
+           else
+           {
+              printf("Number of connected players: %d\n", str);
+              flag_sec = 0;
+           }
         }
 	}
 }
@@ -365,7 +384,8 @@ void	client(t_vm *vm, char *str)
 	socket_fd = create_socket();
 	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
 	send(socket_fd, str, ft_strlen(str), 0);
-    
+    read_init_info(socket_fd);
+    while (1);
 	close(socket_fd);
 
 	// int		socket_fd;

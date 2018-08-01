@@ -135,7 +135,7 @@ typedef struct			s_process
 
 typedef struct			s_vm
 {
-	char				count_players;
+	unsigned char		count_players;
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
 	unsigned char		flag_server : 1;
