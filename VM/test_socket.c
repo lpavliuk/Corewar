@@ -327,7 +327,9 @@ char	connect_to_server(int socket_fd, char *ip)
 	address.sin_port = htons(PORT);
 	if (!inet_aton(ip, &address.sin_addr))
 		ft_error("Error");
-	return (connect(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
+	if (connect(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)) < 0)
+        ft_error("Error: connect");
+
 }
 
 /*
@@ -382,7 +384,7 @@ void	client(t_vm *vm, char *str)
 	int		socket_fd;
 
 	socket_fd = create_socket();
-	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
+	connect_to_server(socket_fd, vm->ip);
 	send(socket_fd, str, ft_strlen(str), 0);
     read_init_info(socket_fd);
     while (1);
