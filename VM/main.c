@@ -59,31 +59,20 @@ void		fill_map(t_vm *vm, char count_players)
 	}
 }
 
-// void		dispatcher_routes(t_vm *vm)
-// {
-	// if (vm->flag_client && vm->flag_server)
-	// 	ft_error("Error");
-	// else if (vm->flag_client)
-	// 	client();
-	// else if (vm->flag_server)
-	// 	server();
-	// else if (vm->flag_visual)
-	// 	visualize();
-	// else
-	// 	while (!vm->winner)
-	// 		step(vm);
-// }
-
-int			main(int ac, char **av)
+void		dispatcher_routes(t_vm *vm)
 {
-	t_vm		*vm;
-
-	if (ac > 1)
+	if (vm->flag_client || vm->flag_server)
 	{
-		vm = init_vm();
-		get_args(vm, ac, av);
+		if (vm->flag_client && vm->flag_server)
+			ft_error("Error");
+		else if ((vm->flag_client))
+			client(vm);
+		else
+			server();	/* Here we need to fill a map. */
+	}
+	else
+	{
 		fill_map(vm, vm->count_players);
-		// dispatcher_routes(vm);
 		if (vm->flag_visual)
 			visualize(vm);
 		else
@@ -100,6 +89,18 @@ int			main(int ac, char **av)
 			}
 			vm->flag_dump ? 0 : print_winer(vm);
 		}
+	}
+}
+
+int			main(int ac, char **av)
+{
+	t_vm		*vm;
+
+	if (ac > 1)
+	{
+		vm = init_vm();
+		get_args(vm, ac, av);		
+		dispatcher_routes(vm);
 	}
 	else
 		usage();
