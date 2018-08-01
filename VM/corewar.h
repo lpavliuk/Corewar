@@ -209,11 +209,12 @@ char					get_arg_size(char opcode, char type);
 void					decipher_codage(char *arr, unsigned char n_args, unsigned char codage);
 void					pseudo_codage(char *arr, char opcode);
 void					get_args(t_vm *vm, int count, char **args);
-void					get_server_info(t_vm *vm, char *args[], int argv,
-						int *i);
+void					get_info_server(t_vm *vm, char *args[], int argv, int *i);
+void					get_info_client(t_vm *vm, char *args[], int argv, int *i);
 t_process				*push_new_process(t_process **head, unsigned int
 						*process_count, t_bot *parent, unsigned int position);
 // void					check_executable(t_bot *bot);
+// void					get_server_info(t_vm *vm, char *args[], int argv, int *i);
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);

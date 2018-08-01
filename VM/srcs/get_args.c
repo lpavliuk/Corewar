@@ -76,9 +76,9 @@ void			get_args(t_vm *vm, int count, char **args)
 		else if (ft_strequ(args[i], "-v"))
 			vm->flag_visual = 1;
 		else if (ft_strequ(args[i], "-s"))
-			get_server_info(vm, args, count, &i);
+			get_info_server(vm, args, count, &i);
 		else if (ft_strequ(args[i], "-c"))
-			vm->flag_client = 1;
+			get_info_client(vm, args, count, &i);
 		else
 		{
 			id--;

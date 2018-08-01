@@ -81,6 +81,15 @@ void		dispatcher_routes(t_vm *vm)
 	}
 }
 
+
+
+
+
+void		sort_bot_list(t_bot	**head)
+{
+
+}
+
 int			main(int ac, char **av)
 {
 	t_vm		*vm;
@@ -88,7 +97,8 @@ int			main(int ac, char **av)
 	if (ac > 1)
 	{
 		vm = init_vm();
-		get_args(vm, ac, av);		
+		get_args(vm, ac, av);
+		sort_bot_list(&vm->bot);
 		dispatcher_routes(vm);
 	}
 	else
