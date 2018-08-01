@@ -115,7 +115,7 @@ int		ft_ldi_check_args(unsigned int *args, char *codage, t_process *process,
 {
 	// arg = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
 	// 		% MEM_SIZE, T_REG_SIZE)) > 0 && arg < 17
-	char			i;
+	char	i;
 
 	i = 0;
 	while (i < 3)
