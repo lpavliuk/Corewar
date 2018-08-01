@@ -38,7 +38,8 @@ void	change_process_position(char opcode, char *codage, t_process *process)
 		(codage[i] == DIR_CODE) ? (offset += LABEL_SIZE(opcode)) : 0;
 		i++;
 	}
-	process->position += (offset + 1 + CODAGE(opcode)) % MEM_SIZE;
+	process->position = (process->position + offset + 1 + CODAGE(opcode))
+		% MEM_SIZE;
 }
 
 void	ft_live(t_process *process, t_vm *vm)
@@ -75,12 +76,9 @@ void	ft_ld(t_process *process, t_vm *vm)
 	change_process_position(OPCODE(1), codage, process);
 }
 
-
-int		ft_st_sti_check_args(unsigned int *args, char *codage,
-	t_process *process, char offset)
-{
-
-}
+/*
+**	set_map_value() - print 4 bytes on the g_map and set appropriate values in g_pixels array
+*/
 
 void	set_map_value(t_process *process, unsigned int val,
 		unsigned int new_pstn)
@@ -170,7 +168,7 @@ int		ft_ldi_lldi_check_args(unsigned int *args, char *codage,
 			if (args[i] < 1 || args[i] > 16)
 				return (0);
 		}
-		else if (codage[i] == DIR_CODE && (offset += LABEL_SIZE(OPCODE(9))))
+		else if (codage[i] == DIR_CODE && (offset += LABEL_SIZE(OPCODE(9)))) /* LABEL_SIZE(OPCODE(9)) == LABEL_SIZE(OPCODE(13))*/
 			args[i] = get_arg((process->position
 			+ (offset - LABEL_SIZE(OPCODE(9)))) % MEM_SIZE, T_DIR_SIZE);
 		i++;
@@ -245,10 +243,43 @@ void	ft_sti(t_process *process, t_vm *vm)
 	change_process_position(OPCODE(10), codage, process);
 }
 
-// void	ft_fork(t_process *process, t_vm *vm)
-// {
+void	copy_new_process(t_process **head, t_process *process, t_vm *vm,
+		unsigned int position)
+{
+	t_process	*new;
+	char		i;
 
-// }
+	i = 1;
+	new = (t_process *)malloc(sizeof(t_process));
+	(!new) ? ft_error("Error") : 0;
+	while (i <= REG_NUMBER)
+	{
+		new->registries[i] = process->registries[i];
+		i++;
+	}
+	new->parent = process->parent;
+	new->position = position;
+	new->carry = process->carry;
+	new->live = process->live;
+	new->opcode = process->opcode;
+	new->codage = process->codage;
+	new->cycles_to_perform = 0;
+	new->next = NULL;
+	if (*head)
+		new->next = *head;
+	*head = new;
+	(vm->process_count)++;
+}
+
+void	ft_fork(t_process *process, t_vm *vm)
+{
+	unsigned int new_position;
+
+	new_position = ((get_arg((process->position + 1) % MEM_SIZE, T_DIR_SIZE)
+		% IDX_MOD) + process->position) % MEM_SIZE;
+	copy_new_process(&(vm->process), process, vm, new_position);
+	process->position = (process->position + T_DIR_SIZE + 1) % MEM_SIZE;
+}
 
 void	ft_lld(t_process *process, t_vm *vm)
 {
@@ -289,10 +320,15 @@ void	ft_lldi(t_process *process, t_vm *vm)
 	change_process_position(OPCODE(13), codage, process);
 }
 
-// void	ft_lfork(t_process *process, t_vm *vm)
-// {
+void	ft_lfork(t_process *process, t_vm *vm)
+{
+	unsigned int new_position;
 
-// }
+	new_position = (get_arg((process->position + 1) % MEM_SIZE, T_DIR_SIZE)
+		+ process->position) % MEM_SIZE;
+	copy_new_process(&(vm->process), process, vm, new_position);
+	process->position = (process->position + T_DIR_SIZE + 1) % MEM_SIZE;
+}
 
 // void	ft_aff(t_process *process, t_vm *vm)
 // {
