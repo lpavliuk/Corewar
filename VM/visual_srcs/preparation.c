@@ -27,7 +27,7 @@ t_win		*init_win(void)
 	return (win);
 }
 
-void			ft_prepare_pixel_map(void)
+static void	ft_prepare_pixel_map(void)
 {
 	unsigned short	i;
 
@@ -42,7 +42,7 @@ void			ft_prepare_pixel_map(void)
 	}
 }
 
-static void		fill_pixel_map(t_bot *bot, char count_players)
+void		fill_pixel_map(t_bot *bot, char count_players)
 {
 	unsigned int	i;
 	unsigned int	total;

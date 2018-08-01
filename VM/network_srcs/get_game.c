@@ -76,7 +76,7 @@ void	get_game(int socket_fd, fd_set read_fds)
 
 	// timeout.tv_sec = 1;
 	// timeout.tv_usec = 0;
-	ft_prepare_pixel_map();
+	create_pixel_map();
 	while (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
 	{
 		recv(socket_fd, &g_map, MEM_SIZE, 0);
