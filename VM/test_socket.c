@@ -237,11 +237,36 @@ void		*apply_clients(void *data)
 	return (data);
 }
 
+void        foreach_sockets(t_server *server, unsigned char *str, int bytes)
+{
+    int i;
+    int sd;
+
+    i = 0;
+    while (i < server->n_client_sockets)
+    {
+    	sd = server->client_sockets[i];
+    	if (sd > 0)
+    		send(sd, str, bytes, 0);
+    	i++;
+    }
+}
+
 void		*send_init_info_to_players(void *data)
 {
-	t_server	*server;
+	unsigned char sec;
+	t_server	  *server;
 
+    sec = 30;
 	server = (t_server *)data;
+	while (sec >= 0)
+	{
+		foreach_sockets(server, &sec, sizeof(unsigned char));
+		foreach_sockets(server, &server->vm_link->count_players, sizeof(unsigned char));
+		sleep(1);
+		sec--;
+	}
+	server->flag_start = 1;
 	return (data);
 }
 
@@ -320,13 +345,27 @@ char	connect_to_server(int socket_fd, char *ip)
 // 	return (str);
 // }
 
+void    read_init_info(int socket_fd)
+{
+	unsigned char sec;
+
+	while (1)
+	{
+        if (read(socket_fd, &sec, sizeof(unsigned char)) > 0)
+        {
+        	
+        }
+	}
+}
+
 void	client(t_vm *vm, char *str)
 {
 	int		socket_fd;
 
 	socket_fd = create_socket();
 	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
-	send(socket_fd, str, strlen(str), 0);
+	send(socket_fd, str, ft_strlen(str), 0);
+    
 	close(socket_fd);
 
 	// int		socket_fd;
