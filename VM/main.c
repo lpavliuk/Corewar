@@ -83,11 +83,44 @@ void		dispatcher_routes(t_vm *vm)
 
 
 
-
-
-void		sort_bot_list(t_bot	**head)
+void		swap(t_bot **head, t_bot *prev, t_bot **cur, t_bot **next)
 {
+	t_bot	*tmp;
 
+	(*cur)->next = (*next)->next;
+	(*next)->next = *cur;
+	if (prev)
+		prev->next = *next;
+	else
+		*head = *next;
+	tmp = *next;
+	*next = *cur;
+	*cur = tmp;
+}
+
+void		sort_bot_list(t_bot **head)
+{
+	t_bot	*tmp;
+	t_bot	*prev;
+	t_bot	*cur;
+	t_bot	*next;
+
+	tmp = *head;
+	while (tmp)
+	{
+		prev = NULL;
+		cur = *head;
+		next = cur->next;
+		while (next)	/* Цикл пока есть пара сравниваемых элементов */
+		{
+			if (cur->id < next->id)
+				swap(head, prev, &cur, &next);
+			prev = cur;
+			cur = next;
+			next = next->next;
+		}
+		tmp = tmp->next;
+	}
 }
 
 int			main(int ac, char **av)
