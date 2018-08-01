@@ -18,7 +18,7 @@ static void		get_dump(t_vm *vm, char **args, int count, int *i)
 	if (*i < count && ft_is_uint(args[*i]))
 	{
 		vm->flag_dump = 1;
-		vm->nbr_cycles = ft_atoi(args[*i]);
+		vm->dump_cycles = ft_atoi(args[*i]);
 	}
 	else
 		usage();

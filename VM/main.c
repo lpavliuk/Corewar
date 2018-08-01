@@ -26,7 +26,7 @@ t_vm		*init_vm(void)
 	new->flag_server = 0;
 	new->flag_client = 0;
 	new->cycle_to_die = CYCLE_TO_DIE;
-	new->nbr_cycles = 0;
+	new->dump_cycles = 0;
 	new->cur_cycle = 0;
 	new->process_count = 0;
 	new->port = 0;
@@ -87,8 +87,19 @@ int			main(int ac, char **av)
 		if (vm->flag_visual)
 			visualize(vm);
 		else
+		{
+			print_header(vm);
 			while (!vm->winner)
-				;// step(vm);
+			{
+				step(vm);
+				if (vm->flag_dump && vm->cur_cycle == vm->dump_cycles)
+				{
+					dump_print();
+					break;
+				}
+			}
+			vm->flag_dump ? 0 : print_winer(vm);
+		}
 	}
 	else
 		usage();
