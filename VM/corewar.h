@@ -220,6 +220,18 @@ t_bot					*push_new_bot(t_bot **head, unsigned int id);
 
 /*>>>>>>>>>> Network Game Mode <<<<<<<<<<*/
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/select.h>
+#include <pthread.h>
+
 #define PORT 8888
 
 typedef struct
@@ -231,6 +243,14 @@ typedef struct
 	unsigned char		flag_start : 1;
 	fd_set				read_fds;
 }						t_server;
+
+void					client(t_vm *vm, char *str);
+int						create_socket(void);
+void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
+void					server(t_vm *vm);
+void					dispatcher_sockets(t_server *server);
+void					get_clients(t_server *server);
+
 
 /*
 **	Process functions
