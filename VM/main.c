@@ -68,7 +68,7 @@ void		dispatcher_routes(t_vm *vm)
 		else if ((vm->flag_client))
 			client(vm);
 		else
-			server();	/* Here we need to fill a map. */
+			server(vm);	/* Here we need to fill a map. */
 	}
 	else
 	{

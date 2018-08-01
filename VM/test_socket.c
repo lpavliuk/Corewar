@@ -23,6 +23,29 @@
 #include <pthread.h>
 #include "corewar.h"
 
+
+static void		fill_map(t_vm *vm, char count_players)
+{
+	t_bot			*bot;
+	unsigned int	i;
+	unsigned int	total;
+
+	total = 0;
+	bot = vm->bot;
+	while (bot)
+	{
+		i = 0;
+		push_new_process(&vm->process, &vm->process_count, bot, total + i);
+		while (i < bot->size)
+		{
+			g_map[total + i] = bot->exec[i];
+			i++;
+		}
+		total += MEM_SIZE / count_players;
+		bot = bot->next;
+	}
+}
+
 static t_vm		*init_vm(void)
 {
 	t_vm	*new;
@@ -91,10 +114,10 @@ t_server	*init_server(void)
 
 	server = (t_server *)malloc(sizeof(t_server));
 	(!server) ? ft_error("Error") : 0;
+	server->vm_link = NULL;
 	server->master_socket = create_socket();
 	server->n_client_sockets = 4;
 	bzero_sockets(server->client_sockets, server->n_client_sockets);
-	server->count_players = 0;
 	server->flag_start = 0;
 	return (server);
 }
@@ -137,7 +160,7 @@ void		accept_client(t_server *server)
 	unsigned char	i;
 	int				new_socket;
 
-	(server->count_players >= 4) ? ft_error("Error") : 0;
+	(server->link_vm->count_players >= 4) ? ft_error("Error") : 0;
 	new_socket = accept(server->master_socket, NULL, NULL);
 	(!new_socket) ? ft_error("Error") : 0;
 	i = 0;
@@ -155,13 +178,13 @@ void		accept_client(t_server *server)
 
 void		check_clients(t_server *server)
 {
-	unsigned char	buffer[12 + PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE];
+	unsigned char	buffer[PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE];
+	int				n_buffer;
+	int				sd;
 	unsigned char	i;
-	int		sd;
-	int		n_buffer;	
 
 	i = 0;
-	n_buffer = 12 + PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE;
+	n_buffer = PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE;
 	while (i < server->n_client_sockets)
 	{
 		ft_bzero(buffer, n_buffer);
@@ -170,13 +193,9 @@ void		check_clients(t_server *server)
 		{
 			if ((read(sd, &buffer, n_buffer)) <= 0)
 			{
-				server->count_players--;
+				server->link_vm->count_players--;
 				server->client_sockets[i] = 0;
 				close(sd);
-			}
-			else
-			{
-
 			}
 		}
 		i++;
@@ -193,13 +212,13 @@ void		dispatcher_sockets(t_server *server)
 
 void		*apply_clients(void *data)
 {
-	int				activity;
 	t_server		*server;
-	int				max_sd;		/* max socket descriptor. */
 	struct timeval	timeout;
+	int				activity;
+	int				max_sd;		/* max socket descriptor. */
 
-	timeout.tv_sec = 1;
 	server = (t_server *)data;
+	timeout.tv_sec = 1;
 	while (!server->flag_start)
 	{
 		max_sd = 0;
@@ -208,34 +227,20 @@ void		*apply_clients(void *data)
 		(activity < 0) ? ft_error("Error: select") : 0;
 		dispatcher_sockets(server);
 	}
-	(server->count_players == 0) ? ft_error("Error") : 0;
+	(server->link_vm->count_players == 0) ? ft_error("Error") : 0;
 	return (data);
 }
 
-void		*check_command_start(void *server)
+void		*check_info_to_players(void *server)
 {
-	char	*line;
-
-	line = NULL;
-	while (get_next_line(0, &line) > 0)
-	{
-		if (ft_strequ(line, "START"))
-		{
-			ft_strdel(&line);
-			((t_server *)server)->flag_start = 1;
-			return (server);
-		}
-		else
-			ft_strdel(&line);
-	}
-	return (server);
+	
 }
 
-void			get_clients(t_server *server)
+void			get_clients(t_server *server, t_vm *vm)
 {
 	pthread_t	tid[2];
 
-	pthread_create(&tid[0], NULL, check_command_start, server);
+	pthread_create(&tid[0], NULL, send_info_to_players, server);
 	pthread_create(&tid[1], NULL, apply_clients, server);
 	pthread_join(tid[0], NULL);
 	pthread_join(tid[1], NULL);
@@ -248,9 +253,11 @@ void			server(t_vm *vm)
 	t_server	*server;
 
 	server = init_server();
+	server->vm_link = vm;
 	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
 	listen(server->master_socket, 4);
 	get_clients(server);
+	fill_map(vm, vm->count_players);
 	// close(master_socket);
 }
 
@@ -279,34 +286,35 @@ char	connect_to_server(int socket_fd, char *ip)
 ** name | comment | size | exec
 */
 
-unsigned char	*serialize(t_bot *bot)
-{
-	unsigned char	*str;
-	int		str_len;
+// unsigned char	*serialize(t_bot *bot)
+// {
+// 	unsigned char	*str;
+// 	int				str_len;
 
-	str_len = 12 + ft_strlen(bot->name) + ft_strlen(bot->comment) + size; /* We specify 4 bytes which correspond strlen(name), 4 bytes - strlen(comment), 4 bytes - length of size var. */
-	str = (unsigned char *)malloc(str_len);
-	(!str) ? ft_error("Error") : 0;
-	ft_bzero(str, str_len);
-	strncat(str, ft_strlen(bot->name), 4);
-	strncat(str, bot->name, ft_strlen(bot->name));
-	strncat(str, ft_strlen(bot->comment), 4);
-	strncat(str, bot->comment, ft_strlen(bot->comment));
-	strncat(str, size, 4);
-	strncat(str, bot->exec, size);
-	return (str);
-}
+// 	str_len = 12 + ft_strlen(bot->name) + ft_strlen(bot->comment) + size; /* We specify 4 bytes which correspond strlen(name), 4 bytes - strlen(comment), 4 bytes - length of size var. */
+// 	str = (unsigned char *)malloc(str_len);
+// 	(!str) ? ft_error("Error") : 0;
+// 	ft_bzero(str, str_len);
+// 	strncat(str, ft_strlen(bot->name), 4);
+// 	strncat(str, bot->name, ft_strlen(bot->name));
+// 	strncat(str, ft_strlen(bot->comment), 4);
+// 	strncat(str, bot->comment, ft_strlen(bot->comment));
+// 	strncat(str, size, 4);
+// 	strncat(str, bot->exec, size);
+// 	return (str);
+// }
 
 void	client(t_vm *vm, char *str)
 {
 	int		socket_fd;
-	unsigned char	*data;
+	// unsigned char	*data;
 
-	(vm->count_players != 1) ? ft_error("Error") : 0;
-	data = serialize(vm->bot);
+	// (vm->count_players != 1) ? ft_error("Error") : 0;
+	// data = serialize(vm->bot);
 	socket_fd = create_socket();
 	(connect_to_server(socket_fd, vm->ip) < 0) ? ft_error("Error") : 0;
-	send(socket_fd, data, strlen(data), 0);
+	send(socket_fd, str, strlen(str), 0);
+	// send(socket_fd, data, strlen(data), 0);
 	close(socket_fd);
 }
 

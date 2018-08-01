@@ -213,7 +213,7 @@ void					get_server_info(t_vm *vm, char *args[], int argv,
 						int *i);
 t_process				*push_new_process(t_process **head, unsigned int
 						*process_count, t_bot *parent, unsigned int position);
-void					check_executable(t_bot *bot);
+// void					check_executable(t_bot *bot);
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
@@ -224,10 +224,10 @@ t_bot					*push_new_bot(t_bot **head, unsigned int id);
 
 typedef struct
 {
+	t_vm				*vm_link;
 	int					master_socket;
 	int					client_sockets[4];
 	unsigned char		n_client_sockets;
-	unsigned char		count_players;
 	unsigned char		flag_start : 1;
 	fd_set				read_fds;
 }						t_server;
