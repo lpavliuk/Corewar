@@ -171,6 +171,7 @@ unsigned char			g_map[MEM_SIZE];
 void		print_header(t_vm *vm);
 void		dump_print();
 void		print_winer(t_vm *vm);
+void		text_out(vm);
 
 /*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 

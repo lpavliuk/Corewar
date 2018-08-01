@@ -76,19 +76,7 @@ void		dispatcher_routes(t_vm *vm)
 		if (vm->flag_visual)
 			visualize(vm);
 		else
-		{
-			print_header(vm);
-			while (!vm->winner)
-			{
-				step(vm);
-				if (vm->flag_dump && vm->cur_cycle == vm->dump_cycles)
-				{
-					dump_print();
-					break;
-				}
-			}
-			vm->flag_dump ? 0 : print_winer(vm);
-		}
+			text_out(vm);
 	}
 }
 
@@ -99,7 +87,7 @@ int			main(int ac, char **av)
 	if (ac > 1)
 	{
 		vm = init_vm();
-		get_args(vm, ac, av);		
+		get_args(vm, ac, av);
 		dispatcher_routes(vm);
 	}
 	else

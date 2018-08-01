@@ -51,3 +51,14 @@ void		print_winer(t_vm *vm)
 {
 	ft_printf("Player %u (%s) won\n", vm->winner->id , vm->winner->name);
 }
+
+void		text_out(t_vm *vm)
+{
+	print_header(vm);
+	while ((vm->flag_dump && vm->cur_cycle == vm->dump_cycles) || vm->winner)
+		step(vm);
+	if (vm->flag_dump)
+		dump_print();
+	else if (vm->winner)
+		print_winer(vm);
+}

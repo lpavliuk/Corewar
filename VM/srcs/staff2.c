@@ -114,15 +114,12 @@ t_bot				*push_new_bot(t_bot **head, unsigned int id)
 
 	player_counter = 1;
 	tmp = *head;
-	while (tmp)
+	while (tmp && tmp->next)
 	{
 		player_counter++;
 		if (tmp->id == id)
 			ft_error("Error");
-		else if (tmp->next)
-			tmp = tmp->next;
-		else
-			break ;
+		tmp = tmp->next;
 	}
 	new = bot_init(id, player_counter);
 	if (!*head)

@@ -116,8 +116,7 @@ int		step(t_vm *vm)
 		vm->last_change_cycle_to_die > 10 ? delta_cycle(vm): 0;					// ? cut cycle_to_die when it had no changes more then 10 steps
 		vm->last_change_cycle_to_die++;
 	}
-	if (vm->cycle_to_die < 1 || !vm->process)
-		vm->winner = winner_bot(vm);
 	vm->cur_cycle++;
+	(vm->cycle_to_die < 1 || !vm->process) ? vm->winner = winner_bot(vm) : 0;
 	return (0);
 }
