@@ -57,19 +57,19 @@ void	ft_live(t_process *process, t_vm *vm)
 void	ft_ld(t_process *process, t_vm *vm)
 {
 	char			codage[4];
-	unsigned int	arg;
+	unsigned int	arg2;
 	unsigned int	result;
 
 	decipher_codage(codage, COUNT_ARGS(2), (process->position + 1) % MEM_SIZE);
 	if (check_valid_codage(OPCODE(1), codage)
-	&& (arg = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
-			% MEM_SIZE, T_REG_SIZE)) > 1 && arg < 17)
+	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
+			% MEM_SIZE, T_REG_SIZE)) > 1 && arg2 < 17)
 	{
-		result = get_arg((process->position + ((codage[0] == IND_CODE)
-			? (get_arg((process->position + (get_arg((process->position + 2)
-			% MEM_SIZE, T_IND_SIZE) % IDX_MOD)) % MEM_SIZE, T_IND_READ)) : 2))
-			% MEM_SIZE, T_DIR_SIZE);
-		process->registries[arg] = result;
+		result = (codage[0] == IND_CODE) ? (get_arg((process->position
+		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD))
+		% MEM_SIZE, T_IND_READ)) : (get_arg((process->position + 2) % MEM_SIZE,
+			T_DIR_SIZE));
+		process->registries[arg2] = result;
 		process->carry = (result) ? 0 : 1;
 	}
 	change_process_position(OPCODE(1), codage, process);
@@ -121,8 +121,8 @@ int		ft_ldi_check_args(unsigned int *args, char *codage, t_process *process,
 	while (i < 3)
 	{
 		if (codage[i] == IND_CODE && (offset += T_IND_SIZE))
-			args[i] = get_arg((process->position + get_arg((process->position
-				+ 2) % MEM_SIZE, T_IND_SIZE)) % MEM_SIZE, T_IND_READ);
+			args[i] = get_arg((process->position + (get_arg((process->position
+			+ 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)) % MEM_SIZE, T_IND_READ);
 		else if (codage[i] == REG_CODE && (offset += LABEL_SIZE(OPCODE(9))))
 		{
 			args[i] = get_arg((process->position + offset) % MEM_SIZE,
@@ -148,11 +148,12 @@ void	ft_ldi(t_process *process, t_vm *vm)
 	if (check_valid_codage(OPCODE(9), codage) && ft_ldi_check_args(args,
 		codage, process, 2))
 	{
-		// result = get_arg((process->position + ((args[0] + args[1]) % MEM_SIZE)) % IDX_MOD, T_IND_READ); NEED TO CHECK TOMORROW
-		// process->registries[arg] = result;
-		process->carry = (result) ? 0 : 1;
+		result = get_arg(((process->position + ((args[0] + args[1]) % IDX_MOD))) 
+			% MEM_SIZE, T_IND_READ);
+		process->registries[args[2]] = result;
+		// process->carry = (result) ? 0 : 1;
 	}
-	change_process_position(OPCODE(1), codage, process);
+	change_process_position(OPCODE(9), codage, process);
 }
 
 // void	ft_sti(t_process *process, t_vm *vm)
@@ -176,10 +177,10 @@ void	ft_lld(t_process *process, t_vm *vm)
 	&& (arg = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
 			% MEM_SIZE, T_REG_SIZE)) > 1 && arg < 17)
 	{
-		result = get_arg((process->position + ((codage[0] == IND_CODE)
-			? (get_arg((process->position + get_arg((process->position + 2)
-			% MEM_SIZE, T_IND_SIZE)) % MEM_SIZE, T_IND_READ)) : 2))
-			% MEM_SIZE, T_DIR_SIZE);
+		result = (codage[0] == IND_CODE) ? (get_arg((process->position
+		+ get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE))
+		% MEM_SIZE, T_IND_READ)) : (get_arg((process->position + 2) % MEM_SIZE,
+			T_DIR_SIZE));
 		process->registries[arg] = result;
 		process->carry = (result) ? 0 : 1;
 	}
