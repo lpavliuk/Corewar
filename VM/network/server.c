@@ -86,6 +86,7 @@ void					server(void)
 	// }
 
 	fill_map();
+	// create_pixel_map(g_vm);
 	// start_game(server);
 	// close(master_socket);
 }
