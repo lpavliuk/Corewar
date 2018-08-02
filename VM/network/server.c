@@ -55,13 +55,11 @@ void					server(void)
 	get_clients(server);
 
 	get_clients_exec(server);
-	while (vm->bot)
+	while (g_vm->bot)
 	{
-		int i = 0;
-		ft_printf("name: %s\ncomment: %s\n", vm->bot->name, vm->bot->comment);
-		while (i < 38)
-			ft_printf("%d\n", vm->bot->exec[i++]);
-		vm->bot = vm->bot->next;
+		ft_printf("name: %s\ncomment: %s\n", g_vm->bot->name, g_vm->bot->comment);
+		print_memory(g_vm->bot->exec, CHAMP_MAX_SIZE);
+		g_vm->bot = g_vm->bot->next;
 	}
 	while (1);
 

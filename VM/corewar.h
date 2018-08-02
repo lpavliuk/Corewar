@@ -246,13 +246,13 @@ typedef struct
 	fd_set				read_fds;
 }						t_server;
 
-void					client(t_vm *vm);
+void					client(void);
 int						create_socket(void);
 void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
-void					server(t_vm *vm);
+void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
-void					get_clients_exec(t_vm *vm, t_server *server);
+void					get_clients_exec(t_server *server);
 
 
 

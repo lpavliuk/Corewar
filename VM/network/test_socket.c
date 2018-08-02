@@ -115,8 +115,8 @@ int		main(int argc, char **argv)
 	if (g_vm->flag_client && g_vm->flag_server)
 		ft_error("Error");
 	else if (g_vm->flag_client)
-		client(g_vm);
+		client();
 	else if (g_vm->flag_server)
-		server(g_vm);
+		server();
 	return (0);
 }
