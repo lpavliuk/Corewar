@@ -91,7 +91,7 @@ static t_bot		*bot_init(unsigned int id)
 {
 	t_bot			*new;
 
-	if (((int)id == 0) || ((int)id < -4))
+	if (((int)id >= 0) || ((int)id < -4))
 		ft_error("Error");
 	new = (t_bot *)malloc(sizeof(t_bot));
 	(!new) ? ft_error("Error") : 0;
