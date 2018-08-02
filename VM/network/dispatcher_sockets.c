@@ -19,7 +19,7 @@ static void			accept_client(t_server *server)
 
 	new_socket = accept(server->master_socket, NULL, NULL);
 	(!new_socket) ? ft_error("Error") : 0;
-	if (server->vm_link->count_players >= 4)
+	if (g_vm->count_players >= 4)
 	{
 		close(new_socket);
 		return ;
@@ -30,7 +30,7 @@ static void			accept_client(t_server *server)
 		if (server->client_sockets[i] == 0)
 		{
 			server->client_sockets[i] = new_socket;
-			server->vm_link->count_players++;
+			g_vm->count_players++;
 			return ;
 		}
 		i++;
@@ -54,7 +54,7 @@ static void			check_clients(t_server *server)
 		{
 			if (read(sd, &buffer, n_buffer) <= 0)
 			{
-				server->vm_link->count_players--;
+				g_vm->count_players--;
 				server->client_sockets[i] = 0;
 				close(sd);
 			}

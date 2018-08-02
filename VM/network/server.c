@@ -27,7 +27,6 @@ static t_server		*init_server(void)
 
 	server = (t_server *)malloc(sizeof(t_server));
 	(!server) ? ft_error("Error: init_server()") : 0;
-	server->vm_link = NULL;
 	server->master_socket = create_socket();
 	server->n_client_sockets = 4;
 	bzero_sockets(server->client_sockets, server->n_client_sockets);
@@ -46,17 +45,16 @@ static char				bind_to_address(int socket_fd, char *ip)
 	return (bind(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
-void					server(t_vm *vm)
+void					server(void)
 {
 	t_server			*server;
 
 	server = init_server();
-	server->vm_link = vm;
-	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error: bind()") : 0;
-	listen(server->master_socket, 4);
+	(bind_to_address(server->master_socket, g_vm->ip)) ? ft_error("Error: bind()") : 0;
+	listen(server->master_socket, 1);
 	get_clients(server);
 
-	get_clients_exec(vm, server);
+	get_clients_exec(server);
 	while (vm->bot)
 	{
 		int i = 0;

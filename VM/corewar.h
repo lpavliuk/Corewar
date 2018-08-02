@@ -239,7 +239,6 @@ void					get_args(int count, char **args);
 
 typedef struct
 {
-	t_vm				*vm_link;
 	int					master_socket;
 	int					client_sockets[4];
 	unsigned char		n_client_sockets;
@@ -247,7 +246,6 @@ typedef struct
 	fd_set				read_fds;
 }						t_server;
 
-// void					client(t_vm *vm, char *str);
 void					client(t_vm *vm);
 int						create_socket(void);
 void					foreach_sockets(t_server *server, unsigned char *str, int bytes);

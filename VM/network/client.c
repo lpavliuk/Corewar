@@ -60,53 +60,30 @@ static void				read_init_info(int socket_fd)
 	}
 }
 
-// void				client(t_vm *vm, char *str)
-// {
-// 	int				socket_fd;
-
-// 	socket_fd = create_socket();
-// 	connect_to_server(socket_fd, vm->ip);
-// 	send(socket_fd, str, ft_strlen(str), 0);
-// 	read_init_info(socket_fd);
-// 	while (1)
-// 		;
-// 	close(socket_fd);
-// }
-
 /*
 ** name | comment | exec
 */
 
 static void				serialize(t_bot *bot, unsigned char *str)
 {
-	// int		str_len;
-
-	// str_len = PROG_NAME_LENGTH + COMMENT_LENGTH + bot->size;
-	// str = (unsigned char *)malloc(str_len);
-	// (!str) ? ft_error("Error") : 0;
-	
-	// print_memory(bot->exec, bot->size);
 	ft_memcpy(str, bot->name, PROG_NAME_LENGTH);
 	ft_memcpy(str + PROG_NAME_LENGTH, bot->comment, COMMENT_LENGTH);
-	ft_memcpy(str + PROG_NAME_LENGTH + COMMENT_LENGTH, (char *)bot->exec, bot->size);
+	ft_memcpy(str + PROG_NAME_LENGTH + COMMENT_LENGTH, bot->exec, bot->size);
 }
 
-/* End up version */
-
-void					client(t_vm *vm)
+void					client(void)
 {
 	int				socket_fd;
-	unsigned char	*data;
-	unsigned char	str[PROG_NAME_LENGTH + COMMENT_LENGTH + vm->bot->size];
+	unsigned char	str[PROG_NAME_LENGTH + COMMENT_LENGTH + g_vm->bot->size];
 
-	ft_bzero(str, PROG_NAME_LENGTH + COMMENT_LENGTH + vm->bot->size);
-	(vm->count_players != 1) ? ft_error("Error") : 0;
-	serialize(vm->bot, str);
+	(g_vm->count_players != 1) ? ft_error("Error") : 0;
+	ft_bzero(str, PROG_NAME_LENGTH + COMMENT_LENGTH + g_vm->bot->size);
+	serialize(g_vm->bot, str);
 	socket_fd = create_socket();
-	connect_to_server(socket_fd, vm->ip);
+	connect_to_server(socket_fd, g_vm->ip);
 	send(socket_fd, "Ready to fight!", 15, 0);
 	read_init_info(socket_fd);
-	send(socket_fd, str, PROG_NAME_LENGTH + COMMENT_LENGTH + vm->bot->size, 0);
+	send(socket_fd, str, PROG_NAME_LENGTH + COMMENT_LENGTH + g_vm->bot->size, 0);
 	
 	while (1);
 	close(socket_fd);
