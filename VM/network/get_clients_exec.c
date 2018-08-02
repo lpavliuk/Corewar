@@ -12,12 +12,12 @@
 
 #include "corewar.h"
 
-void		get_clients_exec(t_vm *vm, t_server *server)
+void		get_clients_exec(t_server *server)
 {
-	int i;
-	int sd;
-	unsigned int id_bot;
-    t_bot *new_bot;
+	int 			i;
+	int 			sd;
+	unsigned int	id_bot;
+    t_bot			*new_bot;
 
 	i = 0;
 	id_bot = 1;
@@ -26,7 +26,7 @@ void		get_clients_exec(t_vm *vm, t_server *server)
 		sd = server->client_sockets[i];
 		if (sd > 0)
 		{
-			new_bot = push_new_bot(&vm->bot, id_bot);
+			new_bot = push_new_bot(&g_vm->bot, id_bot);
 			new_bot->exec = (unsigned char *)malloc(CHAMP_MAX_SIZE + 1);
 			ft_bzero(new_bot->exec, CHAMP_MAX_SIZE);
 			read(sd, &new_bot->name, PROG_NAME_LENGTH);
