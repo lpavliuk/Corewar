@@ -30,6 +30,7 @@ void	change_process_position(char opcode, char *codage, t_process *process)
 	char	offset;
 	int		i;
 
+	offset = 0;
 	i = 0;
 	while (i < 3)
 	{
@@ -146,7 +147,7 @@ void	ft_add(t_process *process)
 {
 	int		i;
 	char	codage[4];
-	char	args[3];
+	unsigned	args[3];
 
 	i = 0;
 	decipher_codage(codage, COUNT_ARGS(4), GET_CODAGE);
@@ -174,7 +175,7 @@ void	ft_sub(t_process *process)
 {
 	int		i;
 	char	codage[4];
-	char	args[3];
+	unsigned	args[3];
 
 	i = 0;
 	decipher_codage(codage, COUNT_ARGS(5), GET_CODAGE);

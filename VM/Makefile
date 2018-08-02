@@ -23,9 +23,9 @@ SRCNAME=	bot_parsing.c\
 			staff2.c\
 			step.c\
 			text_output.c\
-			get_server_info.c
+			get_server_info.c\
+			visualize.c
 			# test_socket.c
-			# visualize.c
 			# visualize.c
 #main.c
 
@@ -44,11 +44,11 @@ OK_STRING    =***	$(NAME) created		***
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@$(CC) $(FLAGS) $(LIBFT) $(OBJ) -I $(INCLD) -o $(NAME)
+	@$(CC) $(FLAGS) $(LIBFT) $(OBJ) -I $(INCLD) -o $(NAME) -lncurses
 	@printf "\n$(GREEN)$(OK_STRING)\n\n"
 
 %.o:%.c $(LIBFT) ./include/corewar.h
-	@$(CC) $(FLAGS) -c $< -I $(INCLD) -o $@
+	@$(CC) $(FLAGS) -c $< -I $(INCLD) -o $@ 
 	@printf "$(CYAN)*$(COLOR_OFF)"
 
 $(LIBFT):

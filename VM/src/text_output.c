@@ -13,7 +13,7 @@
 #include "corewar.h"
 #include <stdio.h>
 
-void		print_header()
+void		print_header()														// ! bot id realy ??
 {
 	t_bot			*cur_bot;
 	char			i;
@@ -26,7 +26,7 @@ void		print_header()
 		cur_bot = g_vm->bot;
 		while(cur_bot && (int)cur_bot->id != (int)i)
 			cur_bot = cur_bot->next;
-		// if (cur_bot)															// ! bot id realy ??
+		if (cur_bot)															
 			ft_printf("* Player %u, weighing %u bytes, \"%s\" (\"%s\") !\n",
 			i, cur_bot->size, cur_bot->name, cur_bot->comment);
 		i++;
@@ -43,7 +43,7 @@ void		dump_print()
 		if (!(i % 64))
 			ft_printf("\n");
 		if (!(i % 64))
-			ft_printf("0x%6x :", i);
+			ft_printf("0x%04x :", i);
 		ft_printf(" %02x", g_map[i]);
 	}
 	ft_printf("\n");
@@ -51,7 +51,7 @@ void		dump_print()
 
 void		print_winer()
 {
-	ft_printf("Player %u (%s) won\n", g_vm->winner->id , g_vm->winner->name);
+	ft_printf("Player %i (%s) won\n", g_vm->winner->id , g_vm->winner->name);
 }
 
 void		text_out()

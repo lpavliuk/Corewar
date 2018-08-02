@@ -25,7 +25,7 @@ void	delta_cycle()
 int		reset_cur_period()
 {
 	t_bot		*cur_bot;
-	int			max;
+	unsigned	max;
 
 	max = 0;
 	cur_bot = g_vm->bot;
