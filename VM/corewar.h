@@ -141,7 +141,7 @@ typedef struct			s_vm
 	unsigned char		flag_server : 1;
 	unsigned char		flag_client : 1;
 	unsigned int		cycle_to_die;
-	unsigned int		nbr_cycles;			/* Cycle on which we are going to dump memory. */
+	unsigned int		dump_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
@@ -162,6 +162,7 @@ typedef struct			s_pixel
 
 t_pixel					**g_pixels;
 unsigned char			g_map[MEM_SIZE];
+t_vm					*g_vm;
 
 /*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 
@@ -205,19 +206,19 @@ void					usage(void);
 unsigned int			get_arg(unsigned int i, char arg_size);
 unsigned int			reverse_bytes(unsigned int data, char bytes);
 char					get_arg_size(char opcode, char type);
-char					get_arg_size(char opcode, char type);
 void					decipher_codage(char *arr, unsigned char n_args, unsigned char codage);
 void					pseudo_codage(char *arr, char opcode);
-void					get_args(t_vm *vm, int count, char **args);
-void					get_info_server(t_vm *vm, char *args[], int argv, int *i);
-void					get_info_client(t_vm *vm, char *args[], int argv, int *i);
+void					get_info_server(char *args[], int argv, int *i);
+void					get_info_client(char *args[], int argv, int *i);
 t_process				*push_new_process(t_process **head, unsigned int
 						*process_count, t_bot *parent, unsigned int position);
-// void					check_executable(t_bot *bot);
-// void					get_server_info(t_vm *vm, char *args[], int argv, int *i);
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
+void					sort_bot_list(t_bot **head, unsigned char count_players);
+void					parse_argument(int count, char **args, int *i);
+
+
 
 /*>>>>>>>>>> Network Game Mode <<<<<<<<<<*/
 

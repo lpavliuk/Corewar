@@ -87,13 +87,15 @@ void				pseudo_codage(char *arr, char opcode)
 	}
 }
 
-static t_bot		*bot_init(unsigned int id, unsigned char player_counter)
+static t_bot		*bot_init(unsigned int id)
 {
 	t_bot			*new;
 
+	if (((int)id == 0) || ((int)id < -4))
+		ft_error("Error");
 	new = (t_bot *)malloc(sizeof(t_bot));
 	(!new) ? ft_error("Error") : 0;
-	new->player_counter = player_counter;
+	new->player_counter = 0;
 	ft_bzero(new->name, PROG_NAME_LENGTH + 1);
 	ft_bzero(new->comment, COMMENT_LENGTH + 1);
 	new->exec = NULL;
@@ -108,15 +110,12 @@ static t_bot		*bot_init(unsigned int id, unsigned char player_counter)
 
 t_bot				*push_new_bot(t_bot **head, unsigned int id)
 {
-	unsigned char	player_counter;
 	t_bot			*tmp;
 	t_bot			*new;
 
-	player_counter = 1;
 	tmp = *head;
 	while (tmp)
 	{
-		player_counter++;
 		if (tmp->id == id)
 			ft_error("Error");
 		else if (tmp->next)
@@ -124,7 +123,7 @@ t_bot				*push_new_bot(t_bot **head, unsigned int id)
 		else
 			break ;
 	}
-	new = bot_init(id, player_counter);
+	new = bot_init(id);
 	if (!*head)
 		*head = new;
 	else
