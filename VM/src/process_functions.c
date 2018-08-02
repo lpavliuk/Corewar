@@ -38,9 +38,10 @@ void	change_process_position(char opcode, char *codage, t_process *process)
 		(codage[i] == DIR_CODE) ? (offset += LABEL_SIZE(opcode)) : 0;
 		i++;
 	}
+	(g_vm->flag_visual) ? (g_pixels[process->position]->color -= 10) : 1;
 	process->position = ((process->position) + offset + 1 + CODAGE(opcode))
 		% MEM_SIZE;
-	ft_printf("position ->%d<- opcode ->%d<- cur_cycle ->%d<-\n", process->position, opcode, g_vm->cur_cycle);
+	(g_vm->flag_visual) ? (g_pixels[process->position]->color += 10) : 1;
 }
 
 void	ft_live(t_process *process)
@@ -56,7 +57,8 @@ void	ft_live(t_process *process)
 	{
 		if (player_id == bot->id)
 		{
-			!g_vm->flag_visual ? ft_printf("Player %d (%s) is said to be alive\n",
+			!g_vm->flag_visual
+				? ft_printf("Player %d (%s) is said to be alive\n",
 				bot->player_counter, bot->name) : 1;
 			bot->lives_cur_period++;
 			bot->last_live = g_vm->cur_cycle;
@@ -64,7 +66,10 @@ void	ft_live(t_process *process)
 		bot = bot->next;
 	}
 	if (g_vm->flag_visual)
-		g_pixels[process->position]->live = 50;
+	{
+		g_pixels[process->position]->live = 1;
+		g_pixels[process->position]->counter = 50;
+	}
 }
 
 void	ft_ld(t_process *process)
