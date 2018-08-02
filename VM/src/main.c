@@ -24,7 +24,7 @@ void		init_vm(void)
 	g_vm->flag_server = 0;
 	g_vm->flag_client = 0;
 	g_vm->cycle_to_die = CYCLE_TO_DIE;
-	g_vm->nbr_cycles = 0;
+	g_vm->dump_cycles = 0;
 	g_vm->cur_cycle = 0;
 	g_vm->process_count = 0;
 	g_vm->port = 0;
@@ -70,9 +70,9 @@ void		dispatcher_routes(void)
 	else
 	{
 		fill_map();
-		if (g_vm->flag_visual)
-			visualize(g_vm);
-		else
+		//if (g_vm->flag_visual)
+		//	visualize(g_vm);
+		//else
 			text_out();
 	}
 }

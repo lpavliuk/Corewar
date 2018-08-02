@@ -17,15 +17,15 @@ NAME=	core
 SRCNAME=	bot_parsing.c\
 			check_exec.c\
 			get_args.c\
-			get_server_info.c\
 			main.c\
 			process_functions.c\
 			staff.c\
 			staff2.c\
 			step.c\
-			test_socket.c\
 			text_output.c\
-			visualize.c
+			get_server_info.c
+			# test_socket.c
+			# visualize.c
 			# visualize.c
 #main.c
 
@@ -47,7 +47,7 @@ $(NAME): $(OBJ)
 	@$(CC) $(FLAGS) $(LIBFT) $(OBJ) -I $(INCLD) -o $(NAME)
 	@printf "\n$(GREEN)$(OK_STRING)\n\n"
 
-%.o:%.c $(LIBFT)
+%.o:%.c $(LIBFT) ./include/corewar.h
 	@$(CC) $(FLAGS) -c $< -I $(INCLD) -o $@
 	@printf "$(CYAN)*$(COLOR_OFF)"
 

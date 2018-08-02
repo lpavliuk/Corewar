@@ -42,7 +42,7 @@ void		dump_print()
 			ft_printf("\n");
 		if (!(i % 64))
 			ft_printf("0x%6x :", i);
-		ft_printf(" %c");
+		ft_printf(" %02x", g_map[i]);
 	}
 	ft_printf("\n");
 }
@@ -54,11 +54,17 @@ void		print_winer()
 
 void		text_out()
 {
+	g_vm->flag_dump = 1;
+	g_vm->dump_cycles = 30000;
 	print_header();
-	while ((g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles) || g_vm->winner)
+	while (!g_vm->winner && !(g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles))
 		step();
 	if (g_vm->flag_dump)
+	{
 		dump_print();
+		ft_printf("Cycle to DIe %d\n", g_vm->cycle_to_die);
+	}
 	else if (g_vm->winner)
 		print_winer();
+	// (g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles)
 }

@@ -38,8 +38,9 @@ void	change_process_position(char opcode, char *codage, t_process *process)
 		(codage[i] == DIR_CODE) ? (offset += LABEL_SIZE(opcode)) : 0;
 		i++;
 	}
-	process->position = (process->position + offset + 1 + CODAGE(opcode))
+	process->position = ((process->position) + offset + 1 + CODAGE(opcode))
 		% MEM_SIZE;
+	ft_printf("position ->%d<- opcode ->%d<- cur_cycle ->%d<-\n", process->position, opcode, g_vm->cur_cycle);
 }
 
 void	ft_live(t_process *process)
@@ -72,7 +73,7 @@ void	ft_ld(t_process *process)
 	unsigned int	arg2;
 	unsigned int	result;
 
-	decipher_codage(codage, COUNT_ARGS(2), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(2), GET_CODAGE);
 	if (check_valid_codage(OPCODE(1), codage)
 	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
 			% MEM_SIZE, T_REG_SIZE)) > 1 && arg2 < 17)
@@ -119,7 +120,7 @@ void	ft_st(t_process *process)
 	unsigned int	position_arg2;
 	unsigned int	result;
 
-	decipher_codage(codage, COUNT_ARGS(3), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(3), GET_CODAGE);
 	if (check_valid_codage(OPCODE(2), codage) && (result = get_arg(
 		(process->position + 2) % MEM_SIZE, T_REG_SIZE) > 0) && result < 17)
 	{
@@ -128,7 +129,7 @@ void	ft_st(t_process *process)
 		if (codage[1] == IND_CODE)
 		{
 			position_arg2 %= IDX_MOD;
-			set_map_value(process, result, position_arg2, g_vm);
+			set_map_value(process, result, position_arg2);
 		}
 		else if (position_arg2 > 0 && position_arg2 <= REG_NUMBER)
 			process->registries[position_arg2] = result;
@@ -143,7 +144,7 @@ void	ft_add(t_process *process)
 	char	args[3];
 
 	i = 0;
-	decipher_codage(codage, COUNT_ARGS(4), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(4), GET_CODAGE);
 	if (check_valid_codage(OPCODE(3), codage))
 	{
 		while(i < 3)
@@ -171,7 +172,7 @@ void	ft_sub(t_process *process)
 	char	args[3];
 
 	i = 0;
-	decipher_codage(codage, COUNT_ARGS(5), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(5), GET_CODAGE);
 	if (check_valid_codage(OPCODE(4), codage))
 	{
 		while(i < 3)
@@ -224,10 +225,11 @@ int		ft_and_or_xor_args(unsigned int *args, char *codage,
 
 void	ft_and(t_process *process)
 {
-	char	codage[4];
-	char	args[3];
+	char			codage[4];
+	unsigned int	args[3];
 
-	decipher_codage(codage, COUNT_ARGS(6), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(OPCODE(5)), GET_CODAGE);
+	// ft_printf("%s: %d value %02x\n", process->parent->name, process->position, g_map[process->position]);
 	if (check_valid_codage(OPCODE(5), codage) && ft_and_or_xor_args(args,
 		codage, process, 2))
 	{
@@ -236,16 +238,16 @@ void	ft_and(t_process *process)
 			process->registries[args[1]] : args[1]);
 		(process->registries[args[2]]) ? (process->carry = 0) : 1;
 	}
-	change_process_position(OPCODE(4), codage, process);
+	change_process_position(OPCODE(5), codage, process);
 }
 
 void	ft_or(t_process *process)
 {
-	char	codage[4];
-	char	args[3];
+	char			codage[4];
+	unsigned int	args[3];
 
-	decipher_codage(codage, COUNT_ARGS(6), (process->position + 1) % MEM_SIZE);
-	if (check_valid_codage(OPCODE(5), codage) && ft_and_or_xor_args(args,
+	decipher_codage(codage, COUNT_ARGS(7), GET_CODAGE);
+	if (check_valid_codage(OPCODE(6), codage) && ft_and_or_xor_args(args,
 		codage, process, 2))
 	{
 		process->registries[args[2]] = ((codage[0] == REG_CODE) ?
@@ -253,16 +255,16 @@ void	ft_or(t_process *process)
 			process->registries[args[1]] : args[1]);
 		(process->registries[args[2]]) ? (process->carry = 0) : 1;
 	}
-	change_process_position(OPCODE(4), codage, process);
+	change_process_position(OPCODE(6), codage, process);
 }
 
 void	ft_xor(t_process *process)
 {
-	char	codage[4];
-	char	args[3];
+	char			codage[4];
+	unsigned int	args[3];
 
-	decipher_codage(codage, COUNT_ARGS(6), (process->position + 1) % MEM_SIZE);
-	if (check_valid_codage(OPCODE(5), codage) && ft_and_or_xor_args(args,
+	decipher_codage(codage, COUNT_ARGS(8), GET_CODAGE);
+	if (check_valid_codage(OPCODE(7), codage) && ft_and_or_xor_args(args,
 		codage, process, 2))
 	{
 		process->registries[args[2]] = ((codage[0] == REG_CODE) ?
@@ -270,7 +272,7 @@ void	ft_xor(t_process *process)
 			process->registries[args[1]] : args[1]);
 		(process->registries[args[2]]) ? (process->carry = 0) : 1;
 	}
-	change_process_position(OPCODE(4), codage, process);
+	change_process_position(OPCODE(7), codage, process);
 }
 
 void	ft_zjmp(t_process *process)
@@ -315,7 +317,7 @@ void	ft_ldi(t_process *process)
 	unsigned int	args[3];
 	unsigned int	result;
 
-	decipher_codage(codage, COUNT_ARGS(10), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(10), GET_CODAGE);
 	if (check_valid_codage(OPCODE(9), codage) && ft_ldi_lldi_check_args(args,
 		codage, process, 2))
 	{
@@ -364,7 +366,7 @@ void	ft_sti(t_process *process)
 	char			codage[4];
 	unsigned int	args[3];
 
-	decipher_codage(codage, COUNT_ARGS(11), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(11), GET_CODAGE);
 	if (check_valid_codage(OPCODE(10), codage) && ft_sti_check_args(args,
 		codage, process, 2))
 	{
@@ -420,7 +422,7 @@ void	ft_lld(t_process *process)
 	unsigned int	arg2;
 	unsigned int	result;
 
-	decipher_codage(codage, COUNT_ARGS(13), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(13), GET_CODAGE);
 	if (check_valid_codage(OPCODE(12), codage)
 	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
 			% MEM_SIZE, T_REG_SIZE)) > 1 && arg2 < 17)
@@ -441,8 +443,8 @@ void	ft_lldi(t_process *process)
 	unsigned int	args[3];
 	unsigned int	result;
 
-	decipher_codage(codage, COUNT_ARGS(14), (process->position + 1) % MEM_SIZE);
-	if (check_valid_codage(OPCODE(13), codage) && ft_ldi_check_args(args,
+	decipher_codage(codage, COUNT_ARGS(14), GET_CODAGE);
+	if (check_valid_codage(OPCODE(13), codage) && ft_ldi_lldi_check_args(args,
 		codage, process, 2))
 	{
 		result = get_arg((process->position + (args[0] + args[1]))
@@ -470,7 +472,7 @@ void	ft_aff(t_process *process)
 	char			codage[4];
 	unsigned int	reg_num;
 
-	decipher_codage(codage, COUNT_ARGS(16), (process->position + 1) % MEM_SIZE);
+	decipher_codage(codage, COUNT_ARGS(16), GET_CODAGE);
 	if (codage[0] == REG_CODE)
 	{
 		reg_num = get_arg((process->position + 1) % MEM_SIZE, T_REG_SIZE);

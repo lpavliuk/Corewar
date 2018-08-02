@@ -81,8 +81,8 @@ typedef	struct			s_table
 	char				args_count;
 	t_arr				args[3];
 	char				opcode;
-	char				codage : 1;
-	char				label_size : 4;
+	unsigned char		codage : 1;
+	unsigned char		label_size : 4;
 	unsigned int		cycles;
 }						t_table;
 
@@ -264,30 +264,33 @@ void					get_clients_exec(t_vm *vm, t_server *server);
 
 
 
+
 /*
-**	Process functions
+**>>>>>>>>>  Process functions <<<<<<<<<<<**
 */
 
-// void		ft_live(t_process *process);
-// void		ft_ld(t_process *process);
-// void		ft_st(t_process *process);
-// void		ft_add(t_process *process);
-// void		ft_sub(t_process *process);
-// void		ft_and(t_process *process);
-// void		ft_or(t_process *process);
-// void		ft_xor(t_process *process);
-// void		ft_zjmp(t_process *process);
-// void		ft_ldi(t_process *process);
-// void		ft_sti(t_process *process);
-// void		ft_fork(t_process *process);
-// void		ft_lld(t_process *process);
-// void		ft_lldi(t_process *process);
-// void		ft_lfork(t_process *process);
-// void		ft_aff(t_process *process);
+#define GET_CODAGE get_arg((process->position + 1) % MEM_SIZE, 1)
 
-// static void	(*func[16])(t_process *process) = {
-// 	ft_live, ft_ld, ft_st, ft_add, ft_sub, ft_and, ft_or, ft_xor,
-// 	ft_zjmp, ft_ldi, ft_sti, ft_fork, ft_lld, ft_lldi, ft_lfork, ft_aff
-// };
+void		ft_live(t_process *process);
+void		ft_ld(t_process *process);
+void		ft_st(t_process *process);
+void		ft_add(t_process *process);
+void		ft_sub(t_process *process);
+void		ft_and(t_process *process);
+void		ft_or(t_process *process);
+void		ft_xor(t_process *process);
+void		ft_zjmp(t_process *process);
+void		ft_ldi(t_process *process);
+void		ft_sti(t_process *process);
+void		ft_fork(t_process *process);
+void		ft_lld(t_process *process);
+void		ft_lldi(t_process *process);
+void		ft_lfork(t_process *process);
+void		ft_aff(t_process *process);
+
+static void	(*g_func[16])(t_process *process) = {
+	ft_live, ft_ld, ft_st, ft_add, ft_sub, ft_and, ft_or, ft_xor,
+	ft_zjmp, ft_ldi, ft_sti, ft_fork, ft_lld, ft_lldi, ft_lfork, ft_aff
+};
 
 #endif

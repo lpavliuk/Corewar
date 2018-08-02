@@ -43,13 +43,15 @@ void	time_to_die()
 
 	prev = 0;
 	cur_p = g_vm->process; 
+	ft_printf("|||die %d|||\n", g_vm->cycle_to_die);
 	while(cur_p)
-		if (!cur_p->live)
+	{																	// !!!!!!!!!!!!!!!!!!!!
+		if (!(cur_p->live))
 		{
 			prev ? prev->next = cur_p->next : 0;
 			!prev ? g_vm->process = cur_p->next : 0;
 			free(cur_p);
-			g_vm->process--;
+			g_vm->process_count--;
 			cur_p = prev ? prev->next : g_vm->process;
 		}
 		else
@@ -58,28 +60,33 @@ void	time_to_die()
 			prev = cur_p;
 			cur_p = cur_p->next;
 		}
+
+	}
 }
 
-void	do_proceses(t_process *curent)
+void	do_proceses()
 {
+	t_process *curent;
+
+	curent = g_vm->process;
 	while(curent)
 	{
 		if (!curent->opcode)
 		{
-			if (!g_map[curent->position] && g_map[curent->position] > 16)
-				curent->position = (curent->position + 1) % MEM_SIZE;
+			if (!g_map[curent->position] || g_map[curent->position] > 16)
+				curent->position = ((curent->position) + 1) % MEM_SIZE;
 			else
 			{
+																				// ft_printf("%02x  %d\n", g_map[curent->position], curent->position);
 				curent->opcode = g_map[curent->position];
-				curent->cycles_to_perform = PREFORM(curent->position) - 1;
+				curent->cycles_to_perform = PREFORM(curent->opcode) - 1;
 			}
 		}
 		else if (curent->cycles_to_perform > 0)
 			curent->cycles_to_perform--;
 		else if (!curent->cycles_to_perform)
 		{
-			;
-			// func[curent->opcode - 1](curent, g_vm);									// ? call function
+			g_func[curent->opcode - 1](curent);									// ? call function
 			curent->opcode = 0;
 		}
 		curent = curent->next;
@@ -102,21 +109,23 @@ t_bot		*winner_bot()
 			min =  cur_bot->last_live;
 			winner_bot = cur_bot;
 		}
+		cur_bot = cur_bot->next;
 	}
 	return (winner_bot);
 }
 
 int		step()
 {
-	do_proceses(g_vm->process);
-	if (!g_vm->cur_cycle && !(g_vm->cur_cycle % g_vm->cycle_to_die))
+	do_proceses();
+	if (g_vm->cur_cycle && !(g_vm->cur_cycle % g_vm->cycle_to_die))
 	{
+		// ft_printf("%s:%d value", curent->parent->name, curent->position);
 		time_to_die();
 		reset_cur_period() ? delta_cycle() : 0;								// ? cut cycle_to_die when "live" greater than 21
 		g_vm->last_change_cycle_to_die > 10 ? delta_cycle(): 0;					// ? cut cycle_to_die when it had no changes more then 10 steps
 		g_vm->last_change_cycle_to_die++;
 	}
 	g_vm->cur_cycle++;
-	(g_vm->cycle_to_die < 1 || !g_vm->process) ? g_vm->winner = winner_bot() : 0;
+	(!g_vm->process || g_vm->cycle_to_die < 1) ? g_vm->winner = winner_bot() : 0;
 	return (0);
 }
