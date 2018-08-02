@@ -217,6 +217,7 @@ void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
 void					sort_bot_list(t_bot **head, unsigned char count_players);
 void					parse_argument(int count, char **args, int *i);
+void					get_args(int count, char **args);
 
 
 

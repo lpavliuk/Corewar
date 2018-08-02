@@ -13,52 +13,48 @@
 #include "../corewar.h"
 
 
-void		fill_map(t_vm *vm, char count_players)
+void		fill_map(void)
 {
 	t_bot			*bot;
 	unsigned int	i;
 	unsigned int	total;
 
 	total = 0;
-	bot = vm->bot;
+	bot = g_vm->bot;
 	while (bot)
 	{
 		i = 0;
-		push_new_process(&vm->process, &vm->process_count, bot, total + i);
+		push_new_process(&g_vm->process, &g_vm->process_count, bot, total + i);
 		while (i < bot->size)
 		{
 			g_map[total + i] = bot->exec[i];
 			i++;
 		}
-		total += MEM_SIZE / count_players;
+		total += MEM_SIZE / g_vm->count_players;
 		bot = bot->next;
 	}
 }
 
-static t_vm		*init_vm(void)
+static void		init_vm(void)
 {
-	t_vm	*new;
-
-	if (!(new = (t_vm *)malloc(sizeof(t_vm))))
+	if (!(g_vm = (t_vm *)malloc(sizeof(t_vm))))
 		exit(0);
 	ft_bzero(g_map, MEM_SIZE);
-	new->count_players = 0;
-	new->flag_visual = 0;
-	new->flag_dump = 0;
-	new->flag_server = 0;
-	new->flag_client = 0;
-	new->cycle_to_die = CYCLE_TO_DIE;
-	new->nbr_cycles = 0;
-	new->cur_cycle = 0;
-	new->process_count = 0;
-	new->port = 0;
-	new->ip = NULL;
-	new->winner = NULL;
-	new->process = NULL;
-	new->bot = NULL;
-	return (new);
+	g_vm->count_players = 0;
+	g_vm->flag_visual = 0;
+	g_vm->flag_dump = 0;
+	g_vm->flag_server = 0;
+	g_vm->flag_client = 0;
+	g_vm->cycle_to_die = CYCLE_TO_DIE;
+	g_vm->dump_cycles = 0;
+	g_vm->cur_cycle = 0;
+	g_vm->process_count = 0;
+	g_vm->port = 0;
+	g_vm->ip = NULL;
+	g_vm->winner = NULL;
+	g_vm->process = NULL;
+	g_vm->bot = NULL;
 }
-
 // static void					get_info_server(t_vm *vm, char *args[], int argv, int *i)
 // {
 // 	vm->flag_server = 1;
@@ -84,6 +80,15 @@ static t_vm		*init_vm(void)
 
 
 
+void			get_args(int count, char **args)
+{
+	int				i;
+
+	i = 0;
+	while (++i < count)
+		parse_argument(count, args, &i);
+	(g_vm->count_players == 0 && !g_vm->flag_server) ? usage() : 0;
+}
 
 
 
@@ -104,17 +109,14 @@ static t_vm		*init_vm(void)
 
 int		main(int argc, char **argv)
 {
-	t_vm	*vm;
+	init_vm();
+	get_args(argc, argv);
 
-	vm = init_vm();
-	get_args(vm, argc, argv);
-
-	print_memory(vm->bot->exec, vm->bot->size);
-	if (vm->flag_client && vm->flag_server)
+	if (g_vm->flag_client && g_vm->flag_server)
 		ft_error("Error");
-	else if (vm->flag_client)
-		client(vm);
-	else if (vm->flag_server)
-		server(vm);
+	else if (g_vm->flag_client)
+		client(g_vm);
+	else if (g_vm->flag_server)
+		server(g_vm);
 	return (0);
 }

@@ -84,15 +84,15 @@ void		dispatcher_routes(void)
 ** and call corresponding functions.
 */
 
-void			get_args(int count, char **args)
-{
-	int				i;
+// void			get_args(int count, char **args)
+// {
+// 	int				i;
 
-	i = 0;
-	while (++i < count)
-		parse_argument(count, args, &i);
-	(g_vm->count_players == 0) ? usage() : 0;
-}
+// 	i = 0;
+// 	while (++i < count)
+// 		parse_argument(count, args, &i);
+// 	(g_vm->count_players == 0) ? usage() : 0;
+// }
 
 // int			main(int ac, char **av)
 // {
