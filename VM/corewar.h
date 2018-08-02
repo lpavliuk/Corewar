@@ -183,7 +183,7 @@ t_vm					*g_vm;
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2
 
-# define LIVE_COLOR	20
+# define LIVE_COLOR	10
 
 /* CURSOR */
 

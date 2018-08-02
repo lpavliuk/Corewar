@@ -59,17 +59,11 @@ void	preparation(void)
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);				/* Second bot */
 	init_pair(3, COLOR_RED, COLOR_BLACK);				/* Third bot */
 	init_pair(4, COLOR_CYAN, COLOR_BLACK);				/* Fourth bot */
-	/* PROCESS COLORS */
+	/* LIVE */
 	init_pair(11, COLOR_WHITE, COLOR_GREEN);
 	init_pair(12, COLOR_WHITE, COLOR_BLUE);
 	init_pair(13, COLOR_WHITE, COLOR_RED);
 	init_pair(14, COLOR_WHITE, COLOR_CYAN);
-	init_pair(15, COLOR_BLACK, COLOR_BLACK);
-	/* LIVE */
-	init_pair(21, COLOR_WHITE, COLOR_GREEN);
-	init_pair(22, COLOR_WHITE, COLOR_BLUE);
-	init_pair(23, COLOR_WHITE, COLOR_RED);
-	init_pair(24, COLOR_WHITE, COLOR_CYAN);
 	/* OTHERS */
 	init_pair(5, COLOR_BLACK, COLOR_BLACK);				/* Initial pixel color */
 	init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA);			/* Layout color */
@@ -108,8 +102,12 @@ void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
 		x = process->position % cols;
 		x = X_BEGIN + x * 3;
 		wattron(win->window, COLOR_PAIR(g_pixels[process->position]->color) | A_REVERSE);
+		if (g_pixels[process->position]->color == 5)
+			wattron(win->window, COLOR_PAIR(6));
 		mvwaddch(win->window, y, x, base[g_map[process->position] / 16]);
 		mvwaddch(win->window, y, x + 1, base[g_map[process->position] % 16]);
+		if (g_pixels[process->position]->color == 5)
+			wattroff(win->window, COLOR_PAIR(6));
 		wattroff(win->window, COLOR_PAIR(g_pixels[process->position]->color) | A_REVERSE);
 		process = process->next;
 	}
