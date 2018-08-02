@@ -78,14 +78,15 @@ void	ft_ld(t_process *process)
 	unsigned int	result;
 
 	decipher_codage(codage, COUNT_ARGS(2), GET_CODAGE);
+	arg2 = 99;
 	if (check_valid_codage(OPCODE(1), codage)
-	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
-			% MEM_SIZE, T_REG_SIZE)) > 1 && arg2 < 17)
+	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4)
+		+ 2) % MEM_SIZE, T_REG_SIZE)) > 0 && arg2 < 17)
 	{
 		result = (codage[0] == IND_CODE) ? (get_arg((process->position
-		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD))
-		% MEM_SIZE, T_IND_READ)) : (get_arg((process->position + 2) % MEM_SIZE,
-			T_DIR_SIZE));
+		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)),
+			T_IND_READ)) : (get_arg((process->position + 2)
+			% MEM_SIZE, T_DIR_SIZE));
 		process->registries[arg2] = result;
 		process->carry = (result) ? 0 : 1;
 	}
@@ -97,10 +98,11 @@ void	ft_ld(t_process *process)
 */
 
 void	set_map_value(t_process *process, unsigned int val,
-		unsigned int new_pstn)
+		short int new_pstn)
 {
 	int		j;
 
+	ft_printf("%d\n", new_pstn);
 	j = 0;
 	while (j < 4)
 	{
@@ -233,7 +235,6 @@ void	ft_and(t_process *process)
 	unsigned int	args[3];
 
 	decipher_codage(codage, COUNT_ARGS(OPCODE(5)), GET_CODAGE);
-	// ft_printf("%s: %d value %02x\n", process->parent->name, process->position, g_map[process->position]);
 	if (check_valid_codage(OPCODE(5), codage) && ft_and_or_xor_args(args,
 		codage, process, 2))
 	{
@@ -282,7 +283,7 @@ void	ft_xor(t_process *process)
 void	ft_zjmp(t_process *process)
 {
 	if (process->carry)
-		process->position = get_arg(((process->position + 1) % IDX_MOD),
+		process->position += get_arg(((process->position + 1) % IDX_MOD),
 			T_DIR_SIZE);
 	else
 		process->position = (process->position + 1 + T_DIR_SIZE) % MEM_SIZE;
@@ -374,8 +375,12 @@ void	ft_sti(t_process *process)
 	if (check_valid_codage(OPCODE(10), codage) && ft_sti_check_args(args,
 		codage, process, 2))
 	{
+		ft_printf("%d\n", (short int)args[1] + (short int)args[2]);
+		ft_printf("%d\n", process->registries[args[2]]);
+		ft_printf("%d\n", codage[2]);
+		ft_printf("%d\n", codage[1]);
 		set_map_value(process, process->registries[args[0]],
-			((((codage[1] == REG_CODE) ? process->registries[args[1]] : args[1])
+			((short int)(((codage[1] == REG_CODE) ? process->registries[args[1]] : args[1])
 			+ ((codage[2] == REG_CODE) ? process->registries[args[2]]
 			: args[2])) % IDX_MOD) % MEM_SIZE);
 	}
