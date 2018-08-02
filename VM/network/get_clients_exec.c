@@ -31,7 +31,7 @@ void		get_clients_exec(t_vm *vm, t_server *server)
 			ft_bzero(new_bot->exec, CHAMP_MAX_SIZE);
 			read(sd, &new_bot->name, PROG_NAME_LENGTH);
 			read(sd, &new_bot->comment, COMMENT_LENGTH);
-			read(sd, new_bot->exec, 38);
+			read(sd, new_bot->exec, CHAMP_MAX_SIZE);
 		}
 		i++;
 	}
