@@ -61,7 +61,7 @@ static void			*send_init_info_to_players(void *data)
 	char		sec;
 	t_server	*server;
 
-	sec = 10;
+	sec = 30;
 	server = (t_server *)data;
 	while (sec >= 0)
 	{

@@ -20,19 +20,22 @@ void		get_clients_exec(t_server *server)
     t_bot			*new_bot;
 
 	i = 0;
-	id_bot = 1;
+	id_bot = -1;
 	while (i < server->n_client_sockets)
 	{
 		sd = server->client_sockets[i];
 		if (sd > 0)
 		{
 			new_bot = push_new_bot(&g_vm->bot, id_bot);
-			new_bot->exec = (unsigned char *)malloc(CHAMP_MAX_SIZE + 1);
-			ft_bzero(new_bot->exec, CHAMP_MAX_SIZE);
 			read(sd, &new_bot->name, PROG_NAME_LENGTH);
 			read(sd, &new_bot->comment, COMMENT_LENGTH);
-			read(sd, new_bot->exec, CHAMP_MAX_SIZE);
+			read(sd, &new_bot->size, 4);
+			new_bot->exec = (unsigned char *)malloc(new_bot->size);
+			ft_bzero(new_bot->exec, new_bot->size);
+			ft_printf("size: %d\n", new_bot->size);
+			read(sd, new_bot->exec, new_bot->size);
 		}
+		id_bot--;
 		i++;
 	}
 }

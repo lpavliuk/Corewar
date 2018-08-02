@@ -113,7 +113,7 @@ int		main(int argc, char **argv)
 	get_args(argc, argv);
 
 	if (g_vm->flag_client && g_vm->flag_server)
-		ft_error("Error");
+		ft_error("Error: main()");
 	else if (g_vm->flag_client)
 		client();
 	else if (g_vm->flag_server)

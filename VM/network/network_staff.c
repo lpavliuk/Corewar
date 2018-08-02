@@ -17,7 +17,7 @@ int			create_socket(void)
 	int		socket_fd;
 
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	(socket_fd < 0) ? ft_error("Error") : 0;
+	(socket_fd < 0) ? ft_error("Error: create_socket()") : 0;
 	return (socket_fd);
 }
 

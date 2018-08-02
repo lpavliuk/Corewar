@@ -58,7 +58,7 @@ void					server(void)
 	while (g_vm->bot)
 	{
 		ft_printf("name: %s\ncomment: %s\n", g_vm->bot->name, g_vm->bot->comment);
-		print_memory(g_vm->bot->exec, CHAMP_MAX_SIZE);
+		print_memory(g_vm->bot->exec, g_vm->bot->size);
 		g_vm->bot = g_vm->bot->next;
 	}
 	while (1);

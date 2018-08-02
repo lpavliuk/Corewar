@@ -17,13 +17,10 @@ static void			accept_client(t_server *server)
 	unsigned char	i;
 	int				new_socket;
 
-	new_socket = accept(server->master_socket, NULL, NULL);
-	(!new_socket) ? ft_error("Error") : 0;
 	if (g_vm->count_players >= 4)
-	{
-		close(new_socket);
 		return ;
-	}
+	new_socket = accept(server->master_socket, NULL, NULL);
+	(!new_socket) ? ft_error("Error: accept_client()") : 0;
 	i = 0;
 	while (i < server->n_client_sockets)
 	{
