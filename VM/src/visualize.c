@@ -284,7 +284,7 @@ void	sidebar_statistics(t_win *win, t_vm *vm)
 
 void	sidebar_footer(t_win *win, t_vm *vm)
 {
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "CYCLE_TO_DIE : %d", vm->cycle_to_die);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "CYCLE_TO_DIE : %4d", vm->cycle_to_die);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "CYCLE_DELTA : %d", CYCLE_DELTA);
 	CURSOR_Y += 2;
@@ -384,7 +384,7 @@ void	redraw(t_win *win, t_vm *vm, int key)
 		dispatcher_keys(win, vm, key, &flag);
 	if (flag || key == KEY_S)
 	{
-		// step(vm);
+		step();
 		draw_map(win, vm, 64);
 		show_sidebar(win, vm);
 	}
@@ -439,4 +439,5 @@ void	visualize(t_vm *vm)
 		redraw(win, vm, key);
 	delwin(win->window);
 	endwin();
+	ft_printf("%s\n", vm->winner->name);
 }

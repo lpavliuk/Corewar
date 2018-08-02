@@ -16,16 +16,30 @@ NAME=	core
 
 SRCNAME=	bot_parsing.c\
 			check_exec.c\
-			get_args.c\
+			get_server_info.c\
 			main.c\
+			parse_argument.c\
 			process_functions.c\
+			sort_bot_list.c\
 			staff.c\
 			staff2.c\
 			step.c\
 			text_output.c\
-			get_server_info.c\
 			visualize.c
-			# test_socket.c
+			# test_socket.c\
+
+			# bot_parsing.c\
+			# check_exec.c\
+			# get_args.c\
+			# main.c\
+			# process_functions.c\
+			# staff.c\
+			# staff2.c\
+			# step.c\
+			# text_output.c\
+			# get_server_info.c\
+			# visualize.c
+			# # test_socket.c
 			# visualize.c
 #main.c
 
