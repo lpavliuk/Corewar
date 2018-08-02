@@ -52,7 +52,7 @@ static void		*apply_clients(void *data)
 		(activity < 0) ? ft_error("Error: select") : 0;
 		dispatcher_sockets(server);
 	}
-	(server->vm_link->count_players == 0) ? ft_error("Error") : 0;
+	(server->vm_link->count_players == 0) ? ft_error("Error: apply_clients()") : 0;
 	return (data);
 }
 

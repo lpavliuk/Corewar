@@ -26,7 +26,7 @@ static t_server		*init_server(void)
 	t_server		*server;
 
 	server = (t_server *)malloc(sizeof(t_server));
-	(!server) ? ft_error("Error") : 0;
+	(!server) ? ft_error("Error: init_server()") : 0;
 	server->vm_link = NULL;
 	server->master_socket = create_socket();
 	server->n_client_sockets = 4;
@@ -42,7 +42,7 @@ static char				bind_to_address(int socket_fd, char *ip)
 	address.sin_family = AF_INET;
 	address.sin_port = htons(PORT);
 	if (!inet_aton(ip, &address.sin_addr))
-		ft_error("Error");
+		ft_error("Error: inet_aton()");
 	return (bind(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
@@ -52,14 +52,17 @@ void					server(t_vm *vm)
 
 	server = init_server();
 	server->vm_link = vm;
-	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
+	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error: bind()") : 0;
 	listen(server->master_socket, 4);
 	get_clients(server);
 
 	get_clients_exec(vm, server);
 	while (vm->bot)
 	{
-		ft_printf("name: %s | comment: %s\n", vm->bot->name, vm->bot->comment);
+		int i = 0;
+		ft_printf("name: %s\ncomment: %s\n", vm->bot->name, vm->bot->comment);
+		while (i < 38)
+			ft_printf("%d\n", vm->bot->exec[i++]);
 		vm->bot = vm->bot->next;
 	}
 	while (1);

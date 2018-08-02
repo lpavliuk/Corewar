@@ -109,6 +109,7 @@ int		main(int argc, char **argv)
 	vm = init_vm();
 	get_args(vm, argc, argv);
 
+	print_memory(vm->bot->exec, vm->bot->size);
 	if (vm->flag_client && vm->flag_server)
 		ft_error("Error");
 	else if (vm->flag_client)

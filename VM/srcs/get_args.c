@@ -77,16 +77,16 @@ char			is_flag(char *s)
 
 void			get_arg_through_flag(t_vm *vm, int count, char **args, int *i)
 {
-	if (ft_strequ(args[i], "-dump"))
-		get_dump(vm, args, count, &i);
-	else if (ft_strequ(args[i], "-n"))
-		get_number_bot(vm, args, count, &i);
-	else if (ft_strequ(args[i], "-v"))
+	if (ft_strequ(args[*i], "-dump"))
+		get_dump(vm, args, count, i);
+	else if (ft_strequ(args[*i], "-n"))
+		get_number_bot(vm, args, count, i);
+	else if (ft_strequ(args[*i], "-v"))
 		vm->flag_visual = 1;
-	else if (ft_strequ(args[i], "-s"))
-		get_info_server(vm, args, count, &i);
-	else if (ft_strequ(args[i], "-c"))
-		get_info_client(vm, args, count, &i);
+	else if (ft_strequ(args[*i], "-s"))
+		get_info_server(vm, args, count, i);
+	else if (ft_strequ(args[*i], "-c"))
+		get_info_client(vm, args, count, i);
 }
 
 void			get_args(t_vm *vm, int count, char **args)
@@ -102,10 +102,10 @@ void			get_args(t_vm *vm, int count, char **args)
 			get_arg_through_flag(vm, count, args, &i); 
 		else
 		{
-			while (not_available_id(id)) /* Attention */
+			// while (not_available_id(id)) /* Attention */
 				id--;
 			get_bot(vm, id, args[i]);
 		}
 	}
-	(vm->count_players == 0) ? usage() : 0;
+	(vm->count_players == 0 && !vm->flag_server) ? usage() : 0;
 }
