@@ -12,6 +12,30 @@
 
 #include "../corewar.h"
 
+static void		fill_map(void)
+{
+	t_bot			*bot;
+	unsigned int	i;
+	unsigned int	total;
+
+	total = 0;
+	bot = g_vm->bot;
+	while (bot)
+	{
+		i = 0;
+		push_new_process(&g_vm->process, &g_vm->process_count, bot, total + i);
+		while (i < bot->size)
+		{
+			g_map[total + i] = bot->exec[i];
+			i++;
+		}
+		total += MEM_SIZE / g_vm->count_players;
+		bot = bot->next;
+	}
+}
+
+/*---------------------------------------------------------------*/
+
 static void			bzero_sockets(int sockets[], int n_sockets)
 {
 	int				i;
@@ -53,17 +77,15 @@ void					server(void)
 	(bind_to_address(server->master_socket, g_vm->ip)) ? ft_error("Error: bind()") : 0;
 	listen(server->master_socket, 1);
 	get_clients(server);
-
 	get_clients_exec(server);
-	while (g_vm->bot)
-	{
-		ft_printf("name: %s\ncomment: %s\n", g_vm->bot->name, g_vm->bot->comment);
-		print_memory(g_vm->bot->exec, g_vm->bot->size);
-		g_vm->bot = g_vm->bot->next;
-	}
-	while (1);
+	// while (g_vm->bot)
+	// {
+	// 	ft_printf("name: %s\ncomment: %s\n", g_vm->bot->name, g_vm->bot->comment);
+	// 	print_memory(g_vm->bot->exec, g_vm->bot->size);
+	// 	g_vm->bot = g_vm->bot->next;
+	// }
 
-	// fill_map(vm, vm->count_players);
+	fill_map();
 	// start_game(server);
 	// close(master_socket);
 }

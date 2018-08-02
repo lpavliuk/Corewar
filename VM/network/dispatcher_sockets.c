@@ -36,20 +36,18 @@ static void			accept_client(t_server *server)
 
 static void			check_clients(t_server *server)
 {
-	unsigned char	buffer[PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE];
-	int				n_buffer;
+	unsigned char	buffer[15];
 	int				sd;
 	unsigned char	i;
 
 	i = 0;
-	n_buffer = PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE;
 	while (i < server->n_client_sockets)
 	{
-		ft_bzero(buffer, n_buffer);
+		ft_bzero(buffer, 15);
 		sd = server->client_sockets[i];
 		if (FD_ISSET(sd, &server->read_fds))
 		{
-			if (read(sd, &buffer, n_buffer) <= 0)
+			if (read(sd, &buffer, 15) <= 0)
 			{
 				g_vm->count_players--;
 				server->client_sockets[i] = 0;
@@ -60,9 +58,13 @@ static void			check_clients(t_server *server)
 	}
 }
 
+/*
+** FD_ISSET checks whether someone wants to connect to the server.
+*/
+
 void		dispatcher_sockets(t_server *server)
 {
-	if (FD_ISSET(server->master_socket, &server->read_fds))		/* Someone wants to connect to the server. */
+	if (FD_ISSET(server->master_socket, &server->read_fds))
 		accept_client(server);
 	else
 		check_clients(server);

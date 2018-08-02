@@ -12,6 +12,10 @@
 
 #include "../corewar.h"
 
+/*
+** 35 line: Checks whether we can read from this server socket or not.
+*/
+
 static void	connect_to_server(int socket_fd, char *ip)
 {
 	struct sockaddr_in	address;
@@ -28,7 +32,7 @@ static void	connect_to_server(int socket_fd, char *ip)
     FD_SET(socket_fd, &set);
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
-	if (select(socket_fd + 1, &set, NULL, NULL, &timeout) != 1)	/* Checks whether we can read from this server socket or not. */
+	if (select(socket_fd + 1, &set, NULL, NULL, &timeout) != 1)
 		ft_error("Error: connect");
 }
 
@@ -62,7 +66,7 @@ static void				read_init_info(int socket_fd)
 }
 
 /*
-** name | comment | size | exec
+** send name | comment | size | exec
 */
 
 static void				serialize(t_bot *bot, unsigned char *str)
@@ -96,5 +100,6 @@ void					client(void)
 	send(socket_fd, str, len, 0);
 	
 	while (1);
+	//get_game();
 	close(socket_fd);
 }
