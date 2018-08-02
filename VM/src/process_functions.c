@@ -2,9 +2,9 @@
 
 int		check_valid_codage(char opcode, char *codage)
 {
-	char	input_arg;
-	char	possible_arg;
-	char	it_was;
+	int		input_arg;
+	int		possible_arg;
+	int		it_was;
 
 	input_arg = 0;
 	while(input_arg < COUNT_ARGS(opcode))
@@ -28,7 +28,7 @@ int		check_valid_codage(char opcode, char *codage)
 void	change_process_position(char opcode, char *codage, t_process *process)
 {
 	char	offset;
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -144,7 +144,7 @@ void	ft_st(t_process *process)
 
 void	ft_add(t_process *process)
 {
-	char	i;
+	int		i;
 	char	codage[4];
 	char	args[3];
 
@@ -172,7 +172,7 @@ void	ft_add(t_process *process)
 
 void	ft_sub(t_process *process)
 {
-	char	i;
+	int		i;
 	char	codage[4];
 	char	args[3];
 
@@ -203,7 +203,7 @@ void	ft_sub(t_process *process)
 int		ft_and_or_xor_args(unsigned int *args, char *codage,
 	t_process *process, char offset)
 {
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -292,7 +292,7 @@ void	ft_zjmp(t_process *process)
 int		ft_ldi_lldi_check_args(unsigned int *args, char *codage,
 	t_process *process, char offset)
 {
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -336,7 +336,7 @@ void	ft_ldi(t_process *process)
 int		ft_sti_check_args(unsigned int *args, char *codage, t_process *process,
 		char offset)
 {
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -387,7 +387,7 @@ void	copy_new_process(t_process **head, t_process *process,
 		unsigned int position)
 {
 	t_process	*new;
-	char		i;
+	int			i;
 
 	i = 1;
 	new = (t_process *)malloc(sizeof(t_process));
