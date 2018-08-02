@@ -65,10 +65,10 @@ void		dispatcher_routes(t_vm *vm)
 	{
 		if (vm->flag_client && vm->flag_server)
 			ft_error("Error");
-		else if ((vm->flag_client))
-			client(vm);
-		else
-			server(vm);	/* Here we need to fill a map. */
+		// else if ((vm->flag_client))
+		// 	client(vm);
+		// else
+		// 	server(vm);	/* Here we need to fill a map. */
 	}
 	else
 	{
@@ -81,27 +81,58 @@ void		dispatcher_routes(t_vm *vm)
 	}
 }
 
+static void		bot_swap(t_bot **head, t_bot *prev, t_bot **cur, t_bot **next)
+{
+	t_bot		*tmp;
 
+	(*cur)->next = (*next)->next;
+	(*next)->next = *cur;
+	if (prev)
+		prev->next = *next;
+	else
+		*head = *next;
+	tmp = *next;
+	*next = *cur;
+	*cur = tmp;
+}
 
+void			sort_bot_list(t_bot **head)
+{
+	t_bot		*tmp;
+	t_bot		*prev;
+	t_bot		*cur;
+	t_bot		*next;
 
+	tmp = *head;
+	while (tmp && tmp->next)
+	{
+		prev = NULL;
+		cur = *head;
+		next = cur->next;
+		while (next)
+		{
+			if (cur->id < next->id)
+				bot_swap(head, prev, &cur, &next);
+			prev = cur;
+			cur = next;
+			next = next->next;
+		}
+		tmp = tmp->next;
+	}
+}
 
-// void		sort_bot_list(t_bot	**head)
-// {
+int			main(int ac, char **av)
+{
+	t_vm		*vm;
 
-// }
-
-// int			main(int ac, char **av)
-// {
-// 	t_vm		*vm;
-
-// 	if (ac > 1)
-// 	{
-// 		vm = init_vm();
-// 		get_args(vm, ac, av);
-// 		// sort_bot_list(&vm->bot);
-// 		dispatcher_routes(vm);
-// 	}
-// 	else
-// 		usage();
-// 	return (0);
-// }
+	if (ac > 1)
+	{
+		vm = init_vm();
+		get_args(vm, ac, av);
+		// sort_bot_list(&vm->bot);
+		dispatcher_routes(vm);
+	}
+	else
+		usage();
+	return (0);
+}
