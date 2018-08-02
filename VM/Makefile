@@ -10,7 +10,7 @@ WHITE	=\033[0;37m#		# White
 
 CC=		gcc
 
-FLAGS=	#-Wall -Wextra -Werror
+FLAGS=	-Wall -Wextra -Werror
 
 NAME=	core
 

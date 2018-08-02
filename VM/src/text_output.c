@@ -22,10 +22,12 @@ void		print_header()
 	i = 1;
 	while(i < g_vm->count_players)
 	{
+		ft_printf("_____\n");
 		cur_bot = g_vm->bot;
-		while(cur_bot && cur_bot->id != i)
+		while(cur_bot && (int)cur_bot->id != (int)i)
 			cur_bot = cur_bot->next;
-		ft_printf("* Player %u, weighing %u bytes, \"%s\" (\"%s\") !\n",
+		// if (cur_bot)															// ! bot id realy ??
+			ft_printf("* Player %u, weighing %u bytes, \"%s\" (\"%s\") !\n",
 			i, cur_bot->size, cur_bot->name, cur_bot->comment);
 		i++;
 	}
@@ -54,17 +56,11 @@ void		print_winer()
 
 void		text_out()
 {
-	g_vm->flag_dump = 1;
-	g_vm->dump_cycles = 30000;
 	print_header();
 	while (!g_vm->winner && !(g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles))
 		step();
 	if (g_vm->flag_dump)
-	{
 		dump_print();
-		ft_printf("Cycle to DIe %d\n", g_vm->cycle_to_die);
-	}
 	else if (g_vm->winner)
 		print_winer();
-	// (g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles)
 }
