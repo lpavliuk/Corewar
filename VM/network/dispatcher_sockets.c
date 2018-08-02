@@ -17,20 +17,17 @@ static void			accept_client(t_server *server)
 	unsigned char	i;
 	int				new_socket;
 
-	new_socket = accept(server->master_socket, NULL, NULL);
-	(!new_socket) ? ft_error("Error") : 0;
-	if (server->vm_link->count_players >= 4)
-	{
-		close(new_socket);
+	if (g_vm->count_players >= 4)
 		return ;
-	}
+	new_socket = accept(server->master_socket, NULL, NULL);
+	(!new_socket) ? ft_error("Error: accept_client()") : 0;
 	i = 0;
 	while (i < server->n_client_sockets)
 	{
 		if (server->client_sockets[i] == 0)
 		{
 			server->client_sockets[i] = new_socket;
-			server->vm_link->count_players++;
+			g_vm->count_players++;
 			return ;
 		}
 		i++;
@@ -39,22 +36,20 @@ static void			accept_client(t_server *server)
 
 static void			check_clients(t_server *server)
 {
-	unsigned char	buffer[PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE];
-	int				n_buffer;
+	unsigned char	buffer[15];
 	int				sd;
 	unsigned char	i;
 
 	i = 0;
-	n_buffer = PROG_NAME_LENGTH + COMMENT_LENGTH + CHAMP_MAX_SIZE;
 	while (i < server->n_client_sockets)
 	{
-		ft_bzero(buffer, n_buffer);
+		ft_bzero(buffer, 15);
 		sd = server->client_sockets[i];
 		if (FD_ISSET(sd, &server->read_fds))
 		{
-			if (read(sd, &buffer, n_buffer) <= 0)
+			if (read(sd, &buffer, 15) <= 0)
 			{
-				server->vm_link->count_players--;
+				g_vm->count_players--;
 				server->client_sockets[i] = 0;
 				close(sd);
 			}
@@ -63,9 +58,13 @@ static void			check_clients(t_server *server)
 	}
 }
 
+/*
+** FD_ISSET checks whether someone wants to connect to the server.
+*/
+
 void		dispatcher_sockets(t_server *server)
 {
-	if (FD_ISSET(server->master_socket, &server->read_fds))		/* Someone wants to connect to the server. */
+	if (FD_ISSET(server->master_socket, &server->read_fds))
 		accept_client(server);
 	else
 		check_clients(server);

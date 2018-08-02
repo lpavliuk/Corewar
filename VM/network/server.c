@@ -12,6 +12,30 @@
 
 #include "../corewar.h"
 
+static void		fill_map(void)
+{
+	t_bot			*bot;
+	unsigned int	i;
+	unsigned int	total;
+
+	total = 0;
+	bot = g_vm->bot;
+	while (bot)
+	{
+		i = 0;
+		push_new_process(&g_vm->process, &g_vm->process_count, bot, total + i);
+		while (i < bot->size)
+		{
+			g_map[total + i] = bot->exec[i];
+			i++;
+		}
+		total += MEM_SIZE / g_vm->count_players;
+		bot = bot->next;
+	}
+}
+
+/*---------------------------------------------------------------*/
+
 static void			bzero_sockets(int sockets[], int n_sockets)
 {
 	int				i;
@@ -26,8 +50,7 @@ static t_server		*init_server(void)
 	t_server		*server;
 
 	server = (t_server *)malloc(sizeof(t_server));
-	(!server) ? ft_error("Error") : 0;
-	server->vm_link = NULL;
+	(!server) ? ft_error("Error: init_server()") : 0;
 	server->master_socket = create_socket();
 	server->n_client_sockets = 4;
 	bzero_sockets(server->client_sockets, server->n_client_sockets);
@@ -42,29 +65,27 @@ static char				bind_to_address(int socket_fd, char *ip)
 	address.sin_family = AF_INET;
 	address.sin_port = htons(PORT);
 	if (!inet_aton(ip, &address.sin_addr))
-		ft_error("Error");
+		ft_error("Error: inet_aton()");
 	return (bind(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
-void					server(t_vm *vm)
+void					server(void)
 {
 	t_server			*server;
 
 	server = init_server();
-	server->vm_link = vm;
-	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
-	listen(server->master_socket, 4);
+	(bind_to_address(server->master_socket, g_vm->ip)) ? ft_error("Error: bind()") : 0;
+	listen(server->master_socket, 1);
 	get_clients(server);
+	get_clients_exec(server);
+	// while (g_vm->bot)
+	// {
+	// 	ft_printf("name: %s\ncomment: %s\n", g_vm->bot->name, g_vm->bot->comment);
+	// 	print_memory(g_vm->bot->exec, g_vm->bot->size);
+	// 	g_vm->bot = g_vm->bot->next;
+	// }
 
-	get_clients_exec(vm, server);
-	while (vm->bot)
-	{
-		ft_printf("name: %s | comment: %s\n", vm->bot->name, vm->bot->comment);
-		vm->bot = vm->bot->next;
-	}
-	while (1);
-
-	// fill_map(vm, vm->count_players);
+	fill_map();
 	// start_game(server);
 	// close(master_socket);
 }

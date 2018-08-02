@@ -59,16 +59,21 @@ void	preparation(void)
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);				/* Second bot */
 	init_pair(3, COLOR_RED, COLOR_BLACK);				/* Third bot */
 	init_pair(4, COLOR_CYAN, COLOR_BLACK);				/* Fourth bot */
-	/* BOT LIVE COLOR */
+	/* PROCESS COLORS */
 	init_pair(11, COLOR_WHITE, COLOR_GREEN);
 	init_pair(12, COLOR_WHITE, COLOR_BLUE);
 	init_pair(13, COLOR_WHITE, COLOR_RED);
 	init_pair(14, COLOR_WHITE, COLOR_CYAN);
+	init_pair(15, COLOR_BLACK, COLOR_BLACK);
+	/* LIVE */
+	init_pair(21, COLOR_WHITE, COLOR_GREEN);
+	init_pair(22, COLOR_WHITE, COLOR_BLUE);
+	init_pair(23, COLOR_WHITE, COLOR_RED);
+	init_pair(24, COLOR_WHITE, COLOR_CYAN);
 	/* OTHERS */
 	init_pair(5, COLOR_BLACK, COLOR_BLACK);				/* Initial pixel color */
 	init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA);			/* Layout color */
 	init_pair(7, COLOR_WHITE, COLOR_BLACK);				/* Generic white color */
-	/* STATUS */
 	init_pair(8, COLOR_RED, COLOR_BLACK);				/* Status: paused */
 	init_pair(9, COLOR_GREEN, COLOR_BLACK);				/* Status: running */
 }
@@ -119,7 +124,7 @@ void		attributes_action(WINDOW *window, t_pixel *pixel, char flag)
 			wattron(window, A_BOLD);
 		else if (pixel->live)
 		{
-			wattron(window, COLOR_PAIR(pixel->color + 10) | A_BOLD);
+			wattron(window, COLOR_PAIR(pixel->color + LIVE_COLOR) | A_BOLD);
 			pixel->counter--;
 			(pixel->counter <= 0) ? (pixel->live = 0) : 0;
 		}
@@ -134,7 +139,7 @@ void		attributes_action(WINDOW *window, t_pixel *pixel, char flag)
 	{
 		wattroff(window, A_BOLD);
 		wattroff(window, COLOR_PAIR(pixel->color));
-		wattroff(window, COLOR_PAIR(pixel->color + 10));		
+		wattroff(window, COLOR_PAIR(pixel->color + LIVE_COLOR));
 	}
 }
 

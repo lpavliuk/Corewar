@@ -158,7 +158,7 @@ typedef struct			s_vm
 typedef struct			s_pixel
 {
 	unsigned char		counter;	/* How much iterations this pixel must be in bold */
-	unsigned char		color : 5;	/* We have at our disposal 7 values */
+	unsigned char		color : 5;	/* We have at our disposal 31 values */
 	unsigned char		bold : 1;	/* We can put this bit in 1 and tell that this particular pixel will be in bold */
 	unsigned char		live : 1;	/* Flag whether this pixel is live-pixel or not. */
 	unsigned char		empty : 1;
@@ -193,6 +193,8 @@ void		text_out();
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2
 
+# define LIVE_COLOR	20
+
 /* CURSOR */
 
 # define CURSOR_X win->cursor_x
@@ -218,7 +220,6 @@ unsigned int			reverse_bytes(unsigned int data, char bytes);
 char					get_arg_size(char opcode, char type);
 void					decipher_codage(char *arr, unsigned char n_args, unsigned char codage);
 void					pseudo_codage(char *arr, char opcode);
-void					get_args(int count, char **args);
 void					get_info_server(char *args[], int argv, int *i);
 void					get_info_client(char *args[], int argv, int *i);
 t_process				*push_new_process(t_process **head, unsigned int
@@ -227,6 +228,12 @@ void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
 int						step();
+void					sort_bot_list(t_bot **head, unsigned char count_players);
+void					parse_argument(int count, char **args, int *i);
+void					get_args(int count, char **args);
+
+
+
 /*>>>>>>>>>> Network Game Mode <<<<<<<<<<*/
 
 #include <sys/socket.h>
@@ -245,7 +252,6 @@ int						step();
 
 typedef struct
 {
-	t_vm				*vm_link;
 	int					master_socket;
 	int					client_sockets[4];
 	unsigned char		n_client_sockets;
@@ -253,14 +259,13 @@ typedef struct
 	fd_set				read_fds;
 }						t_server;
 
-// void					client(t_vm *vm, char *str);
-void					client(t_vm *vm);
+void					client(void);
 int						create_socket(void);
 void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
-void					server(t_vm *vm);
+void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
-void					get_clients_exec(t_vm *vm, t_server *server);
+void					get_clients_exec(t_server *server);
 
 
 

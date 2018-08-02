@@ -44,15 +44,15 @@ static void		*apply_clients(void *data)
 	server = (t_server *)data;
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
+	max_sd = 0;
 	while (!server->flag_start)
 	{
-		max_sd = 0;
 		add_sockets_to_set(server, &max_sd);
 		activity = select(max_sd + 1, &server->read_fds, NULL, NULL, &timeout);
 		(activity < 0) ? ft_error("Error: select") : 0;
 		dispatcher_sockets(server);
 	}
-	(server->vm_link->count_players == 0) ? ft_error("Error") : 0;
+	(g_vm->count_players == 0) ? ft_error("Error: apply_clients()") : 0;
 	return (data);
 }
 
@@ -61,12 +61,12 @@ static void			*send_init_info_to_players(void *data)
 	char		sec;
 	t_server	*server;
 
-	sec = 10;
+	sec = 30;
 	server = (t_server *)data;
 	while (sec >= 0)
 	{
 		foreach_sockets(server, (unsigned char *)&sec, sizeof(unsigned char));
-		foreach_sockets(server, &server->vm_link->count_players, sizeof(unsigned char));
+		foreach_sockets(server, &g_vm->count_players, sizeof(unsigned char));
 		sleep(1);
 		sec--;
 	}
