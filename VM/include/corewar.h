@@ -138,7 +138,7 @@ typedef struct			s_process
 
 typedef struct			s_vm
 {
-	char				count_players;
+	unsigned char		count_players;
 	unsigned char		flag_visual : 1;
 	unsigned char		flag_dump : 1;
 	unsigned char		flag_server : 1;
@@ -166,6 +166,7 @@ typedef struct			s_pixel
 
 t_pixel					**g_pixels;
 unsigned char			g_map[MEM_SIZE];
+t_vm					*g_vm;
 
 /*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
 void		print_header(t_vm *vm);
@@ -215,32 +216,53 @@ void					usage(void);
 unsigned int			get_arg(unsigned int i, char arg_size);
 unsigned int			reverse_bytes(unsigned int data, char bytes);
 char					get_arg_size(char opcode, char type);
-char					get_arg_size(char opcode, char type);
 void					decipher_codage(char *arr, unsigned char n_args, unsigned char codage);
 void					pseudo_codage(char *arr, char opcode);
-void					get_args(t_vm *vm, int count, char **args);
-void					get_server_info(t_vm *vm, char *args[], int argv,
-						int *i);
+void					get_args(int count, char **args);
+void					get_info_server(char *args[], int argv, int *i);
+void					get_info_client(char *args[], int argv, int *i);
 t_process				*push_new_process(t_process **head, unsigned int
 						*process_count, t_bot *parent, unsigned int position);
-void					check_executable(t_bot *bot);
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
 int						step(t_vm *vm);
 /*>>>>>>>>>> Network Game Mode <<<<<<<<<<*/
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/select.h>
+#include <pthread.h>
+
 #define PORT 8888
 
 typedef struct
 {
+	t_vm				*vm_link;
 	int					master_socket;
 	int					client_sockets[4];
 	unsigned char		n_client_sockets;
-	unsigned char		count_players;
 	unsigned char		flag_start : 1;
 	fd_set				read_fds;
 }						t_server;
+
+// void					client(t_vm *vm, char *str);
+void					client(t_vm *vm);
+int						create_socket(void);
+void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
+void					server(t_vm *vm);
+void					dispatcher_sockets(t_server *server);
+void					get_clients(t_server *server);
+void					get_clients_exec(t_vm *vm, t_server *server);
+
+
 
 /*
 **	Process functions

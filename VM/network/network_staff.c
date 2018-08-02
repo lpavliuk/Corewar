@@ -1,33 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   corewar.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/07/11 13:45:19 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/07/11 13:45:23 by tkiselev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "corewar.h"
+#include "../corewar.h"
 
-void	get_info_server(char *args[], int argv, int *i)
+int			create_socket(void)
 {
-	g_vm->flag_server = 1;
-	(*i)++;
-	if (*i >= argv)
-		ft_error("Error");
-	else
-		g_vm->ip = args[*i];
+	int		socket_fd;
+
+	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+	(socket_fd < 0) ? ft_error("Error") : 0;
+	return (socket_fd);
 }
 
-void	get_info_client(char *args[], int argv, int *i)
+void		foreach_sockets(t_server *server, unsigned char *str, int bytes)
 {
-	g_vm->flag_client = 1;
-	(*i)++;
-	if (*i >= argv)
-		ft_error("Error");
-	else
-		g_vm->ip = args[*i];
+	int		i;
+	int		sd;
+
+	i = 0;
+	while (i < server->n_client_sockets)
+	{
+		sd = server->client_sockets[i];
+		if (sd > 0)
+			send(sd, str, bytes, 0);
+		i++;
+	}
 }
