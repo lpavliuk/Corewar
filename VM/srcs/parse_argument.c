@@ -18,7 +18,7 @@ static void		get_dump(char **args, int count, int *i)
 	if (*i < count && ft_is_uint(args[*i]))
 	{
 		g_vm->flag_dump = 1;
-		g_vm->nbr_cycles = ft_atoi(args[*i]);
+		g_vm->dump_cycles = ft_atoi(args[*i]);
 	}
 	else
 		usage();
@@ -47,36 +47,32 @@ static void		get_number_bot(char **args, int count, int *i)
 	if (*i < count && ft_is_uint(args[*i]))
 	{
 		id = ft_atoi(args[*i]);
-		(id > 4 || id == 0) ? ft_error("Error") : (*i)++;
+		(*i)++;
 		(*i < count) ? get_bot(id * -1, args[*i]) : usage();
 	}
 	else
 		usage();
 }
 
-/*
-** We go through an array of args and check whether
-** argument is -dump, -n, -s (server), -c (client) or simply .cor file,
-** and call corresponding functions.
-*/
-
-char			is_flag(char *s)
+static char			available_id(unsigned int id)
 {
-	if (ft_strequ(s, "-dump"))
-		return (1);
-	else if (ft_strequ(s, "-n"))
-		return (1);
-	else if (ft_strequ(s, "-v"))
-		return (1);
-	else if (ft_strequ(s, "-s"))
-		return (1);
-	else if (ft_strequ(s, "-c"))
-		return (1);
-	return (0);
+	t_bot		*bot;
+
+	bot = g_vm->bot;
+	while (bot)
+	{
+		if (bot->id == id)
+			return (0);
+		bot = bot->next;
+	}
+	return (1);
 }
 
-void			get_arg_through_flag(int count, char **args, int *i)
+void				parse_argument(int count, char **args, int *i)
 {
+	unsigned int	id;
+
+	id = -1;
 	if (ft_strequ(args[*i], "-dump"))
 		get_dump(args, count, i);
 	else if (ft_strequ(args[*i], "-n"))
@@ -87,24 +83,10 @@ void			get_arg_through_flag(int count, char **args, int *i)
 		get_info_server(args, count, i);
 	else if (ft_strequ(args[*i], "-c"))
 		get_info_client(args, count, i);
-}
-
-void			get_args(int count, char **args)
-{
-	int				i;
-	unsigned int	id;
-
-	id = 0;
-	i = 0;
-	while (++i < count)
+	else
 	{
-		if (is_flag(args[i]))
-			get_arg_through_flag(count, args, &i); 
-		else
-		{
-			id--;	/* Remake this shit cause it doesn't work correctly */
-			get_bot(id, args[i]);
-		}
+		while (!available_id(id))
+			id--;
+		get_bot(id, args[*i]);
 	}
-	(g_vm->count_players == 0) ? usage() : 0;
 }

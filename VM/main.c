@@ -24,7 +24,7 @@ void		init_vm(void)
 	g_vm->flag_server = 0;
 	g_vm->flag_client = 0;
 	g_vm->cycle_to_die = CYCLE_TO_DIE;
-	g_vm->nbr_cycles = 0;
+	g_vm->dump_cycles = 0;
 	g_vm->cur_cycle = 0;
 	g_vm->process_count = 0;
 	g_vm->port = 0;
@@ -78,47 +78,21 @@ void		dispatcher_routes(void)
 	}
 }
 
-/* >>>>> SORT BOT LIST <<<<< */
+/*
+** We go through an array of args and check whether
+** argument is -dump, -n, -s (server), -c (client) or simply .cor file,
+** and call corresponding functions.
+*/
 
-// static void		bot_swap(t_bot **head, t_bot *prev, t_bot **cur, t_bot **next)
-// {
-// 	t_bot		*tmp;
+void			get_args(int count, char **args)
+{
+	int				i;
 
-// 	(*cur)->next = (*next)->next;
-// 	(*next)->next = *cur;
-// 	if (prev)
-// 		prev->next = *next;
-// 	else
-// 		*head = *next;
-// 	tmp = *next;
-// 	*next = *cur;
-// 	*cur = tmp;
-// }
-
-// void			sort_bot_list(t_bot **head)
-// {
-// 	t_bot		*tmp;
-// 	t_bot		*prev;
-// 	t_bot		*cur;
-// 	t_bot		*next;
-
-// 	tmp = *head;
-// 	while (tmp && tmp->next)
-// 	{
-// 		prev = NULL;
-// 		cur = *head;
-// 		next = cur->next;
-// 		while (next)
-// 		{
-// 			if (cur->id < next->id)
-// 				bot_swap(head, prev, &cur, &next);
-// 			prev = cur;
-// 			cur = next;
-// 			next = next->next;
-// 		}
-// 		tmp = tmp->next;
-// 	}
-// }
+	i = 0;
+	while (++i < count)
+		parse_argument(count, args, &i);
+	(g_vm->count_players == 0) ? usage() : 0;
+}
 
 int			main(int ac, char **av)
 {
@@ -126,7 +100,7 @@ int			main(int ac, char **av)
 	{
 		init_vm();
 		get_args(ac, av);
-		// sort_bot_list(&g_vm->bot);
+		sort_bot_list(&g_vm->bot, g_vm->count_players);
 		dispatcher_routes();
 	}
 	else
