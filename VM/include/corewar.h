@@ -169,10 +169,10 @@ unsigned char			g_map[MEM_SIZE];
 t_vm					*g_vm;
 
 /*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
-void		print_header(t_vm *vm);
+void		print_header();
 void		dump_print();
-void		print_winer(t_vm *vm);
-void		text_out(vm);
+void		print_winer();
+void		text_out();
 
 /*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 
@@ -226,7 +226,7 @@ t_process				*push_new_process(t_process **head, unsigned int
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
-int						step(t_vm *vm);
+int						step();
 /*>>>>>>>>>> Network Game Mode <<<<<<<<<<*/
 
 #include <sys/socket.h>

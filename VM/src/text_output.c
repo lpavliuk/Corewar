@@ -13,16 +13,16 @@
 #include "corewar.h"
 #include <stdio.h>
 
-void		print_header(t_vm *vm)
+void		print_header()
 {
 	t_bot			*cur_bot;
 	char			i;
 
 	ft_printf("Introducing contestants...\n");
 	i = 1;
-	while(i < vm->count_players)
+	while(i < g_vm->count_players)
 	{
-		cur_bot = vm->bot;
+		cur_bot = g_vm->bot;
 		while(cur_bot && cur_bot->id != i)
 			cur_bot = cur_bot->next;
 		ft_printf("* Player %u, weighing %u bytes, \"%s\" (\"%s\") !\n",
@@ -47,18 +47,18 @@ void		dump_print()
 	ft_printf("\n");
 }
 
-void		print_winer(t_vm *vm)
+void		print_winer()
 {
-	ft_printf("Player %u (%s) won\n", vm->winner->id , vm->winner->name);
+	ft_printf("Player %u (%s) won\n", g_vm->winner->id , g_vm->winner->name);
 }
 
-void		text_out(t_vm *vm)
+void		text_out()
 {
-	print_header(vm);
-	while ((vm->flag_dump && vm->cur_cycle == vm->dump_cycles) || vm->winner)
-		step(vm);
-	if (vm->flag_dump)
+	print_header();
+	while ((g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles) || g_vm->winner)
+		step();
+	if (g_vm->flag_dump)
 		dump_print();
-	else if (vm->winner)
-		print_winer(vm);
+	else if (g_vm->winner)
+		print_winer();
 }

@@ -73,7 +73,7 @@ void		dispatcher_routes(void)
 		if (g_vm->flag_visual)
 			visualize(g_vm);
 		else
-			text_out(vm);
+			text_out();
 	}
 }
 
