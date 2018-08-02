@@ -59,25 +59,25 @@ static t_vm		*init_vm(void)
 	return (new);
 }
 
-static void					get_info_server(t_vm *vm, char *args[], int argv, int *i)
-{
-	vm->flag_server = 1;
-	(*i)++;
-	if (*i >= argv)
-		ft_error("Error");
-	else
-		vm->ip = args[*i];
-}
+// static void					get_info_server(t_vm *vm, char *args[], int argv, int *i)
+// {
+// 	vm->flag_server = 1;
+// 	(*i)++;
+// 	if (*i >= argv)
+// 		ft_error("Error");
+// 	else
+// 		vm->ip = args[*i];
+// }
 
-static void					get_info_client(t_vm *vm, char *args[], int argv, int *i)
-{
-	vm->flag_client = 1;
-	(*i)++;
-	if (*i >= argv)
-		ft_error("Error");
-	else
-		vm->ip = args[*i];
-}
+// static void					get_info_client(t_vm *vm, char *args[], int argv, int *i)
+// {
+// 	vm->flag_client = 1;
+// 	(*i)++;
+// 	if (*i >= argv)
+// 		ft_error("Error");
+// 	else
+// 		vm->ip = args[*i];
+// }
 
 /*-------------------------------------------------------------------------------------*/
 
@@ -85,20 +85,22 @@ static void					get_info_client(t_vm *vm, char *args[], int argv, int *i)
 
 
 
-void			get_args(t_vm *vm, int count, char **args)
-{
-	int				i;
 
-	i = 1;
-	while (i < count)
-	{
-		if (ft_strequ(args[i], "-s"))
-			get_info_server(vm, args, count, &i);
-		else if (ft_strequ(args[i], "-c"))
-			get_info_client(vm, args, count, &i);
-		i++;
-	}
-}
+
+// void			get_args(t_vm *vm, int count, char **args)
+// {
+// 	int				i;
+
+// 	i = 1;
+// 	while (i < count)
+// 	{
+// 		if (ft_strequ(args[i], "-s"))
+// 			get_info_server(vm, args, count, &i);
+// 		else if (ft_strequ(args[i], "-c"))
+// 			get_info_client(vm, args, count, &i);
+// 		i++;
+// 	}
+// }
 
 int		main(int argc, char **argv)
 {
@@ -110,7 +112,7 @@ int		main(int argc, char **argv)
 	if (vm->flag_client && vm->flag_server)
 		ft_error("Error");
 	else if (vm->flag_client)
-		client(vm, argv[1]);
+		client(vm);
 	else if (vm->flag_server)
 		server(vm);
 	return (0);

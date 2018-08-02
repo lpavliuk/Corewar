@@ -86,5 +86,5 @@ void			get_args(t_vm *vm, int count, char **args)
 		}
 		i++;
 	}
-	(vm->count_players == 0) ? usage() : 0;
+	// (vm->count_players == 0) ? usage() : 0;
 }

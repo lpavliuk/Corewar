@@ -55,9 +55,15 @@ void					server(t_vm *vm)
 	(bind_to_address(server->master_socket, vm->ip)) ? ft_error("Error") : 0;
 	listen(server->master_socket, 4);
 	get_clients(server);
+
+	get_clients_exec(vm, server);
+	while (vm->bot)
+	{
+		ft_printf("name: %s | comment: %s\n", vm->bot->name, vm->bot->comment);
+		vm->bot = vm->bot->next;
+	}
 	while (1);
 
-	// get_clients_exec(server);
 	// fill_map(vm, vm->count_players);
 	// start_game(server);
 	// close(master_socket);

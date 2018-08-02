@@ -23,7 +23,6 @@ void		get_clients_exec(t_vm *vm, t_server *server)
 	id_bot = 1;
     while (i < server->n_client_sockets)
     {
-    	ft_bzero(buffer, n_buffer);
     	sd = server->client_sockets[i];
     	if (sd > 0)
     	{
