@@ -206,10 +206,11 @@ int		ft_and_or_xor_args(unsigned int *args, char *codage,
 			args[i] = get_arg((process->position + get_arg((process->position +
 			(offset - T_IND_SIZE)) % MEM_SIZE, T_IND_SIZE))
 				% MEM_SIZE, T_IND_READ);
-		else if (codage[i] == REG_CODE && (offset += T_REG_SIZE))
+		else if (codage[i] == REG_CODE)
 		{
-			args[i] = get_arg((process->position + (offset - T_REG_SIZE))
+			args[i] = get_arg((process->position + offset)
 				% MEM_SIZE, T_REG_SIZE);
+			offset += T_REG_SIZE;
 			if (args[i] < 1 || args[i] > 16)
 				return (0);
 		}
@@ -292,10 +293,11 @@ int		ft_ldi_lldi_check_args(unsigned int *args, char *codage,
 		if (codage[i] == IND_CODE && (offset += T_IND_SIZE))
 			args[i] = get_arg((process->position + (get_arg((process->position
 			+ 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)) % MEM_SIZE, T_IND_READ);
-		else if (codage[i] == REG_CODE && (offset += T_REG_SIZE))
+		else if (codage[i] == REG_CODE)
 		{
-			args[i] = get_arg((process->position + (offset - T_REG_SIZE))
+			args[i] = get_arg((process->position + offset)
 				% MEM_SIZE, T_REG_SIZE);
+			offset += T_REG_SIZE;
 			if (args[i] < 1 || args[i] > 16)
 				return (0);
 		}
