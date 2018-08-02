@@ -2,9 +2,9 @@
 
 int		check_valid_codage(char opcode, char *codage)
 {
-	char	input_arg;
-	char	possible_arg;
-	char	it_was;
+	int		input_arg;
+	int		possible_arg;
+	int		it_was;
 
 	input_arg = 0;
 	while(input_arg < COUNT_ARGS(opcode))
@@ -28,7 +28,7 @@ int		check_valid_codage(char opcode, char *codage)
 void	change_process_position(char opcode, char *codage, t_process *process)
 {
 	char	offset;
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -38,9 +38,10 @@ void	change_process_position(char opcode, char *codage, t_process *process)
 		(codage[i] == DIR_CODE) ? (offset += LABEL_SIZE(opcode)) : 0;
 		i++;
 	}
+	(g_vm->flag_visual) ? (g_pixels[process->position]->color -= 10) : 1;
 	process->position = ((process->position) + offset + 1 + CODAGE(opcode))
 		% MEM_SIZE;
-	ft_printf("position ->%d<- opcode ->%d<- cur_cycle ->%d<-\n", process->position, opcode, g_vm->cur_cycle);
+	(g_vm->flag_visual) ? (g_pixels[process->position]->color += 10) : 1;
 }
 
 void	ft_live(t_process *process)
@@ -56,7 +57,8 @@ void	ft_live(t_process *process)
 	{
 		if (player_id == bot->id)
 		{
-			!g_vm->flag_visual ? ft_printf("Player %d (%s) is said to be alive\n",
+			!g_vm->flag_visual
+				? ft_printf("Player %d (%s) is said to be alive\n",
 				bot->player_counter, bot->name) : 1;
 			bot->lives_cur_period++;
 			bot->last_live = g_vm->cur_cycle;
@@ -64,7 +66,10 @@ void	ft_live(t_process *process)
 		bot = bot->next;
 	}
 	if (g_vm->flag_visual)
-		g_pixels[process->position]->live = 50;
+	{
+		g_pixels[process->position]->live = 1;
+		g_pixels[process->position]->counter = 50;
+	}
 }
 
 void	ft_ld(t_process *process)
@@ -139,7 +144,7 @@ void	ft_st(t_process *process)
 
 void	ft_add(t_process *process)
 {
-	char	i;
+	int		i;
 	char	codage[4];
 	char	args[3];
 
@@ -167,7 +172,7 @@ void	ft_add(t_process *process)
 
 void	ft_sub(t_process *process)
 {
-	char	i;
+	int		i;
 	char	codage[4];
 	char	args[3];
 
@@ -198,7 +203,7 @@ void	ft_sub(t_process *process)
 int		ft_and_or_xor_args(unsigned int *args, char *codage,
 	t_process *process, char offset)
 {
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -287,7 +292,7 @@ void	ft_zjmp(t_process *process)
 int		ft_ldi_lldi_check_args(unsigned int *args, char *codage,
 	t_process *process, char offset)
 {
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -331,7 +336,7 @@ void	ft_ldi(t_process *process)
 int		ft_sti_check_args(unsigned int *args, char *codage, t_process *process,
 		char offset)
 {
-	char	i;
+	int		i;
 
 	i = 0;
 	while (i < 3)
@@ -382,7 +387,7 @@ void	copy_new_process(t_process **head, t_process *process,
 		unsigned int position)
 {
 	t_process	*new;
-	char		i;
+	int			i;
 
 	i = 1;
 	new = (t_process *)malloc(sizeof(t_process));

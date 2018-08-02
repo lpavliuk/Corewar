@@ -158,7 +158,7 @@ typedef struct			s_vm
 typedef struct			s_pixel
 {
 	unsigned char		counter;	/* How much iterations this pixel must be in bold */
-	unsigned char		color : 3;	/* We have at our disposal 7 values */
+	unsigned char		color : 5;	/* We have at our disposal 7 values */
 	unsigned char		bold : 1;	/* We can put this bit in 1 and tell that this particular pixel will be in bold */
 	unsigned char		live : 1;	/* Flag whether this pixel is live-pixel or not. */
 	unsigned char		empty : 1;
