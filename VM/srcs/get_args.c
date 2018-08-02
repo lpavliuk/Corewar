@@ -60,31 +60,52 @@ static void		get_number_bot(t_vm *vm, char **args, int count, int *i)
 ** and call corresponding functions.
 */
 
+char			is_flag(char *s)
+{
+	if (ft_strequ(s, "-dump"))
+		return (1);
+	else if (ft_strequ(s, "-n"))
+		return (1);
+	else if (ft_strequ(s, "-v"))
+		return (1);
+	else if (ft_strequ(s, "-s"))
+		return (1);
+	else if (ft_strequ(s, "-c"))
+		return (1);
+	return (0);
+}
+
+void			get_arg_through_flag(t_vm *vm, int count, char **args, int *i)
+{
+	if (ft_strequ(args[i], "-dump"))
+		get_dump(vm, args, count, &i);
+	else if (ft_strequ(args[i], "-n"))
+		get_number_bot(vm, args, count, &i);
+	else if (ft_strequ(args[i], "-v"))
+		vm->flag_visual = 1;
+	else if (ft_strequ(args[i], "-s"))
+		get_info_server(vm, args, count, &i);
+	else if (ft_strequ(args[i], "-c"))
+		get_info_client(vm, args, count, &i);
+}
+
 void			get_args(t_vm *vm, int count, char **args)
 {
 	int				i;
 	unsigned int	id;
 
 	id = 0;
-	i = 1;
-	while (i < count)
+	i = 0;
+	while (++i < count)
 	{
-		if (ft_strequ(args[i], "-dump"))
-			get_dump(vm, args, count, &i);
-		else if (ft_strequ(args[i], "-n"))
-			get_number_bot(vm, args, count, &i);
-		else if (ft_strequ(args[i], "-v"))
-			vm->flag_visual = 1;
-		else if (ft_strequ(args[i], "-s"))
-			get_info_server(vm, args, count, &i);
-		else if (ft_strequ(args[i], "-c"))
-			get_info_client(vm, args, count, &i);
+		if (is_flag(args[i]))
+			get_arg_through_flag(vm, count, args, &i); 
 		else
 		{
-			id--;
+			while (not_available_id(id)) /* Attention */
+				id--;
 			get_bot(vm, id, args[i]);
 		}
-		i++;
 	}
-	// (vm->count_players == 0) ? usage() : 0;
+	(vm->count_players == 0) ? usage() : 0;
 }

@@ -81,6 +81,9 @@ void		dispatcher_routes(t_vm *vm)
 	}
 }
 
+
+/* >>>>> SORT BOT LIST <<<<< */
+
 static void		bot_swap(t_bot **head, t_bot *prev, t_bot **cur, t_bot **next)
 {
 	t_bot		*tmp;
@@ -129,7 +132,7 @@ int			main(int ac, char **av)
 	{
 		vm = init_vm();
 		get_args(vm, ac, av);
-		// sort_bot_list(&vm->bot);
+		sort_bot_list(&vm->bot);
 		dispatcher_routes(vm);
 	}
 	else

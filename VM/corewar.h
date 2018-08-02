@@ -146,7 +146,7 @@ typedef struct			s_vm
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
 	char				*ip;
-	char				*winner;
+	t_bot				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
 }						t_vm;
