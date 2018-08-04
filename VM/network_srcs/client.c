@@ -60,9 +60,9 @@ static void				read_init_info(int socket_fd, fd_set read_fds)
 			sleep(1);
 			system("clear");
 			printf("Time to start the game: %d\n", str[0]);
-			if (str[1] == 0)
-				break ;
 			printf("Number of connected players: %d\n", str[1]);
+			if (str[0] == 0)
+				break ;
 		}
 		else
 			ft_error("Error: connection interrupted");	/* CTRL + C on the server side */
@@ -103,8 +103,7 @@ void					client(void)
 	read_init_info(socket_fd, read_fds);
 	serialize(g_vm->bot, str);
 	send(socket_fd, str, len, 0);
-
-	while (1);
-	//get_game();
+	get_game(socket_fd, read_fds);
+	FD_ZERO(&read_fds);
 	close(socket_fd);
 }
