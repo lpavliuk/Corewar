@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../corewar.h"
+#include "corewar.h"
 
 /*
 ** 35 line: Checks whether we can read from this server socket or not.

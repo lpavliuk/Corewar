@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../corewar.h"
+#include "corewar.h"
 
 static void			add_sockets_to_set(t_server *server, int *max_sd)
 {
