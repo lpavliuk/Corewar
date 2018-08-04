@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../corewar.h"
+#include "corewar.h"
 
 static void		fill_map(void)
 {
@@ -86,7 +86,7 @@ void					server(void)
 	// }
 
 	fill_map();
-	// create_pixel_map(g_vm);
+	create_pixel_map();
 	// start_game(server);
 	// close(master_socket);
 }
