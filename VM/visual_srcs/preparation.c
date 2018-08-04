@@ -27,7 +27,7 @@ t_win		*init_win(void)
 	return (win);
 }
 
-static void		ft_prepare_pixel_map(void)
+void			ft_prepare_pixel_map(void)
 {
 	unsigned short	i;
 

@@ -36,7 +36,23 @@ static void		send_map_all_clients(t_server *server)
 			pthread_join(tid[i], NULL);
 }
 
+static void		send_pixels_all_clients(t_server *server)
+{
+	pthread_t	tid[4];
+	int			i;
+
+	i = -1;
+	while (++i < server->n_client_sockets)
+		if (server->client_sockets[i])
+			pthread_create(&tid[i], NULL, send_map, &server->client_sockets[i]);
+	i = -1;
+	while (++i < server->n_client_sockets)
+		if (server->client_sockets[i])
+			pthread_join(tid[i], NULL);
+}
+
 void			start_game(t_server *server)
 {
 	send_map_all_clients(server);
+	send_pixels_all_clients(server);
 }

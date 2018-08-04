@@ -236,6 +236,7 @@ void					redraw(t_win *win, int key);
 void					show_sidebar(t_win *win);
 void					sidebar_statistics(t_win *win);
 void					show_status(t_win *win);
+void					ft_prepare_pixel_map(void);
 
 /* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 
