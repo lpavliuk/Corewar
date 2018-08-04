@@ -39,7 +39,7 @@ void	get_game(int socket_fd, fd_set read_fds)
 	n = 0;
 	g_pixels = (t_pixel **)malloc(sizeof(t_pixel *) * MEM_SIZE);
 	(!g_pixels) ? ft_error("Error") : ft_prepare_pixel_map();
-	while (select(socket_fd + 1, &read_fds, NULL, NULL, 0) > 0)
+	while (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
 	{
 		if (!flag_map && !flag_pixel && recv(socket_fd, &g_map, MEM_SIZE, 0) > 0)
 		{

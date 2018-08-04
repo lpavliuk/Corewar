@@ -83,15 +83,11 @@ void					server(void)
 	// while (bot)
 	// {
 	// 	ft_printf("name: %s\ncomment: %s\n size: %d\n", bot->name, bot->comment, bot->size);
-	// 	print_memory(bot->exec, bot->size);
 	// 	bot = bot->next;
 	// }
-	// ft_printf("\n\n");
-
 	fill_map();
-	create_pixel_map();
+	// create_pixel_map();
+	print_memory(g_map, MEM_SIZE);
 	start_game(server);
-	while (1)
-		;
-	// close(master_socket);
+	close(server->master_socket);
 }

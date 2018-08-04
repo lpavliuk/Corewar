@@ -43,7 +43,6 @@ static void			check_clients(t_server *server)
 	int				sd;
 	unsigned char	i;
 
-
 	i = 0;
 	while (i < server->n_client_sockets)
 	{
