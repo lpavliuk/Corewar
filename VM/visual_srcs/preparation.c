@@ -69,7 +69,6 @@ void			create_pixel_map(void)
 {
 	g_pixels = (t_pixel **)malloc(sizeof(t_pixel *) * MEM_SIZE);
 	(!g_pixels) ? ft_error("Error") : ft_prepare_pixel_map();
-	fill_pixel_map(g_vm->bot, g_vm->count_players);
 }
 
 void			color_preparation(void)
