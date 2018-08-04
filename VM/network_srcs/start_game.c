@@ -18,6 +18,14 @@ static void		*send_map(void *sd)
 
 	socket_sd = *(int *)sd;
 	send(socket_sd, g_map, MEM_SIZE, 0);
+
+	int i = 0;
+	while (i < MEM_SIZE)
+	{
+		ft_printf("count: %d, color: %d\n", g_pixels[i]->counter, g_pixels[i]->color);
+		send(socket_sd, g_pixels[i], 2, 0);
+		i++;
+	}
 	return (sd);
 }
 
