@@ -145,9 +145,9 @@ void	ft_st(t_process *process)
 
 void	ft_add(t_process *process)
 {
-	int		i;
-	char	codage[4];
-	unsigned	args[3];
+	int				i;
+	char			codage[4];
+	unsigned char	args[3];
 
 	i = 0;
 	decipher_codage(codage, COUNT_ARGS(4), GET_CODAGE);
@@ -173,9 +173,9 @@ void	ft_add(t_process *process)
 
 void	ft_sub(t_process *process)
 {
-	int		i;
-	char	codage[4];
-	unsigned	args[3];
+	int				i;
+	char			codage[4];
+	unsigned char	args[3];
 
 	i = 0;
 	decipher_codage(codage, COUNT_ARGS(5), GET_CODAGE);
@@ -283,7 +283,7 @@ void	ft_xor(t_process *process)
 void	ft_zjmp(t_process *process)
 {
 	if (process->carry)
-		process->position += get_arg(((process->position + 1) % IDX_MOD),
+		process->position += (short)get_arg(((process->position + 1) % IDX_MOD),
 			T_DIR_SIZE);
 	else
 		process->position = (process->position + 1 + T_DIR_SIZE) % MEM_SIZE;
@@ -326,7 +326,9 @@ void	ft_ldi(t_process *process)
 	if (check_valid_codage(OPCODE(9), codage) && ft_ldi_lldi_check_args(args,
 		codage, process, 2))
 	{
-		result = get_arg((process->position + ((args[0] + args[1]) % IDX_MOD))
+		result = get_arg((process->position
+			+ ((((codage[0] == DIR_CODE) ? (short)args[0] : args[0])
+			+ ((codage[1] == DIR_CODE) ? (short)args[1] : args[1])) % IDX_MOD))
 			% MEM_SIZE, T_IND_READ);
 		process->registries[args[2]] = result;
 	}
