@@ -269,7 +269,9 @@ void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
 void					get_clients_exec(t_server *server);
+void					get_game(int socket_fd, fd_set read_fds);
 void					start_game(t_server *server);
+
 
 /*
 **	Process functions
