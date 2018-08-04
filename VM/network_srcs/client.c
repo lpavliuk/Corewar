@@ -45,33 +45,27 @@ static void	connect_to_server(int socket_fd, char *ip)
 	check_connection(socket_fd);
 }
 
-static void				read_init_info(int socket_fd)
+static void				read_init_info(int socket_fd, fd_set read_fds)
 {
-	char			flag_sec;
-	unsigned char	str;
+	unsigned char	str[2];
+	struct timeval	timeout;
 
-	flag_sec = 0;
-	str = 0;
-
-	while (1)
+	timeout.tv_sec = 1;
+	timeout.tv_usec = 0;
+	while (select(socket_fd + 1, &read_fds, NULL, NULL, &timeout) > 0)
 	{
-		if (read(socket_fd, &str, sizeof(unsigned char)) > 0)
+		ft_bzero(str, 2);
+		if (recv(socket_fd, &str, 2, 0) > 0)
 		{
-			if (!flag_sec)
-			{
-				sleep(1);
-				system("clear");
-				printf("Time to start the game: %d\n", str);
-				flag_sec = 1;
-				if (str == 0)
-					break ;
-			}
-			else
-			{
-				printf("Number of connected players: %d\n", str);
-				flag_sec = 0;
-			}
+			sleep(1);
+			system("clear");
+			printf("Time to start the game: %d\n", str[0]);
+			if (str[1] == 0)
+				break ;
+			printf("Number of connected players: %d\n", str[1]);
 		}
+		else
+			ft_error("Error: connection interrupted");	/* CTRL + C on the server side */
 	}
 }
 
@@ -98,15 +92,17 @@ void					client(void)
 	int				len;
 	int				socket_fd;
 	unsigned char	str[PROG_NAME_LENGTH + COMMENT_LENGTH + g_vm->bot->size + 4];
+	fd_set			read_fds;
 
 	len = PROG_NAME_LENGTH + COMMENT_LENGTH + g_vm->bot->size + 4;
 	(g_vm->count_players != 1) ? ft_error("Error: client()") : 0;
 	ft_bzero(str, len);
 	socket_fd = create_socket();
 	connect_to_server(socket_fd, g_vm->ip);
-	read_init_info(socket_fd);
+	FD_SET(socket_fd, &read_fds);
+	read_init_info(socket_fd, read_fds);
 	serialize(g_vm->bot, str);
-	ft_printf("send = %d\n", send(socket_fd, str, len, 0));
+	send(socket_fd, str, len, 0);
 
 	while (1);
 	//get_game();
