@@ -103,7 +103,10 @@ void					client(void)
 	read_init_info(socket_fd, read_fds);
 	serialize(g_vm->bot, str);
 	send(socket_fd, str, len, 0);
+
 	get_game(socket_fd, read_fds);
+	while (1)
+		;
 	FD_ZERO(&read_fds);
 	close(socket_fd);
 }

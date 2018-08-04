@@ -40,7 +40,6 @@ static void			accept_client(t_server *server)
 
 static void			check_clients(t_server *server)
 {
-	unsigned char	buffer[1];
 	int				sd;
 	unsigned char	i;
 
@@ -48,11 +47,10 @@ static void			check_clients(t_server *server)
 	i = 0;
 	while (i < server->n_client_sockets)
 	{
-		ft_bzero(buffer, 1);
 		sd = server->client_sockets[i];
 		if (FD_ISSET(sd, &server->read_fds))
 		{
-			if (read(sd, buffer, 1) <= 0)
+			if (read(sd, 0, 0) < 0)
 			{
 				g_vm->count_players--;
 				server->client_sockets[i] = 0;

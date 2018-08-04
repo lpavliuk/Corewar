@@ -24,11 +24,8 @@ static void		fill_map(void)
 	{
 		i = 0;
 		push_new_process(&g_vm->process, &g_vm->process_count, bot, total + i);
-		ft_printf("size = %d\n", reverse_bytes(bot->size, 4));
 		while (i < bot->size)
 		{
-			// ft_printf("i = %u\n", i);
-			// ft_printf("total + i = %u\n", total + i);
 			g_map[total + i] = bot->exec[i];
 			i++;
 		}
@@ -82,16 +79,19 @@ void					server(void)
 	get_clients(server);
 	get_clients_exec(server);
 
-	t_bot	*bot = g_vm->bot;
-	while (bot)
-	{
-		ft_printf("name: %s\ncomment: %s\n size: %d\n", bot->name, bot->comment, bot->size);
-		// print_memory(bot->exec, bot->size);
-		bot = bot->next;
-	}
+	// t_bot	*bot = g_vm->bot;
+	// while (bot)
+	// {
+	// 	ft_printf("name: %s\ncomment: %s\n size: %d\n", bot->name, bot->comment, bot->size);
+	// 	print_memory(bot->exec, bot->size);
+	// 	bot = bot->next;
+	// }
+	// ft_printf("\n\n");
 
 	fill_map();
-	// create_pixel_map();
-	// start_game(server);
+	create_pixel_map();
+	start_game(server);
+	while (1)
+		;
 	// close(master_socket);
 }

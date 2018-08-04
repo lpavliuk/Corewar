@@ -20,7 +20,7 @@ void	get_game(int socket_fd, fd_set read_fds)
 	// timeout.tv_usec = 0;
 	while (select(socket_fd + 1, &read_fds, NULL, NULL, 0) > 0)
 	{
-		if (recv(socket_fd, &g_map, sizeof(g_map), 0) > 0)
-			print_memory(g_map, sizeof(g_map));
+		if (recv(socket_fd, &g_map, MEM_SIZE, 0) > 0)
+			print_memory(g_map, MEM_SIZE);
 	}
 }
