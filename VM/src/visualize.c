@@ -12,10 +12,6 @@
 
 #include "corewar.h"
 
-/*
-** Color 5 because it is an initial number that represents the color of pixel.
-*/
-
 void		ft_bzero_pixel_map(void)
 {
 	unsigned short	i;
@@ -26,10 +22,7 @@ void		ft_bzero_pixel_map(void)
 		g_pixels[i] = (t_pixel *)malloc(sizeof(t_pixel));
 		(!g_pixels[i]) ? ft_error("Error") : 0;
 		g_pixels[i]->counter = 0;
-		g_pixels[i]->color = 5;
-		g_pixels[i]->bold = 0;
-		g_pixels[i]->live = 0;
-		g_pixels[i]->empty = 1;
+		g_pixels[i]->color = INIT_PIXEL_COLOR;
 		i++;
 	}
 }
@@ -54,19 +47,27 @@ void	preparation(void)
 	curs_set(0);
 	(!has_colors()) ? (endwin(), exit(0)) : start_color();
 	init_color(COLOR_MAGENTA, 408, 408, 408);
-	/* BOT COLORS */
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);				/* First bot */
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);				/* Second bot */
 	init_pair(3, COLOR_RED, COLOR_BLACK);				/* Third bot */
 	init_pair(4, COLOR_CYAN, COLOR_BLACK);				/* Fourth bot */
-	/* LIVE */
+	init_pair(5, COLOR_BLACK, COLOR_BLACK);				/* Initial pixel color */
+
+	/* ----- LIVE ----- */
 	init_pair(11, COLOR_WHITE, COLOR_GREEN);
 	init_pair(12, COLOR_WHITE, COLOR_BLUE);
 	init_pair(13, COLOR_WHITE, COLOR_RED);
 	init_pair(14, COLOR_WHITE, COLOR_CYAN);
-	/* OTHERS */
-	init_pair(5, COLOR_BLACK, COLOR_BLACK);				/* Initial pixel color */
-	init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA);			/* Layout color */
+
+	/* ----- PROCESSES ----- */
+	init_pair(21, COLOR_BLACK, COLOR_GREEN);
+	init_pair(22, COLOR_BLACK, COLOR_BLUE);
+	init_pair(23, COLOR_BLACK, COLOR_RED);
+	init_pair(24, COLOR_BLACK, COLOR_CYAN);
+	init_pair(25, COLOR_BLACK, COLOR_BLACK);
+
+	/* ----- OTHERS ----- */
+	init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA);			/* Layout color */	// WTF???
 	init_pair(7, COLOR_WHITE, COLOR_BLACK);				/* Generic white color */
 	init_pair(8, COLOR_RED, COLOR_BLACK);				/* Status: paused */
 	init_pair(9, COLOR_GREEN, COLOR_BLACK);				/* Status: running */
@@ -89,59 +90,29 @@ void	draw_table(t_win *win)
 	wattroff(win->window, COLOR_PAIR(6));
 }
 
-void			show_processes(t_win *win, t_vm *vm, unsigned char cols, char *base)
-{
-	t_process		*process;
-	unsigned char	y;
-	unsigned char	x;
-
-	process = vm->process;
-	while (process)
-	{
-		y = Y_BEGIN + (process->position / cols);
-		x = process->position % cols;
-		x = X_BEGIN + x * 3;
-		wattron(win->window, COLOR_PAIR(g_pixels[process->position]->color) | A_REVERSE);
-		if (g_pixels[process->position]->color == 5)
-			wattron(win->window, COLOR_PAIR(6));
-		mvwaddch(win->window, y, x, base[g_map[process->position] / 16]);
-		mvwaddch(win->window, y, x + 1, base[g_map[process->position] % 16]);
-		if (g_pixels[process->position]->color == 5)
-			wattroff(win->window, COLOR_PAIR(6));
-		wattroff(win->window, COLOR_PAIR(g_pixels[process->position]->color) | A_REVERSE);
-		process = process->next;
-	}
-}
-
 void		attributes_action(WINDOW *window, t_pixel *pixel, char flag)
 {
 	if (flag == ON)
 	{
 		wattron(window, COLOR_PAIR(pixel->color));
-		if (pixel->empty)
+		if ((pixel->color % 10) == INIT_PIXEL_COLOR)	/* INITIAL COLOR */
 			wattron(window, A_BOLD);
-		else if (pixel->live)
-		{
-			wattron(window, COLOR_PAIR(pixel->color + LIVE_COLOR) | A_BOLD);
-			pixel->counter--;
-			(pixel->counter <= 0) ? (pixel->live = 0) : 0;
-		}
-		else if (pixel->bold)
-		{
+		else if (pixel->counter > 0)
 			wattron(window, A_BOLD);
-			pixel->counter--;
-			(pixel->counter <= 0) ? (pixel->bold = 0) : 0;
-		}
 	}
-	else if (flag == OFF)
+	else
 	{
-		wattroff(window, A_BOLD);
-		wattroff(window, COLOR_PAIR(pixel->color));
-		wattroff(window, COLOR_PAIR(pixel->color + LIVE_COLOR));
+		wattroff(window, COLOR_PAIR(pixel->color) | A_BOLD);
+		if (pixel->counter != 0)
+		{
+			pixel->counter--;
+			if (pixel->counter == 0)
+				pixel->color %= 10;
+		}
 	}
 }
 
-void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
+void			draw_map(t_win *win)
 {
 	char			*base;
 	unsigned short	i;
@@ -157,7 +128,7 @@ void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i] % 16]);
 		attributes_action(win->window, g_pixels[i], OFF);
 		i++;
-		if ((i % cols) == 0)
+		if ((i % 64) == 0)
 		{
 			win->cursor_y++;
 			win->cursor_x = X_BEGIN;
@@ -165,8 +136,9 @@ void			draw_map(t_win *win, t_vm *vm, unsigned char cols)
 		else
 			mvwaddch(win->window, win->cursor_y, win->cursor_x++, ' ');
 	}
-	show_processes(win, vm, cols, base);
 }
+
+/* ---------------------------- SIDEBAR ------------------------------- */
 
 void	show_status(t_win *win)
 {
@@ -310,7 +282,7 @@ void	prepare_window(t_win *win, t_vm *vm)
 	win->cursor_y = Y_BEGIN;
 	clear();
 	draw_table(win);
-	draw_map(win, vm, 64);
+	draw_map(win);
 	show_sidebar(win, vm);
 	refresh();
 	wrefresh(win->window);
@@ -383,7 +355,7 @@ void	redraw(t_win *win, t_vm *vm, int key)
 	if (flag || key == KEY_S)
 	{
 		step();
-		draw_map(win, vm, 64);
+		draw_map(win);
 		show_sidebar(win, vm);
 	}
 	if (vm->winner)
@@ -405,9 +377,9 @@ void		fill_pixel_map(t_bot *bot, char count_players)
 		while (i < bot->size)
 		{
 			g_pixels[total + i]->color = bot_counter;
-			g_pixels[total + i]->empty = 0;
 			i++;
 		}
+		g_pixels[total]->color = bot_counter + 20;
 		total += MEM_SIZE / count_players;
 		bot_counter++;
 		bot = bot->next;

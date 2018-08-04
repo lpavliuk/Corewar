@@ -52,6 +52,8 @@ void	time_to_die()
 		{
 			prev ? prev->next = cur_p->next : 0;
 			!prev ? g_vm->process = cur_p->next : 0;
+			(g_vm->flag_visual) ? (g_pixels[cur_p->position]->color =
+				g_pixels[cur_p->position]->color % 10) : 1;
 			free(cur_p);
 			g_vm->process_count--;
 			cur_p = prev ? prev->next : g_vm->process;
@@ -75,11 +77,9 @@ void	do_proceses()
 	{
 		if (!curent->opcode)
 		{
-			if (!g_map[curent->position] || g_map[curent->position] > 16)
 				curent->position = ((curent->position) + 1) % MEM_SIZE;
 			else
 			{
-																				// ft_printf("%02x  %d\n", g_map[curent->position], curent->position);
 				curent->opcode = g_map[curent->position];
 				curent->cycles_to_perform = PREFORM(curent->opcode) - 1;
 			}
@@ -116,7 +116,7 @@ t_bot	*winner_bot()
 	return (winner_bot);
 }
 
-int		step()
+int		step(void)
 {
 	do_proceses();
 	if (g_vm->cur_cycle && !(g_vm->cur_cycle % g_vm->cycle_to_die))

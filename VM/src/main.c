@@ -99,7 +99,7 @@ int			main(int ac, char **av)
 	{
 		init_vm();
 		get_args(ac, av);
-		// sort_bot_list(&g_vm->bot, g_vm->count_players);
+		sort_bot_list(&g_vm->bot, g_vm->count_players);
 		dispatcher_routes();
 	}
 	else
