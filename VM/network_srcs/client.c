@@ -52,7 +52,7 @@ static void				read_init_info(int socket_fd, fd_set read_fds)
 
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
-	while (select(socket_fd + 1, &read_fds, NULL, NULL, &timeout) > 0)
+	while (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
 	{
 		ft_bzero(str, 2);
 		if (recv(socket_fd, &str, 2, 0) > 0)
@@ -99,6 +99,7 @@ void					client(void)
 	ft_bzero(str, len);
 	socket_fd = create_socket();
 	connect_to_server(socket_fd, g_vm->ip);
+	FD_ZERO(&read_fds);
 	FD_SET(socket_fd, &read_fds);
 	read_init_info(socket_fd, read_fds);
 	serialize(g_vm->bot, str);

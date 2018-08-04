@@ -24,7 +24,6 @@ void		get_clients_exec(t_server *server)
 	while (i < server->n_client_sockets)
 	{
 		sd = server->client_sockets[i];
-		lseek(sd, 0, SEEK_SET);
 		if (sd > 0)
 		{
 			new_bot = push_new_bot(&g_vm->bot, id_bot);
