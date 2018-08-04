@@ -16,7 +16,6 @@
 # include "libft.h"
 # include <fcntl.h>
 # include <curses.h>
-
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
 # define T_IND_SIZE				2
@@ -69,6 +68,7 @@
 # define LABEL_SIZE(i)	g_table[i - 1].label_size
 # define PREFORM(i)		g_table[i - 1].cycles
 # define MAX_TABLE 16
+
 
 typedef struct
 {
@@ -271,15 +271,16 @@ void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
 void					get_clients_exec(t_server *server);
 
-
-
-
 /*
 **>>>>>>>>>  Process functions <<<<<<<<<<<**
 */
 
 #define GET_CODAGE get_arg((process->position + 1) % MEM_SIZE, 1)
+FILE *g_f;
 
+int			check_valid_codage(char opcode, char *codage);
+void		change_process_position(char opcode, char *codage,
+	t_process *process);
 void		ft_live(t_process *process);
 void		ft_ld(t_process *process);
 void		ft_st(t_process *process);

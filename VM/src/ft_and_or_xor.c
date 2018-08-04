@@ -42,7 +42,7 @@ void	ft_and(t_process *process)
 		process->registries[args[2]] = ((codage[0] == REG_CODE) ?
 			process->registries[args[0]] : args[0]) & ((codage[1] == REG_CODE) ?
 			process->registries[args[1]] : args[1]);
-		(process->registries[args[2]]) ? (process->carry = 0) : 1;
+		process->carry = (process->registries[args[2]]) ? 0 : 1;
 	}
 	change_process_position(OPCODE(5), codage, process);
 }
@@ -59,7 +59,7 @@ void	ft_or(t_process *process)
 		process->registries[args[2]] = ((codage[0] == REG_CODE) ?
 			process->registries[args[0]] : args[0]) | ((codage[1] == REG_CODE) ?
 			process->registries[args[1]] : args[1]);
-		(process->registries[args[2]]) ? (process->carry = 0) : 1;
+		process->carry = (process->registries[args[2]]) ? 0 : 1;
 	}
 	change_process_position(OPCODE(6), codage, process);
 }
@@ -76,7 +76,7 @@ void	ft_xor(t_process *process)
 		process->registries[args[2]] = ((codage[0] == REG_CODE) ?
 			process->registries[args[0]] : args[0]) ^ ((codage[1] == REG_CODE) ?
 			process->registries[args[1]] : args[1]);
-		(process->registries[args[2]]) ? (process->carry = 0) : 1;
+		process->carry = (process->registries[args[2]]) ? 0 : 1;
 	}
 	change_process_position(OPCODE(7), codage, process);
 }

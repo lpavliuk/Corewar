@@ -1,5 +1,5 @@
 #include "corewar.h"
-
+#include <stdio.h>
 int		check_valid_codage(char opcode, char *codage)
 {
 	int		input_arg;
@@ -47,16 +47,23 @@ void	change_process_position(char opcode, char *codage, t_process *process)
 				(g_pixels[process->position]->color % 10) + 20) : 0;
 }
 
-
 void	ft_zjmp(t_process *process)
 {
 	if (g_vm->flag_visual)
 		SET_PIXEL_COLOR;
 	if (process->carry)
+	{
+		fprintf(g_f, "zjmp: in cycle ->%d<- process_position is ->%d<- carry 1\n", g_vm->cur_cycle, process->position);
 		process->position += (short)get_arg(((process->position + 1) % IDX_MOD),
 			T_DIR_SIZE);
+		fprintf(g_f, "					process_position is ->%d<- carry 1\n", process->position);
+	}
 	else
+	{
+		fprintf(g_f, "zjmp: in cycle ->%d<- process_position is ->%d<- carry 0\n", g_vm->cur_cycle, process->position);
 		process->position = (process->position + 1 + T_DIR_SIZE) % MEM_SIZE;
+		fprintf(g_f, "					process_position is ->%d<- carry 0\n", process->position);
+	}
 	if (g_vm->flag_visual)
 		TURN_ON_PROCESS;
 }

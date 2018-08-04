@@ -10,7 +10,7 @@ WHITE	=\033[0;37m#		# White
 
 CC=		gcc
 
-FLAGS=	-Wall -Wextra -Werror
+# FLAGS=	-Wall -Wextra -Werror
 
 NAME=	core
 
@@ -19,7 +19,7 @@ SRCNAME=	bot_parsing.c\
 			get_server_info.c\
 			main.c\
 			parse_argument.c\
-			process_functions.c\
+			process_function_ft_aff_zjmp.c\
 			ft_add_sub.c\
 			ft_and_or_xor.c\
 			ft_fork_lfork.c\

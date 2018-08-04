@@ -7,7 +7,6 @@ void	ft_ld(t_process *process)
 	unsigned int	result;
 
 	decipher_codage(codage, COUNT_ARGS(2), GET_CODAGE);
-	arg2 = 99;
 	if (check_valid_codage(OPCODE(1), codage)
 	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4)
 		+ 2) % MEM_SIZE, T_REG_SIZE)) > 0 && arg2 < 17)
@@ -15,8 +14,10 @@ void	ft_ld(t_process *process)
 		result = (codage[0] == IND_CODE) ? (get_arg((process->position
 		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)),
 			T_IND_READ)) : (get_arg((process->position + 2)
-			% MEM_SIZE, T_DIR_SIZE));
+			% MEM_SIZE, LABEL_SIZE(OPCODE(1))));
 		process->registries[arg2] = result;
+		fprintf(g_f, "ft_ld: in cycle ->%d<- process_position is ->%d<- __uints: arg2 %u result %u__  __short arg2 %hd result %hd__ reg[arg2] = %u carry %d\n",
+				g_vm->cur_cycle, process->position, arg2, result, arg2, result, process->registries[arg2], process->carry);
 		process->carry = (result) ? 0 : 1;
 	}
 	change_process_position(OPCODE(1), codage, process);

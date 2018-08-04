@@ -71,12 +71,14 @@ void	time_to_die()
 void	do_proceses()
 {
 	t_process *curent;
+	static	int i = 0;
 
 	curent = g_vm->process;
 	while(curent)
 	{
 		if (!curent->opcode)
 		{
+			if (!g_map[curent->position] || g_map[curent->position] > 16)
 				curent->position = ((curent->position) + 1) % MEM_SIZE;
 			else
 			{
@@ -89,10 +91,12 @@ void	do_proceses()
 		else if (!curent->cycles_to_perform)
 		{
 			g_func[curent->opcode - 1](curent);									// ? call function
+			fprintf(g_f, "		do_process: in cycle ->%d<- process_position is ->%d<- num of call %d opcode %d\n", g_vm->cur_cycle, curent->position, i, curent->opcode);
 			curent->opcode = 0;
 		}
 		curent = curent->next;
 	}
+	i++;
 }
 
 t_bot	*winner_bot()

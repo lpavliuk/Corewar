@@ -128,6 +128,7 @@ void	ft_sti(t_process *process)
 			((short int)(((codage[1] == REG_CODE) ? process->registries[args[1]] : args[1])
 			+ ((codage[2] == REG_CODE) ? process->registries[args[2]]
 			: args[2])) % IDX_MOD) % MEM_SIZE);
+		fprintf(g_f, "ft_sti: in cycle ->%d<- process_position is ->%d<- __uints: arg0 %u arg1 %u__  __short arg0 %hd arg1 %hd__ carry %d\n", g_vm->cur_cycle, process->position, args[0], args[1], args[0], args[1], process->carry);
 	}
 	change_process_position(OPCODE(10), codage, process);
 }
