@@ -78,15 +78,15 @@ void					server(void)
 	listen(server->master_socket, 1);
 	get_clients(server);
 	get_clients_exec(server);
-	// while (g_vm->bot)
-	// {
-	// 	ft_printf("name: %s\ncomment: %s\n", g_vm->bot->name, g_vm->bot->comment);
-	// 	print_memory(g_vm->bot->exec, g_vm->bot->size);
-	// 	g_vm->bot = g_vm->bot->next;
-	// }
+	while (g_vm->bot)
+	{
+		ft_printf("name: %s\ncomment: %s\n", g_vm->bot->name, g_vm->bot->comment);
+		print_memory(g_vm->bot->exec, g_vm->bot->size);
+		g_vm->bot = g_vm->bot->next;
+	}
 
 	fill_map();
 	create_pixel_map();
-	// start_game(server);
+	start_game(server);
 	// close(master_socket);
 }
