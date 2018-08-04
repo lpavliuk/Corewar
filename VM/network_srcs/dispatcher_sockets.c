@@ -17,10 +17,13 @@ static void			accept_client(t_server *server)
 	unsigned char	i;
 	int				new_socket;
 
-	if (g_vm->count_players >= 4)
-		return ;
 	new_socket = accept(server->master_socket, NULL, NULL);
 	(!new_socket) ? ft_error("Error: accept_client()") : 0;
+	if (g_vm->count_players >= 4)
+	{
+		close(new_socket);
+		return ;
+	}
 	i = 0;
 	while (i < server->n_client_sockets)
 	{
@@ -28,6 +31,7 @@ static void			accept_client(t_server *server)
 		{
 			server->client_sockets[i] = new_socket;
 			g_vm->count_players++;
+			send(new_socket, "OK", 2, 0);
 			return ;
 		}
 		i++;
@@ -36,18 +40,19 @@ static void			accept_client(t_server *server)
 
 static void			check_clients(t_server *server)
 {
-	unsigned char	buffer[15];
+	unsigned char	buffer[1];
 	int				sd;
 	unsigned char	i;
+
 
 	i = 0;
 	while (i < server->n_client_sockets)
 	{
-		ft_bzero(buffer, 15);
+		ft_bzero(buffer, 1);
 		sd = server->client_sockets[i];
 		if (FD_ISSET(sd, &server->read_fds))
 		{
-			if (read(sd, &buffer, 15) <= 0)
+			if (read(sd, buffer, 1) <= 0)
 			{
 				g_vm->count_players--;
 				server->client_sockets[i] = 0;

@@ -12,9 +12,17 @@
 
 #include "../corewar.h"
 
-/*
-** 35 line: Checks whether we can read from this server socket or not.
-*/
+static void	check_connection(int socket_fd)
+{
+	char	buffer[3];
+
+	ft_bzero(buffer, 3);
+	if (read(socket_fd, buffer, 2) != 2 || !ft_strequ(buffer, "OK"))
+	{
+		close(socket_fd);
+		ft_error("Error: connect");
+	}
+}
 
 static void	connect_to_server(int socket_fd, char *ip)
 {
@@ -34,6 +42,7 @@ static void	connect_to_server(int socket_fd, char *ip)
 	timeout.tv_usec = 0;
 	if (select(socket_fd + 1, &set, NULL, NULL, &timeout) != 1)
 		ft_error("Error: connect");
+	check_connection(socket_fd);
 }
 
 static void				read_init_info(int socket_fd)
@@ -43,6 +52,7 @@ static void				read_init_info(int socket_fd)
 
 	flag_sec = 0;
 	str = 0;
+
 	while (1)
 	{
 		if (read(socket_fd, &str, sizeof(unsigned char)) > 0)
@@ -92,13 +102,12 @@ void					client(void)
 	len = PROG_NAME_LENGTH + COMMENT_LENGTH + g_vm->bot->size + 4;
 	(g_vm->count_players != 1) ? ft_error("Error: client()") : 0;
 	ft_bzero(str, len);
-	serialize(g_vm->bot, str);
 	socket_fd = create_socket();
 	connect_to_server(socket_fd, g_vm->ip);
-	send(socket_fd, "Ready to fight!", 15, 0);
 	read_init_info(socket_fd);
-	send(socket_fd, str, len, 0);
-	
+	serialize(g_vm->bot, str);
+	ft_printf("send = %d\n", send(socket_fd, str, len, 0));
+
 	while (1);
 	//get_game();
 	close(socket_fd);
