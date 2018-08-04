@@ -20,6 +20,11 @@ SRCNAME=	bot_parsing.c\
 			main.c\
 			parse_argument.c\
 			process_functions.c\
+			ft_add_sub.c\
+			ft_and_or_xor.c\
+			ft_fork_lfork.c\
+			ft_ld_ldi_lld_lldi.c\
+			ft_live_st_sti.c\
 			sort_bot_list.c\
 			staff.c\
 			staff2.c\
