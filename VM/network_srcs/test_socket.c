@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../corewar.h"
+#include "corewar.h"
 
 static void		init_vm(void)
 {

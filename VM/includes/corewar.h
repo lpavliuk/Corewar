@@ -13,7 +13,7 @@
 #ifndef COREWAR_H
 # define COREWAR_H
 
-# include "../libft/libft.h"
+# include "libft.h"
 # include <fcntl.h>
 # include <curses.h>
 
@@ -177,7 +177,7 @@ void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
 void					sort_bot_list(t_bot **head, unsigned char count_players);
 void					parse_argument(int count, char **args, int *i);
-void					get_args(int count, char **args);
+void					get_args(int argc, char **args);
 
 /* >>>>>>>>>> Visualisation <<<<<<<<<< */
 
@@ -226,15 +226,16 @@ typedef struct
 }						t_win;
 
 void					visualize(void);
-void					print_winner(t_win *win, t_vm *vm)
+void					print_winner(t_win *win);
 t_win					*init_win(void);
 void					create_pixel_map(void);
 void					color_preparation(void);
 void					prepare_window(t_win *win);
 void					draw_map(t_win *win);
-void					redraw(t_win *win, t_vm *vm, int key);
+void					redraw(t_win *win, int key);
 void					show_sidebar(t_win *win);
 void					sidebar_statistics(t_win *win);
+void					show_status(t_win *win);
 
 /* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 
@@ -257,7 +258,7 @@ typedef struct
 	int					master_socket;
 	int					client_sockets[4];
 	unsigned char		n_client_sockets;
-	unsigned char		flag_start : 1;
+	unsigned char		flag_start;
 	fd_set				read_fds;
 }						t_server;
 
@@ -268,7 +269,9 @@ void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
 void					get_clients_exec(t_server *server);
+void					get_game(int socket_fd, fd_set read_fds);
 void					start_game(t_server *server);
+
 
 /*
 **	Process functions
