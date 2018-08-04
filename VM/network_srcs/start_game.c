@@ -12,29 +12,25 @@
 
 #include "corewar.h"
 
-void	send_map(int sd)
+static void		*send_map(void *sd)
 {
-	
+	send(*sd, g_map, MEM_SIZE, 0);
 }
 
-void	send_map_all_clients(t_server *server)
+static void		send_map_all_clients(t_server *server)
 {
 	pthread_t	tid[server->n_client_sockets];
 	int			i;
-	int			sd;
 
 	i = -1;
 	while (++i < server->n_client_sockets)
-	{
-		sd = server->client_sockets[i];
-		pthread_creat(&tid[i], NULL, send_map, sd);
-	}
+		pthread_creat(&tid[i], NULL, send_map, &server->client_sockets[i]);
 	i = -1;
 	while (++i < server->n_client_sockets)
 		pthread_join(tid[i], NULL);
 }
 
-void	start_game(t_server *server)
+void			start_game(t_server *server)
 {
 	send_map_all_clients(server);
 }
