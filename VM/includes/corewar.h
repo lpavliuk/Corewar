@@ -226,16 +226,15 @@ typedef struct
 }						t_win;
 
 void					visualize(void);
-void					print_winner(t_win *win);
+void					print_winner(t_win *win, t_vm *vm)
 t_win					*init_win(void);
 void					create_pixel_map(void);
 void					color_preparation(void);
 void					prepare_window(t_win *win);
 void					draw_map(t_win *win);
-void					redraw(t_win *win, int key);
+void					redraw(t_win *win, t_vm *vm, int key);
 void					show_sidebar(t_win *win);
 void					sidebar_statistics(t_win *win);
-void					show_status(t_win *win);
 
 /* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 

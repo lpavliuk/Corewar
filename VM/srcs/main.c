@@ -65,13 +65,13 @@ void		dispatcher_routes(void)
 		// else if ((g_vm->flag_client))
 		// 	client();
 		// else
-		// 	server();	/* Here we need to fill a map. */
+		// 	server();
 	}
 	else
 	{
 		fill_map();
 		if (g_vm->flag_visual)
-			visualize(g_vm);
+			visualize();
 		else
 			while (!g_vm->winner)
 				;// step();
@@ -84,13 +84,13 @@ void		dispatcher_routes(void)
 ** and call corresponding functions.
 */
 
-void			get_args(int count, char **args)
+void			get_args(int argc, char **args)
 {
 	int				i;
 
 	i = 0;
-	while (++i < count)
-		parse_argument(count, args, &i);
+	while (++i < argc)
+		parse_argument(argc, args, &i);
 	(g_vm->count_players == 0) ? usage() : 0;
 }
 

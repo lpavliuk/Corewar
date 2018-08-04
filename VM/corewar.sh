@@ -1,1 +1,1 @@
-gcc main.c visualize.c srcs/*.c libft.a -lncurses -I ./
+gcc srcs/*.c visual_srcs/*.c libft.a -lncurses -I ./
