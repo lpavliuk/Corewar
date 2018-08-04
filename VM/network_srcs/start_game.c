@@ -16,14 +16,14 @@ static void		*send_map(void *sd)
 {
 	int socket_sd;
 
-	socket_sd = *(int*)sd;
+	socket_sd = *(int *)sd;
 	send(socket_sd, g_map, MEM_SIZE, 0);
 	return (sd);
 }
 
 static void		send_map_all_clients(t_server *server)
 {
-	pthread_t	tid[server->n_client_sockets];
+	pthread_t	tid[4];
 	int			i;
 
 	i = -1;
