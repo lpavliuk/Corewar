@@ -154,10 +154,7 @@ typedef struct			s_vm
 typedef struct			s_pixel
 {
 	unsigned char		counter;	/* How much iterations this pixel must be in bold */
-	unsigned char		color : 5;	/* We have at our disposal 31 values */
-	unsigned char		bold : 1;	/* We can put this bit in 1 and tell that this particular pixel will be in bold */
-	unsigned char		live : 1;	/* Flag whether this pixel is live-pixel or not. */
-	unsigned char		empty : 1;
+	unsigned char		color;
 }						t_pixel;
 
 t_pixel					**g_pixels;
@@ -183,12 +180,12 @@ t_vm					*g_vm;
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2
 
-# define LIVE_COLOR	10
-
 /* CURSOR */
 
 # define CURSOR_X win->cursor_x
 # define CURSOR_Y win->cursor_y
+
+# define INIT_PIXEL_COLOR 5
 
 typedef struct
 {
