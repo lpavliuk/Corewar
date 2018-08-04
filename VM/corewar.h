@@ -13,7 +13,7 @@
 #ifndef COREWAR_H
 # define COREWAR_H
 
-# include "../libft/libft.h"
+# include "includes/libft.h"
 # include <fcntl.h>
 # include <curses.h>
 
@@ -177,7 +177,7 @@ void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
 void					sort_bot_list(t_bot **head, unsigned char count_players);
 void					parse_argument(int count, char **args, int *i);
-void					get_args(int count, char **args);
+void					get_args(int argc, char **args);
 
 /* >>>>>>>>>> Visualisation <<<<<<<<<< */
 
@@ -258,7 +258,7 @@ typedef struct
 	int					master_socket;
 	int					client_sockets[4];
 	unsigned char		n_client_sockets;
-	unsigned char		flag_start : 1;
+	unsigned char		flag_start;
 	fd_set				read_fds;
 }						t_server;
 

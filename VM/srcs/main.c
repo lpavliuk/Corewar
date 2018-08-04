@@ -84,26 +84,26 @@ void		dispatcher_routes(void)
 ** and call corresponding functions.
 */
 
-void			get_args(int argc, char **args)
-{
-	int				i;
+// void			get_args(int argc, char **args)
+// {
+// 	int				i;
 
-	i = 0;
-	while (++i < argc)
-		parse_argument(argc, args, &i);
-	(g_vm->count_players == 0) ? usage() : 0;
-}
+// 	i = 0;
+// 	while (++i < argc)
+// 		parse_argument(argc, args, &i);
+// 	(g_vm->count_players == 0) ? usage() : 0;
+// }
 
-int			main(int ac, char **av)
-{
-	if (ac > 1)
-	{
-		init_vm();
-		get_args(ac, av);
-		sort_bot_list(&g_vm->bot, g_vm->count_players);
-		dispatcher_routes();
-	}
-	else
-		usage();
-	return (0);
-}
+// int			main(int ac, char **av)
+// {
+// 	if (ac > 1)
+// 	{
+// 		init_vm();
+// 		get_args(ac, av);
+// 		sort_bot_list(&g_vm->bot, g_vm->count_players);
+// 		dispatcher_routes();
+// 	}
+// 	else
+// 		usage();
+// 	return (0);
+// }

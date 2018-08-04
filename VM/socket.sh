@@ -1,1 +1,1 @@
-gcc  network/*.c srcs/staff.c srcs/staff2.c libft.a -I ./ -lpthread
+gcc network_srcs/*.c srcs/*.c visual_srcs/*.c libft.a -I ./ -lpthread -lncurses

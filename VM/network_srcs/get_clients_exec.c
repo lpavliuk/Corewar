@@ -32,7 +32,6 @@ void		get_clients_exec(t_server *server)
 			read(sd, &new_bot->size, 4);
 			new_bot->exec = (unsigned char *)malloc(new_bot->size);
 			ft_bzero(new_bot->exec, new_bot->size);
-			ft_printf("size: %d\n", new_bot->size);
 			read(sd, new_bot->exec, new_bot->size);
 		}
 		id_bot--;
