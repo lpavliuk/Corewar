@@ -53,16 +53,16 @@ void	ft_zjmp(t_process *process)
 		SET_PIXEL_COLOR;
 	if (process->carry)
 	{
-		fprintf(g_f, "zjmp: in cycle ->%d<- process_position is ->%d<- carry 1\n", g_vm->cur_cycle, process->position);
+		// fprintf(g_f, "zjmp: in cycle ->%d<- process_position is ->%d<- carry 1\n", g_vm->cur_cycle, process->position);
 		process->position += (short)get_arg(((process->position + 1) % IDX_MOD),
 			T_DIR_SIZE);
-		fprintf(g_f, "					process_position is ->%d<- carry 1\n", process->position);
+		// fprintf(g_f, "					process_position is ->%d<- carry 1\n", process->position);
 	}
 	else
 	{
-		fprintf(g_f, "zjmp: in cycle ->%d<- process_position is ->%d<- carry 0\n", g_vm->cur_cycle, process->position);
+		// fprintf(g_f, "zjmp: in cycle ->%d<- process_position is ->%d<- carry 0\n", g_vm->cur_cycle, process->position);
 		process->position = (process->position + 1 + T_DIR_SIZE) % MEM_SIZE;
-		fprintf(g_f, "					process_position is ->%d<- carry 0\n", process->position);
+		// fprintf(g_f, "					process_position is ->%d<- carry 0\n", process->position);
 	}
 	if (g_vm->flag_visual)
 		TURN_ON_PROCESS;

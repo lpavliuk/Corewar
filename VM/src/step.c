@@ -70,33 +70,37 @@ void	time_to_die()
 
 void	do_proceses()
 {
-	t_process *curent;
-	static	int i = 0;
+	t_process *process;
+	// static	int i = 0;
 
-	curent = g_vm->process;
-	while(curent)
+	process = g_vm->process;
+	while(process)
 	{
-		if (!curent->opcode)
+		if (!process->opcode)
 		{
-			if (!g_map[curent->position] || g_map[curent->position] > 16)
-				curent->position = ((curent->position) + 1) % MEM_SIZE;
+			if (!g_map[process->position] || g_map[process->position] > 16)
+			{
+				(g_vm->flag_visual) ? SET_PIXEL_COLOR : 1;
+				process->position = ((process->position) + 1) % MEM_SIZE;
+				(g_vm->flag_visual) ? TURN_ON_PROCESS : 1;
+			}
 			else
 			{
-				curent->opcode = g_map[curent->position];
-				curent->cycles_to_perform = PREFORM(curent->opcode) - 1;
+				process->opcode = g_map[process->position];
+				process->cycles_to_perform = PREFORM(process->opcode) - 1;
 			}
 		}
-		else if (curent->cycles_to_perform > 0)
-			curent->cycles_to_perform--;
-		else if (!curent->cycles_to_perform)
+		else if (process->cycles_to_perform > 0)
+			process->cycles_to_perform--;
+		else if (!process->cycles_to_perform)
 		{
-			g_func[curent->opcode - 1](curent);									// ? call function
-			fprintf(g_f, "		do_process: in cycle ->%d<- process_position is ->%d<- num of call %d opcode %d\n", g_vm->cur_cycle, curent->position, i, curent->opcode);
-			curent->opcode = 0;
+			g_func[process->opcode - 1](process);			// ? call function
+			process->opcode = 0;
 		}
-		curent = curent->next;
+		// fprintf(g_f, "	do_process: in cycle ->%d<- process_position is ->%d<- num of call %d opcode %d COLOR ->%d<-\n", g_vm->cur_cycle, process->position, i, process->opcode, g_pixels[process->position]->color);
+		process = process->next;
 	}
-	i++;
+	// i++;
 }
 
 t_bot	*winner_bot()

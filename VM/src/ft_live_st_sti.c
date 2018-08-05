@@ -43,7 +43,7 @@ void	set_map_value(t_process *process, unsigned int val,
 	while (j < 4)
 	{
 		g_map[(process->position + new_pstn + j) % MEM_SIZE] =
-			((unsigned char *)&val)[j];
+			((unsigned char *)&val)[3 - j];
 		if (g_vm->flag_visual)
 		{
 			g_pixels[(process->position + new_pstn + j) % MEM_SIZE]->counter
