@@ -99,8 +99,11 @@ int		ft_sti_check_args(unsigned int *args, char *codage, t_process *process,
 			+ (offset - T_IND_SIZE)) % MEM_SIZE, T_IND_SIZE) % IDX_MOD))
 			% MEM_SIZE, T_IND_READ);
 		else if (codage[i] == DIR_CODE && (offset += T_DIR_SIZE))
+		{
+			ft_printf("DIR!!!!!!!!!!!!!!\n");
 			args[i] = get_arg((process->position + (offset - T_DIR_SIZE))
 				% MEM_SIZE, T_DIR_SIZE);
+		}
 		i++;
 	}
 	return (1);
@@ -114,7 +117,8 @@ int		ft_sti_check_args(unsigned int *args, char *codage, t_process *process,
 void	ft_sti(t_process *process)
 {
 	char			codage[4];
-	unsigned int	args[3];
+	unsigned int	uargs[3];
+	short int		sargs[3];
 
 	decipher_codage(codage, COUNT_ARGS(11), GET_CODAGE);
 	if (check_valid_codage(OPCODE(10), codage) && ft_sti_check_args(args,
@@ -122,12 +126,12 @@ void	ft_sti(t_process *process)
 	{
 		// ft_printf("%d\n", (short int)args[1] + (short int)args[2]);
 		// ft_printf("%d\n", process->registries[args[2]]);
-		// ft_printf("%d\n", codage[2]);
-		// ft_printf("%d\n", codage[1]);
+		ft_printf("BEFORE SET MAP VAL in cycle %d\n", g_vm->cur_cycle);
 		set_map_value(process, process->registries[args[0]],
 			((short int)(((codage[1] == REG_CODE) ? process->registries[args[1]] : args[1])
 			+ ((codage[2] == REG_CODE) ? process->registries[args[2]]
 			: args[2])) % IDX_MOD) % MEM_SIZE);
+		ft_printf("AFTER SET MAP VAL in cycle %d\n", g_vm->cur_cycle);
 		fprintf(g_f, "ft_sti: in cycle ->%d<- process_position is ->%d<- __uints: arg0 %u arg1 %u__  __short arg0 %hd arg1 %hd__ carry %d\n", g_vm->cur_cycle, process->position, args[0], args[1], args[0], args[1], process->carry);
 	}
 	change_process_position(OPCODE(10), codage, process);
