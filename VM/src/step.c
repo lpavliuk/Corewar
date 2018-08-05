@@ -71,36 +71,49 @@ void	time_to_die()
 void	do_proceses()
 {
 	t_process *process;
-	// static	int i = 0;
+	static	int i = 0;
+	int			j = 1;
 
 	process = g_vm->process;
+	ft_printf("HAHA do_process: cur_cycle %d | process_cout %d\n", g_vm->cur_cycle, g_vm->process_count);
 	while(process)
 	{
 		if (!process->opcode)
 		{
+			ft_printf(" !opcode sart with process pos %u\n", process->position);
 			if (!g_map[process->position] || g_map[process->position] > 16)
 			{
+				ft_printf("bag opcode sart\n");
 				(g_vm->flag_visual) ? SET_PIXEL_COLOR : 1;
 				process->position = ((process->position) + 1) % MEM_SIZE;
 				(g_vm->flag_visual) ? TURN_ON_PROCESS : 1;
+				ft_printf("bad opcode end\n");
 			}
 			else
 			{
+				ft_printf("good opcode start\n");
 				process->opcode = g_map[process->position];
 				process->cycles_to_perform = PREFORM(process->opcode) - 1;
+				ft_printf("good opcode end\n");
 			}
+			ft_printf(" !opcode end\n");
 		}
 		else if (process->cycles_to_perform > 0)
 			process->cycles_to_perform--;
 		else if (!process->cycles_to_perform)
 		{
+			ft_printf("func call start\n");
 			g_func[process->opcode - 1](process);			// ? call function
 			process->opcode = 0;
+			ft_printf("func call end\n");
 		}
 		// fprintf(g_f, "	do_process: in cycle ->%d<- process_position is ->%d<- num of call %d opcode %d COLOR ->%d<-\n", g_vm->cur_cycle, process->position, i, process->opcode, g_pixels[process->position]->color);
+		ft_printf("do_process: cur_cycle %d | process_cout %d | cycle is checked %d\n", g_vm->cur_cycle, g_vm->process_count, j);
 		process = process->next;
+		j++;
 	}
-	// i++;
+	ft_printf("DO_PROCESS CALLED %d times\n", i);
+	i++;
 }
 
 t_bot	*winner_bot()

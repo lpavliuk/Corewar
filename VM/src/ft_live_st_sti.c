@@ -98,7 +98,7 @@ int		ft_sti_check_args(unsigned int *uargs, short int *sargs, char *codage,
 			+ (offset - T_IND_SIZE)) % MEM_SIZE, T_IND_SIZE) % IDX_MOD))
 			% MEM_SIZE, T_IND_READ);
 		else if (codage[i] == DIR_CODE && (offset += T_DIR_SIZE))
-			sargs[i] = (short)get_arg((process->position
+			sargs[i] = get_arg((process->position
 				+ (offset - T_DIR_SIZE)) % MEM_SIZE, T_DIR_SIZE);
 		i++;
 	}
@@ -115,26 +115,26 @@ void	ft_sti(t_process *process)
 	char			codage[4];
 	short int		sargs[3];
 	unsigned int	uargs[3];
-	int				write_position;
+	int				ch_pos;
 
-	ft_bzero(uargs, 3);
-	ft_bzero(sargs, 3);
-	write_position = 0;
 	decipher_codage(codage, COUNT_ARGS(11), GET_CODAGE);
 	if (check_valid_codage(OPCODE(10), codage) && ft_sti_check_args(uargs,
 		sargs, codage, process))
 	{
-		if (codage[1] == DIR_CODE)
-			write_position = sargs[1];
+		if (codage[1] == REG_CODE)
+			ch_pos = process->registries[uargs[1]];
 		else if (codage[1] == IND_CODE)
-			write_position = uargs[1];
-		write_position += (process->position + (((int)((codage[1] == REG_CODE)
-			? process->registries[uargs[1]] : 0)
-			+ (int)((codage[2] == REG_CODE) ? process->registries[uargs[2]]
-			: sargs[2])) % IDX_MOD)) % MEM_SIZE;
-		// ((short)write_position < 0) ? write_position = ((short)write_position % MEM_SIZE) + 4096 : 1;
-		set_map_value(process, process->registries[uargs[0]], write_position);
-		// fprintf(g_f, "ft_sti: in cycle ->%d<- process_position is ->%d<- __uints: arg0 %u arg1 %u__  __short arg0 %hd arg1 %hd__ carry %d\n", g_vm->cur_cycle, process->position, args[0], args[1], args[0], args[1], process->carry);
+			ch_pos = uargs[1];
+		else if (codage[1] == DIR_CODE)
+			ch_pos = sargs[1];
+		if (codage[2] == REG_CODE)
+			ch_pos += process->registries[uargs[2]];
+		else if (codage[2] == DIR_CODE)
+			ch_pos += sargs[2];
+		// fprintf(g_f, "zjmp: in cycle ->%d<- process_position is ->%d<- carry 0\n", g_vm->cur_cycle, process->position);
+
+		set_map_value(process, process->registries[uargs[0]],
+			(process->position + (ch_pos % IDX_MOD)) % MEM_SIZE);
 	}
 	change_process_position(OPCODE(10), codage, process);
 }
