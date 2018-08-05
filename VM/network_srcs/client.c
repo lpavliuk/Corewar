@@ -99,15 +99,11 @@ void					client(void)
 	ft_bzero(str, len);
 	socket_fd = create_socket();
 	connect_to_server(socket_fd, g_vm->ip);
-	FD_ZERO(&read_fds);
 	FD_SET(socket_fd, &read_fds);
 	read_init_info(socket_fd, read_fds);
 	serialize(g_vm->bot, str);
 	send(socket_fd, str, len, 0);
-
 	get_game(socket_fd, read_fds);
-	while (1)
-		;
 	FD_ZERO(&read_fds);
 	close(socket_fd);
 }

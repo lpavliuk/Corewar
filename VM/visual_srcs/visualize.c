@@ -19,7 +19,7 @@ void	visualize(void)
 
 	key = 0;
 	create_pixel_map();
-	fill_pixel_map(g_vm->bot, g_vm->count_players);
+	fill_pixel_map();
 	initscr();
 	noecho();
 	color_preparation();

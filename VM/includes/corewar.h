@@ -236,7 +236,7 @@ void					redraw(t_win *win, int key);
 void					show_sidebar(t_win *win);
 void					sidebar_statistics(t_win *win);
 void					show_status(t_win *win);
-void					fill_pixel_map(t_bot *bot, char count_players);
+void					fill_pixel_map(void);
 
 /* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 
@@ -271,8 +271,7 @@ void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
 void					get_clients_exec(t_server *server);
 void					get_game(int socket_fd, fd_set read_fds);
-void					start_game(t_server *server);
-
+void					send_data_all_clients(t_server *server);
 
 /*
 **	Process functions

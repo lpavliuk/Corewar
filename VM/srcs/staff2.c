@@ -92,7 +92,7 @@ static t_bot		*bot_init(unsigned int id)
 	t_bot			*new;
 
 	if (((int)id >= 0) || ((int)id < -4))
-		ft_error("Error");
+		ft_error("Error: invalid id");
 	new = (t_bot *)malloc(sizeof(t_bot));
 	(!new) ? ft_error("Error") : 0;
 	new->player_counter = 0;
@@ -117,7 +117,7 @@ t_bot				*push_new_bot(t_bot **head, unsigned int id)
 	while (tmp)
 	{
 		if (tmp->id == id)
-			ft_error("Error");
+			ft_error("Error: not unique id");
 		else if (tmp->next)
 			tmp = tmp->next;
 		else

@@ -42,14 +42,16 @@ static void	ft_prepare_pixel_map(void)
 	}
 }
 
-void		fill_pixel_map(t_bot *bot, char count_players)
+void		fill_pixel_map(void)
 {
+	t_bot			*bot;
 	unsigned int	i;
 	unsigned int	total;
 	unsigned char	bot_counter;
 
 	total = 0;
 	bot_counter = 1;
+	bot = g_vm->bot;
 	while (bot)
 	{
 		i = 0;
@@ -59,7 +61,7 @@ void		fill_pixel_map(t_bot *bot, char count_players)
 			i++;
 		}
 		g_pixels[total]->color = bot_counter + 20;
-		total += MEM_SIZE / count_players;
+		total += MEM_SIZE / g_vm->count_players;
 		bot_counter++;
 		bot = bot->next;
 	}

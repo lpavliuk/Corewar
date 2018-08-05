@@ -20,6 +20,7 @@ static void		fill_map(void)
 
 	total = 0;
 	bot = g_vm->bot;
+	ft_bzero(g_map, MEM_SIZE);
 	while (bot)
 	{
 		i = 0;
@@ -77,17 +78,10 @@ void					server(void)
 	(bind_to_address(server->master_socket, g_vm->ip)) ? ft_error("Error: bind()") : 0;
 	listen(server->master_socket, 1);
 	get_clients(server);
-	get_clients_exec(server);
-
-	// t_bot	*bot = g_vm->bot;
-	// while (bot)
-	// {
-	// 	ft_printf("name: %s\ncomment: %s\n size: %d\n", bot->name, bot->comment, bot->size);
-	// 	bot = bot->next;
-	// }
 	fill_map();
-	// create_pixel_map();
-	print_memory(g_map, MEM_SIZE);
-	start_game(server);
+	create_pixel_map();
+	fill_pixel_map();
+	send_data_all_clients(server);
+	while (1);
 	close(server->master_socket);
 }

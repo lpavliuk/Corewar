@@ -82,4 +82,5 @@ void			get_clients(t_server *server)
 	pthread_create(&tid[1], NULL, apply_clients, server);
 	pthread_join(tid[0], NULL);
 	pthread_join(tid[1], NULL);
+	get_clients_exec(server);
 }
