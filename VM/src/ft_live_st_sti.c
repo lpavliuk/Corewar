@@ -34,21 +34,18 @@ void	ft_live(t_process *process)
 */
 
 void	set_map_value(t_process *process, unsigned int val,
-		short int new_pstn)
+		unsigned int new_pstn)
 {
 	int		j;
 
-	// ft_printf("%d\n", new_pstn);
 	j = 0;
 	while (j < 4)
 	{
-		g_map[(process->position + new_pstn + j) % MEM_SIZE] =
-			((unsigned char *)&val)[3 - j];
+		g_map[(new_pstn + j) % MEM_SIZE] = ((unsigned char *)&val)[3 - j];
 		if (g_vm->flag_visual)
 		{
-			g_pixels[(process->position + new_pstn + j) % MEM_SIZE]->counter
-				= 50;
-			g_pixels[(process->position + new_pstn + j) % MEM_SIZE]->color
+			g_pixels[(new_pstn + j) % MEM_SIZE]->counter = 50;
+			g_pixels[(new_pstn + j) % MEM_SIZE]->color
 				= process->parent->player_counter;
 		}
 		j++;
@@ -78,32 +75,31 @@ void	ft_st(t_process *process)
 	change_process_position(OPCODE(2), codage, process);
 }
 
-int		ft_sti_check_args(unsigned int *args, char *codage, t_process *process,
-		char offset)
+int		ft_sti_check_args(unsigned int *uargs, short int *sargs, char *codage,
+	t_process *process)
 {
 	int		i;
+	char	offset;
 
 	i = 0;
+	offset = 2;
 	while (i < 3)
 	{
 		if (codage[i] == REG_CODE)
 		{
-			args[i] = get_arg((process->position + offset) % MEM_SIZE,
+			uargs[i] = get_arg((process->position + offset) % MEM_SIZE,
 				T_REG_SIZE);
 			offset += T_REG_SIZE;
-			if (args[i] < 1 || args[i] > 16)
+			if (uargs[i] < 1 || uargs[i] > 16)
 				return (0);
 		}
 		else if (codage[i] == IND_CODE && (offset += T_IND_SIZE))
-			args[i] = get_arg((process->position + (get_arg((process->position
+			uargs[i] = get_arg((process->position + (get_arg((process->position
 			+ (offset - T_IND_SIZE)) % MEM_SIZE, T_IND_SIZE) % IDX_MOD))
 			% MEM_SIZE, T_IND_READ);
 		else if (codage[i] == DIR_CODE && (offset += T_DIR_SIZE))
-		{
-			ft_printf("DIR!!!!!!!!!!!!!!\n");
-			args[i] = get_arg((process->position + (offset - T_DIR_SIZE))
-				% MEM_SIZE, T_DIR_SIZE);
-		}
+			sargs[i] = (short)get_arg((process->position
+				+ (offset - T_DIR_SIZE)) % MEM_SIZE, T_DIR_SIZE);
 		i++;
 	}
 	return (1);
@@ -117,22 +113,28 @@ int		ft_sti_check_args(unsigned int *args, char *codage, t_process *process,
 void	ft_sti(t_process *process)
 {
 	char			codage[4];
-	unsigned int	uargs[3];
 	short int		sargs[3];
+	unsigned int	uargs[3];
+	int				write_position;
 
+	ft_bzero(uargs, 3);
+	ft_bzero(sargs, 3);
+	write_position = 0;
 	decipher_codage(codage, COUNT_ARGS(11), GET_CODAGE);
-	if (check_valid_codage(OPCODE(10), codage) && ft_sti_check_args(args,
-		codage, process, 2))
+	if (check_valid_codage(OPCODE(10), codage) && ft_sti_check_args(uargs,
+		sargs, codage, process))
 	{
-		// ft_printf("%d\n", (short int)args[1] + (short int)args[2]);
-		// ft_printf("%d\n", process->registries[args[2]]);
-		ft_printf("BEFORE SET MAP VAL in cycle %d\n", g_vm->cur_cycle);
-		set_map_value(process, process->registries[args[0]],
-			((short int)(((codage[1] == REG_CODE) ? process->registries[args[1]] : args[1])
-			+ ((codage[2] == REG_CODE) ? process->registries[args[2]]
-			: args[2])) % IDX_MOD) % MEM_SIZE);
-		ft_printf("AFTER SET MAP VAL in cycle %d\n", g_vm->cur_cycle);
-		fprintf(g_f, "ft_sti: in cycle ->%d<- process_position is ->%d<- __uints: arg0 %u arg1 %u__  __short arg0 %hd arg1 %hd__ carry %d\n", g_vm->cur_cycle, process->position, args[0], args[1], args[0], args[1], process->carry);
+		if (codage[1] == DIR_CODE)
+			write_position = sargs[1];
+		else if (codage[1] == IND_CODE)
+			write_position = uargs[1];
+		write_position += (process->position + (((int)((codage[1] == REG_CODE)
+			? process->registries[uargs[1]] : 0)
+			+ (int)((codage[2] == REG_CODE) ? process->registries[uargs[2]]
+			: sargs[2])) % IDX_MOD)) % MEM_SIZE;
+		// ((short)write_position < 0) ? write_position = ((short)write_position % MEM_SIZE) + 4096 : 1;
+		set_map_value(process, process->registries[uargs[0]], write_position);
+		// fprintf(g_f, "ft_sti: in cycle ->%d<- process_position is ->%d<- __uints: arg0 %u arg1 %u__  __short arg0 %hd arg1 %hd__ carry %d\n", g_vm->cur_cycle, process->position, args[0], args[1], args[0], args[1], process->carry);
 	}
 	change_process_position(OPCODE(10), codage, process);
 }
