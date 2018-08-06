@@ -42,6 +42,7 @@ void		client_visualize(int socket_fd, fd_set read_fds)
 	win = init_win();
 	win->speed = 1000;
 	win->paused = 0;
+	g_vm->win_link = win;
 	nodelay(stdscr, true);
 	prepare_window(win);
 	while ((key = getch()) != 3 && !g_vm->winner)

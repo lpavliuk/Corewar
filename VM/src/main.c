@@ -28,6 +28,7 @@ void		init_vm(void)
 	g_vm->cur_cycle = 0;
 	g_vm->process_count = 0;
 	g_vm->port = 0;
+	g_vm->win_link = NULL;
 	g_vm->ip = NULL;
 	g_vm->winner = NULL;
 	g_vm->process = NULL;

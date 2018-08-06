@@ -105,11 +105,13 @@ static t_table		g_table[16] = {
 	{"aff",		1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		16,	1,	4,	2}
 };
 
+typedef struct	s_win t_win;
+
 /*
 ** exec - executable
 */
 
-typedef struct		s_bot
+typedef struct			s_bot
 {
 	unsigned char 		player_counter;
 	char				name[PROG_NAME_LENGTH + 1];
@@ -150,6 +152,7 @@ typedef struct			s_vm
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
 	char				*ip;
+	t_win				*win_link;			/* link to the window of ncurses, initialises if flag_visual == 1 */
 	t_bot				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
@@ -235,7 +238,7 @@ void		text_out();
 # define SET_PIXEL_COLOR g_pixels[process->position]->color =\
 		g_pixels[process->position]->color % 10
 
-typedef struct
+typedef struct			s_win
 {
 	WINDOW				*window;
 	int					height;
@@ -292,6 +295,7 @@ void					client(void);
 int						create_socket(void);
 void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
 void					get_data_select(int socket_fd, fd_set read_fds, void *dest, int len);
+void					send_data_select(int socket_fd, fd_set read_fds, void *src, int len);
 void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
