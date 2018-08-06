@@ -65,9 +65,9 @@ static void			*send_init_info_to_players(void *data)
 	server = (t_server *)data;
 	while (sec >= 0)
 	{
+		sleep(1);
 		foreach_sockets(server, (unsigned char *)&sec, sizeof(unsigned char));
 		foreach_sockets(server, &g_vm->count_players, sizeof(unsigned char));
-		sleep(1);
 
 		system("clear");
 		ft_printf("Time to start the game: %d\n", sec);
