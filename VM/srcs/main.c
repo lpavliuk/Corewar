@@ -56,27 +56,27 @@ void		fill_map(void)
 	}
 }
 
-void		dispatcher_routes(void)
-{
-	if (g_vm->flag_client || g_vm->flag_server)
-	{
-		if (g_vm->flag_client && g_vm->flag_server)
-			ft_error("Error: dispatcher_routes()");
-		// else if ((g_vm->flag_client))
-		// 	client();
-		// else
-		// 	server();
-	}
-	else
-	{
-		fill_map();
-		if (g_vm->flag_visual)
-			visualize();
-		else
-			while (!g_vm->winner)
-				;// step();
-	}
-}
+// void		dispatcher_routes(void)
+// {
+// 	if (g_vm->flag_client || g_vm->flag_server)
+// 	{
+// 		if (g_vm->flag_client && g_vm->flag_server)
+// 			ft_error("Error: dispatcher_routes()");
+// 		else if ((g_vm->flag_client))
+// 			client();
+// 		else
+// 			server();
+// 	}
+// 	else
+// 	{
+// 		fill_map();
+// 		if (g_vm->flag_visual)
+// 			visualize();
+// 		else
+// 			while (!g_vm->winner)
+// 				;// step();
+// 	}
+// }
 
 /*
 ** We go through an array of args and check whether
