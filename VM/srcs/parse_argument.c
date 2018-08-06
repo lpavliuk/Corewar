@@ -31,9 +31,9 @@ static void		get_bot(unsigned int id, char *filename)
 
 	g_vm->count_players++;	
 	if (g_vm->count_players > 4)
-		ft_error("Error");
+		ft_error("Error: Can be only 1-4 players!");
 	if ((fd = open(filename, O_RDONLY)) < 0 || read(fd, 0, 0) == -1)
-		ft_error("Error");
+		ft_error("Error: Can't open file!");
 	new = push_new_bot(&g_vm->bot, id);
 	bot_parsing(fd, new);
 	close(fd);
@@ -79,9 +79,9 @@ void				parse_argument(int count, char **args, int *i)
 		get_number_bot(args, count, i);
 	else if (ft_strequ(args[*i], "-v"))
 		g_vm->flag_visual = 1;
-	else if (ft_strequ(args[*i], "-s"))
+	else if (ft_strequ(args[1], "-s") && count != 3)
 		get_info_server(args, count, i);
-	else if (ft_strequ(args[*i], "-c"))
+	else if (ft_strequ(args[*i], "-c") && count != 4)
 		get_info_client(args, count, i);
 	else
 	{
