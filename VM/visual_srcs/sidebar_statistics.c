@@ -25,7 +25,7 @@ static double		get_cost_live(t_bot *bot, char len, char flag)
 			res += bot->lives_last_period;
 		bot = bot->next;
 	}
-	return (len / res);
+	return ((double)len / res);
 }
 
 static int		ft_round(double n)
@@ -40,6 +40,7 @@ static int		ft_round(double n)
 		return (res);
 }
 
+
 static void	show_line(t_win *win, t_bot *bot, char flag)
 {
 	double			cost_live;
@@ -48,8 +49,6 @@ static void	show_line(t_win *win, t_bot *bot, char flag)
 
 	len = 50;
 	cost_live = get_cost_live(bot, len, flag);
-	if (flag == LAST_PERIOD)
-		ft_printf("cost_live", cost_live);
 	mvwaddch(win->window, CURSOR_Y, CURSOR_X, '[');
 	CURSOR_X++;
 	mvwaddch(win->window, CURSOR_Y, CURSOR_X + len, ']');
