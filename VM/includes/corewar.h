@@ -226,6 +226,7 @@ typedef struct
 }						t_win;
 
 void					visualize(void);
+void					client_visualize(int socket_fd, fd_set read_fds);
 void					print_winner(t_win *win);
 t_win					*init_win(void);
 void					create_pixel_map(void);
@@ -237,6 +238,7 @@ void					show_sidebar(t_win *win);
 void					sidebar_statistics(t_win *win);
 void					show_status(t_win *win);
 void					fill_pixel_map(void);
+
 
 /* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 
@@ -266,12 +268,14 @@ typedef struct
 void					client(void);
 int						create_socket(void);
 void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
+void					get_data_select(int socket_fd, fd_set read_fds, void *dest, int len);
 void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
 void					get_clients_exec(t_server *server);
 void					get_game(int socket_fd, fd_set read_fds);
 void					send_data_all_clients(t_server *server);
+void					get_data_from_server(int socket_fd, fd_set read_fds);
 
 /*
 **	Process functions

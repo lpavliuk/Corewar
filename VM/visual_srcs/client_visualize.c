@@ -12,20 +12,40 @@
 
 #include "corewar.h"
 
-void	visualize(void)
+/*------------- VISUALIZATION on client side -------------*/
+
+static void	redraw_client(t_win *win, int key, int socket_fd, fd_set read_fds)
+{
+	win->cursor_x = X_BEGIN;
+	win->cursor_y = Y_BEGIN;
+	(key == RESIZE) ? prepare_window(win) : 0;
+	get_data_from_server(socket_fd, read_fds);
+	draw_map(win);
+	show_sidebar(win);
+	if (g_vm->winner)
+	{
+		print_winner(win);
+		nodelay(stdscr, false);
+	}
+	wrefresh(win->window);
+	while (1);
+}
+
+void		client_visualize(int socket_fd, fd_set read_fds)
 {
 	t_win	*win;
-	int		key;
+	int 	key;
 
-	create_pixel_map();
-	fill_pixel_map();
 	initscr();
 	noecho();
 	color_preparation();
 	win = init_win();
+	win->speed = 1000;
+	win->paused = 0;
+	nodelay(stdscr, true);
 	prepare_window(win);
 	while ((key = getch()) && !g_vm->winner)
-		redraw(win, key);
+		redraw_client(win, key, socket_fd, read_fds);
 	delwin(win->window);
 	endwin();
 }

@@ -35,3 +35,18 @@ void		foreach_sockets(t_server *server, unsigned char *str, int bytes)
 		i++;
 	}
 }
+
+void		get_data_select(int socket_fd, fd_set read_fds, void *dest, int len)
+{
+	// struct timeval timeout;
+
+	// timeout.tv_sec = 1;
+	// timeout.tv_usec = 0;
+	if (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
+	{
+		if (recv(socket_fd, dest, len, 0) <= 0)
+			ft_error("Error: connection interrupted");
+	}
+	else
+		ft_error("Error: connection interrupted");
+}

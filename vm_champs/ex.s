@@ -1,4 +1,5 @@
-.name "Aleks"
+.name "
+tralalala"
 .comment "coool!"
 		
 l2:	sti r1,%:live,%0
