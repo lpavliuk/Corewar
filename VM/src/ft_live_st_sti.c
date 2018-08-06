@@ -131,6 +131,7 @@ void	ft_sti(t_process *process)
 			ch_pos += process->registries[uargs[2]];
 		else if (codage[2] == DIR_CODE)
 			ch_pos += sargs[2];
+		ft_printf("STI %d reg == %d cycle %d\n", process->registries[uargs[0]], uargs[0], g_vm->cur_cycle);
 		set_map_value(process, process->registries[uargs[0]],
 			(process->position + (ch_pos % IDX_MOD)) % MEM_SIZE);
 	}

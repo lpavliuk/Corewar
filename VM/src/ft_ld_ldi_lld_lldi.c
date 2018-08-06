@@ -15,9 +15,8 @@ void	ft_ld(t_process *process)
 		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)),
 			T_IND_READ)) : (get_arg((process->position + 2)
 			% MEM_SIZE, LABEL_SIZE(OPCODE(1))));
+		ft_printf("LD result == %d\n", result);
 		process->registries[arg2] = result;
-		// fprintf(g_f, "ft_ld: in cycle ->%d<- process_position is ->%d<- __uints: arg2 %u result %u__  __short arg2 %hd result %hd__ reg[arg2] = %u carry %d\n",
-		// 		g_vm->cur_cycle, process->position, arg2, result, arg2, result, process->registries[arg2], process->carry);
 		process->carry = (result) ? 0 : 1;
 	}
 	change_process_position(OPCODE(1), codage, process);
