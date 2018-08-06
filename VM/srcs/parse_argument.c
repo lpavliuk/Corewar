@@ -79,9 +79,9 @@ void				parse_argument(int count, char **args, int *i)
 		get_number_bot(args, count, i);
 	else if (ft_strequ(args[*i], "-v"))
 		g_vm->flag_visual = 1;
-	else if (ft_strequ(args[1], "-s") && count != 3)
+	else if (ft_strequ(args[1], "-s") && count == 3)
 		get_info_server(args, count, i);
-	else if (ft_strequ(args[*i], "-c") && count != 4)
+	else if (ft_strequ(args[*i], "-c") && count == 4)
 		get_info_client(args, count, i);
 	else
 	{
