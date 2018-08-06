@@ -55,22 +55,23 @@ void	set_map_value(t_process *process, unsigned int val,
 void	ft_st(t_process *process)
 {
 	char			codage[4];
-	unsigned int	position_arg2;
-	unsigned int	result;
+	short			position_arg2;
+	unsigned char	result;
 
-	decipher_codage(codage, COUNT_ARGS(3), GET_CODAGE);
-	if (check_valid_codage(OPCODE(2), codage) && (result = get_arg(
-		(process->position + 2) % MEM_SIZE, T_REG_SIZE) > 0) && result < 17)
+	decipher_codage(codage, COUNT_ARGS(OPCODE(2)), GET_CODAGE);
+	if (check_valid_codage(OPCODE(2), codage) && ((result = get_arg(
+		(process->position + 2) % MEM_SIZE, T_REG_SIZE)) > 0) && result < 17)
 	{
 		position_arg2 = get_arg((process->position + 3) % MEM_SIZE, ((codage[1]
 			== IND_CODE) ? T_IND_SIZE : T_REG_SIZE));
 		if (codage[1] == IND_CODE)
 		{
-			position_arg2 %= IDX_MOD;
-			set_map_value(process, result, position_arg2);
+			position_arg2 = position_arg2 % IDX_MOD;
+			set_map_value(process, process->registries[result],
+				(position_arg2 + process->position) % MEM_SIZE);
 		}
 		else if (position_arg2 > 0 && position_arg2 <= REG_NUMBER)
-			process->registries[position_arg2] = result;
+			process->registries[position_arg2] = process->registries[result];
 	}
 	change_process_position(OPCODE(2), codage, process);
 }
