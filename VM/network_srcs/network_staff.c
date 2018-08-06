@@ -33,7 +33,7 @@ void		foreach_sockets(t_server *server, unsigned char *str, int bytes)
 		if (sd > 0)
 		{
 			send(sd, str, bytes, 0);
-			send(sd, &g_vm->count_players, 1, 0);
+			// send(sd, &g_vm->count_players, 1, 0);
 		}
 		i++;
 	}

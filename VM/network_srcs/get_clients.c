@@ -66,7 +66,7 @@ static void			*send_init_info_to_players(void *data)
 	while (sec >= 0)
 	{
 		foreach_sockets(server, (unsigned char *)&sec, sizeof(unsigned char));
-		// foreach_sockets(server, &g_vm->count_players, sizeof(unsigned char));
+		foreach_sockets(server, &g_vm->count_players, sizeof(unsigned char));
 		sleep(1);
 
 		system("clear");

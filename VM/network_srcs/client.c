@@ -57,6 +57,7 @@ static void				read_init_info(int socket_fd, fd_set read_fds)
 		ft_bzero(str, 2);
 		if (recv(socket_fd, &str, 2, 0) > 0)
 		{
+			sleep(1);
 			system("clear");
 			ft_printf("Time to start the game: %d\n", str[0]);
 			ft_printf("Number of connected players: %d\n", str[1]);
