@@ -20,8 +20,6 @@ static void		send_bots_to_client(int socket_fd)
 	bot = g_vm->bot;
 	while (bot)
 	{
-		// ft_printf("name = %s\n", bot->name);
-		// ft_printf("comment = %s\n", bot->comment);
 		send(socket_fd, bot->name, PROG_NAME_LENGTH, 0);
 		send(socket_fd, bot->comment, COMMENT_LENGTH, 0);
 		bot = bot->next;
@@ -61,7 +59,6 @@ static void		*send_data_to_client(void *sd)
 	int	socket_fd;
 
 	socket_fd = *(int *)sd;
-	printf("socket_fd = %d\n", socket_fd);
 	send_bots_to_client(socket_fd);
 
 	// while (!g_vm->winner)
