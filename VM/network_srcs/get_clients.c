@@ -68,11 +68,9 @@ static void			*send_init_info_to_players(void *data)
 		sleep(1);
 		foreach_sockets(server, (unsigned char *)&sec, sizeof(unsigned char));
 		foreach_sockets(server, &g_vm->count_players, sizeof(unsigned char));
-
 		system("clear");
 		ft_printf("Time to start the game: %d\n", sec);
 		ft_printf("Number of connected players: %d\n", g_vm->count_players);
-
 		sec--;
 	}
 	server->flag_start = 1;

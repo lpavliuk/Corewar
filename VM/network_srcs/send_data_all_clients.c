@@ -60,6 +60,8 @@ static void		*send_data_to_client(void *sd)
 
 	socket_fd = *(int *)sd;
 	send_bots_to_client(socket_fd);
+
+	int i = 100;
 	while (1)
 	{
 		send(socket_fd, g_map, MEM_SIZE, 0);
@@ -72,8 +74,7 @@ static void		*send_data_to_client(void *sd)
 		}
 		else
 			send(socket_fd, &g_vm->winner, 4, 0);
-		// step();
-		while (1);
+		step();
 	}
 	return (sd);
 }
