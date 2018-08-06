@@ -18,19 +18,19 @@ void				usage(void)
 	"[[-n N] <champion1.cor> <...cor>]\n"
 	"   {red}-n{eoc}      : Number of player\n"
 	"{blue}### {yellow}TEXT OUTPUT MODE{eoc} {blue}###"
-	"######################################################{eoc}\n"
+	"#########################################################{eoc}\n"
 	"   {red}-dump N{eoc} : Dumps memory after N cycles then exits\n"
 	"{blue}### {yellow}NCURSES OUTPUT MODE{eoc} {blue}###"
-	"###################################################{eoc}\n"
+	"######################################################{eoc}\n"
 	"   {red}-v{eoc}      : Dumps memory after N cycles then exits\n"
 	"{blue}### {yellow}NETWORK GAME MODE{eoc} {blue}###"
-	"#####################################################{eoc}\n"
+	"########################################################{eoc}\n"
 	"   {red}-s IP{eoc}   : Start server on IP address\n"
 	"             [./corewar -s 0.0.0.0]\n"
 	"   {red}-c IP{eoc}   : Connect client to server which on IP address\n"
 	"             [./corewar <champion.cor> -c 0.0.0.0]\n"
 	"{blue}########################"
-	"######################################################{eoc}\n");
+	"#########################################################{eoc}\n");
 	exit(0);
 }
 
