@@ -32,7 +32,7 @@ static void		send_pixel_map_to_client(int socket_fd)
 
 	i = 0;
 	while (i < MEM_SIZE)
-		write(socket_fd, g_pixels[i++], 2);
+		send(socket_fd, g_pixels[i++], 2, 0);
 }
 
 static void		send_other_data_to_client(int socket_fd)
@@ -60,6 +60,7 @@ static void		*send_data_to_client(void *sd)
 	fd_set			set;
 
 	socket_fd = *(int *)sd;
+	signal(SIGPIPE, SIG_IGN);
 	send_bots_to_client(socket_fd);
 	while (1)
 	{
