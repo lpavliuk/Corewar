@@ -1,1 +1,1 @@
-gcc srcs/*.c visual_srcs/*.c network_srcs/*.c libft.a -lncurses -I ./includes/
+gcc src/*.c visual_srcs/*.c network_srcs/*.c libft.a -lncurses -I ./include/

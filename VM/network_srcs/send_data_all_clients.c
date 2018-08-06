@@ -72,8 +72,8 @@ static void		*send_data_to_client(void *sd)
 		}
 		else
 			send(socket_fd, &g_vm->winner, 4, 0);
-		// step();
-		while (1);
+		step();
+		handle_pixels();
 	}
 	return (sd);
 }

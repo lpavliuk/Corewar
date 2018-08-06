@@ -103,7 +103,7 @@ t_process			*push_new_process(t_process **head,
 	new->opcode = 0;
 	new->codage = 0;
 	new->cycles_to_perform = 0;
-	new->next = NULL;
+	new->next = 0;
 	if (*head)
 		new->next = *head;
 	*head = new;
