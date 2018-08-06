@@ -24,7 +24,7 @@ int		ft_and_or_xor_args(unsigned int *args, char *codage,
 		}
 		else if (codage[i] == DIR_CODE && (offset += LABEL_SIZE(OPCODE(6)))) /* LABEL_SIZE(OPCODE(6)) == LABEL_SIZE(OPCODE(7 && 8))*/
 			args[i] = get_arg((process->position
-			+ (offset - LABEL_SIZE(OPCODE(6)))) % MEM_SIZE, T_DIR_SIZE);
+			+ (offset - LABEL_SIZE(OPCODE(6)))) % MEM_SIZE, LABEL_SIZE(OPCODE(6)));
 		i++;
 	}
 	return (1);
@@ -44,7 +44,9 @@ void	ft_and(t_process *process)
 			process->registries[args[1]] : args[1]);
 		process->carry = (process->registries[args[2]]) ? 0 : 1;
 	}
+	// ft_printf("____AND: process->position before changes %d\n", process->position);
 	change_process_position(OPCODE(5), codage, process);
+	// ft_printf("____AND: process->position after changes %d\n", process->position);
 }
 
 void	ft_or(t_process *process)
@@ -61,7 +63,9 @@ void	ft_or(t_process *process)
 			process->registries[args[1]] : args[1]);
 		process->carry = (process->registries[args[2]]) ? 0 : 1;
 	}
+	// ft_printf("____OR: process->position before changes %d\n", process->position);
 	change_process_position(OPCODE(6), codage, process);
+	// ft_printf("____OR: process->position after changes %d\n", process->position);
 }
 
 void	ft_xor(t_process *process)
@@ -78,5 +82,7 @@ void	ft_xor(t_process *process)
 			process->registries[args[1]] : args[1]);
 		process->carry = (process->registries[args[2]]) ? 0 : 1;
 	}
+	// ft_printf("____XOR: process->position before changes %d\n", process->position);
 	change_process_position(OPCODE(7), codage, process);
+	// ft_printf("____XOR: process->position after changes %d\n", process->position);
 }

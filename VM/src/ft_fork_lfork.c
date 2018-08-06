@@ -1,7 +1,7 @@
 #include "corewar.h"
 
 void	copy_new_process(t_process **head, t_process *process_old,
-		int position)
+		unsigned int position)
 {
 	t_process	*process;
 	int			i;
@@ -14,8 +14,9 @@ void	copy_new_process(t_process **head, t_process *process_old,
 		process->registries[i] = process->registries[i];
 		i++;
 	}
-	process->parent = process->parent;
+	process->parent = process_old->parent;
 	process->position = position;
+	// ft_printf("COPY_NEW_PROCESS:			in cycle ->%d<- process_position is ->%d<- __short  new pos %hd\n", g_vm->cur_cycle, process->position, process->position);
 	(g_vm->flag_visual) ? TURN_ON_PROCESS : 1;
 	process->carry = process->carry;
 	process->live = process->live;
@@ -34,11 +35,9 @@ void	ft_fork(t_process *process)
 	short new_position;
 	// static long long i = 0;
 
-	new_position = ((short)(get_arg((process->position + 1) % MEM_SIZE, T_DIR_SIZE))
-		% IDX_MOD);
-	// (new_position < 0) ? (new_position += 4096) : 1;
-	ft_printf("FORK: new_pos ->%d<- current_pos ->%d<- in cycle ->%d<- sent to func ->%d<-\n", new_position, process->position, g_vm->cur_cycle, ((new_position + (unsigned int)1) % MEM_SIZE));
-	// fprintf(g_f, "ft_fork:			in cycle ->%d<- process_position is ->%d<- __uints: new_pos %u __short  new pos %hd process count %d\n", g_vm->cur_cycle, process->position, new_position, new_position, g_vm->process_count);
+	new_position = ((short)(get_arg((process->position + 1)
+		% MEM_SIZE, T_DIR_SIZE)) % IDX_MOD);
+	// ft_printf("FORK:			in cycle ->%d<- process_position is ->%d<- __uints: new_pos %u __short  new pos %hd process count %d\n", g_vm->cur_cycle, process->position, new_position, new_position, g_vm->process_count);
 	copy_new_process(&(g_vm->process), process, ((new_position + process->position) % MEM_SIZE));
 	if (g_vm->flag_visual)
 		SET_PIXEL_COLOR;
@@ -50,13 +49,12 @@ void	ft_fork(t_process *process)
 
 void	ft_lfork(t_process *process)
 {
-	int new_position;
+	short new_position;
 
-	new_position = (process->position
-		+ ((get_arg((process->position + 1) % MEM_SIZE, T_DIR_SIZE))))
-			% MEM_SIZE;
-	// ft_printf("LFORK!!!!!!1!1!1\n");
-	copy_new_process(&(g_vm->process), process, new_position);
+	new_position = (short)get_arg((process->position + 1) % MEM_SIZE,
+		T_DIR_SIZE);
+	copy_new_process(&(g_vm->process), process,
+		((new_position + process->position) % MEM_SIZE));
 	if (g_vm->flag_visual)
 		SET_PIXEL_COLOR;
 	process->position = (process->position + T_DIR_SIZE + 1) % MEM_SIZE;
