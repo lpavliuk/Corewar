@@ -11,16 +11,16 @@ void	copy_new_process(t_process **head, t_process *process_old,
 	(!process) ? ft_error("Error") : 0;
 	while (i <= REG_NUMBER)
 	{
-		process->registries[i] = process->registries[i];
+		process->registries[i] = process_old->registries[i];
 		i++;
 	}
 	process->parent = process_old->parent;
 	process->position = position;
 	(g_vm->flag_visual) ? TURN_ON_PROCESS : 1;
-	process->carry = process->carry;
-	process->live = process->live;
+	process->carry = process_old->carry;
+	process->live = process_old->live;
 	process->opcode = 0;
-	process->codage = process->codage;
+	process->codage = process_old->codage;
 	process->cycles_to_perform = 0;
 	process->next = NULL;
 	if (*head)

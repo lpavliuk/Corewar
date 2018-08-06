@@ -1,5 +1,5 @@
 #include "corewar.h"
-#include <stdio.h>
+
 int		check_valid_codage(char opcode, char *codage)
 {
 	int		input_arg;
@@ -53,14 +53,18 @@ void	ft_zjmp(t_process *process)
 
 	if (g_vm->flag_visual)
 		SET_PIXEL_COLOR;
+	// ft_printf("ZJMP: <<cur_cycle %d>> <<carry %d>> <cur_position %d>>\n", g_vm->cur_cycle, process->carry, process->position);
 	if (process->carry)
 	{
-		new_position = (short)get_arg(((process->position + 1) % IDX_MOD),
-			T_DIR_SIZE);
+		new_position = (short)get_arg((process->position + 1) % MEM_SIZE,
+			T_DIR_SIZE) % IDX_MOD;
+		// ft_printf("	<<new_position %d>> <<changed position %d>>\n", new_position, (process->position + new_position) % MEM_SIZE);
 		process->position = (process->position + new_position) % MEM_SIZE;
+		// (process->position > 4096) ? (process->position %= 4096) : 1;
 	}
 	else
 	{
+		// ft_printf("	carry == 0 <<changed position %d>>\n", (process->position + 1 + T_DIR_SIZE) % MEM_SIZE);
 		process->position = (process->position + 1 + T_DIR_SIZE) % MEM_SIZE;
 	}
 	if (g_vm->flag_visual)

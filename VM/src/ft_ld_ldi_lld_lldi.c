@@ -15,7 +15,6 @@ void	ft_ld(t_process *process)
 		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)),
 			T_IND_READ)) : (get_arg((process->position + 2)
 			% MEM_SIZE, LABEL_SIZE(OPCODE(1))));
-		ft_printf("LD result == %d\n", result);
 		process->registries[arg2] = result;
 		process->carry = (result) ? 0 : 1;
 	}
@@ -75,19 +74,25 @@ int		ft_ldi_lldi_check_args(unsigned int *uargs, short int *sargs,
 void	ft_ldi(t_process *process)
 {
 	char			codage[4];
-	unsigned int	uargs[3];
 	short int		sargs[2];
-	unsigned int	result;
+	unsigned int	uargs[3];
+	int				sum;
 
 	decipher_codage(codage, COUNT_ARGS(10), GET_CODAGE);
 	if (check_valid_codage(OPCODE(9), codage) && ft_ldi_lldi_check_args(uargs,
 		sargs, codage, process))
 	{
-		result = get_arg((process->position
-			+ ((((codage[0] == DIR_CODE) ? sargs[0] : uargs[0])
-			+ ((codage[1] == DIR_CODE) ? sargs[1] : uargs[1])) % IDX_MOD))
-			% MEM_SIZE, T_IND_READ);
-		process->registries[uargs[2]] = result;
+		if (codage[0] == DIR_CODE)
+			sum = sargs[0];
+		else
+			sum = uargs[0];
+		if (codage[1] == DIR_CODE)
+			sum += sargs[1];
+		else
+			sum += uargs[1];
+		process->registries[uargs[2]] = get_arg((process->position
+			+ (sum % IDX_MOD)) % MEM_SIZE, T_IND_READ);
+		process->carry = (process->registries[uargs[2]]) ? 0 : 1;
 	}
 	change_process_position(OPCODE(9), codage, process);
 }
@@ -95,20 +100,25 @@ void	ft_ldi(t_process *process)
 void	ft_lldi(t_process *process)
 {
 	char			codage[4];
-	unsigned int	uargs[3];
 	short int		sargs[2];
-	unsigned int	result;
+	unsigned int	uargs[3];
+	int				sum;
 
 	decipher_codage(codage, COUNT_ARGS(14), GET_CODAGE);
 	if (check_valid_codage(OPCODE(13), codage) && ft_ldi_lldi_check_args(uargs,
 		sargs, codage, process))
 	{
-		result = get_arg((process->position
-			+ ((codage[0] == DIR_CODE) ? sargs[0] : uargs[0])
-			+ ((codage[1] == DIR_CODE) ? sargs[1] : uargs[1]))
+		if (codage[0] == DIR_CODE)
+			sum = sargs[0];
+		else
+			sum = uargs[0];
+		if (codage[1] == DIR_CODE)
+			sum += sargs[1];
+		else
+			sum += uargs[1];
+		process->registries[uargs[2]] = get_arg((process->position + sum)
 			% MEM_SIZE, T_IND_READ);
-		process->registries[uargs[2]] = result;
-		process->carry = (result) ? 0 : 1;
+		process->carry = (process->registries[uargs[2]]) ? 0 : 1;
 	}
 	change_process_position(OPCODE(13), codage, process);
 }
