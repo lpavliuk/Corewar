@@ -12,32 +12,24 @@
 
 #include "corewar.h"
 
-static void	get_pixel_map(int socket_fd)
+inline static void	get_data_select(int socket_fd, fd_set read_fds, void *dest, int len)
+{
+	if (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
+	{
+		if (recv(socket_fd, dest, len, 0) <= 0)
+			ft_error("Error: connection interrupted");
+	}
+	else
+		ft_error("Error: connection interrupted");
+}
+
+static void	get_pixel_map(int socket_fd, fd_set read_fds)
 {
 	int i;
 
 	i = 0;
 	while (i < MEM_SIZE)
-	{
-		if (recv(socket_fd, g_pixels[i], 2, 0) < 0)
-			ft_error("Error: get_pixel_map()");
-		i++;
-	}
-}
-
-static void	get_data_select(int socket_fd, fd_set read_fds, void *dest, int len)
-{
-	struct timeval timeout;
-
-	timeout.tv_sec = 1;
-	timeout.tv_usec = 0;
-	if (select(socket_fd + 1, &read_fds, NULL, NULL, &timeout) > 0)
-	{
-		if (recv(socket_fd, dest, len, 0) <= 0)
-			ft_error("Error: get_data_select()");
-	}
-	else
-		ft_error("Error: get_data_select()");
+		get_data_select(socket_fd, read_fds, g_pixels[i++], 2);
 }
 
 static void	get_init_data(int socket_fd, fd_set read_fds)
@@ -67,29 +59,73 @@ static void		remove_player(t_bot **bot)
 	*bot = NULL;
 }
 
-void	get_game(int socket_fd, fd_set read_fds)
+static void		get_other_data(int socket_fd, fd_set read_fds)
 {
-	remove_player(&g_vm->bot);	/* KOSTIL */
-	get_init_data(socket_fd, read_fds);
+	t_bot	*bot;
 
-	t_bot *bot = g_vm->bot;
+	get_data_select(socket_fd, read_fds, &g_vm->cycle_to_die, 4);
+	get_data_select(socket_fd, read_fds, &g_vm->cur_cycle, 4);
+	get_data_select(socket_fd, read_fds, &g_vm->process_count, 4);
+	bot = g_vm->bot;
 	while (bot)
 	{
-		ft_printf("\nPLAYER %d\n", bot->player_counter);
-		ft_printf("id = %u\n", bot->id);
-		ft_printf("name = %s\n", bot->name);
-		ft_printf("comment = %s\n", bot->comment);
+		get_data_select(socket_fd, read_fds, &bot->lives_cur_period, 4);
+		get_data_select(socket_fd, read_fds, &bot->lives_last_period, 4);
+		get_data_select(socket_fd, read_fds, &bot->last_live, 4);
 		bot = bot->next;
 	}
+}
 
+static void	get_winner(unsigned int winner_id)
+{
+	t_bot	*bot;
 
+	bot = g_vm->bot;
+	while (bot)
+	{
+		if (bot->id == winner_id)
+		{
+			g_vm->winner = bot;
+			return ;
+		}
+		bot = bot->next;
+	}
+}
 
+// void	prohodochka(void)
+// {
+// 	ft_printf("count players = %d\n", g_vm->count_players);
+// 	while (g_vm->bot)
+// 	{
+// 		ft_printf("player: %d\nname: %s\ncomment: %s\nid: %d\n", g_vm->bot->player_counter, g_vm->bot->name, g_vm->bot->comment, g_vm->bot->id);
+// 		ft_printf("lives_cur_period: %u\nlives_last_period: %u\nlast_live: %u\n", g_vm->bot->lives_cur_period, g_vm->bot->lives_last_period, g_vm->bot->last_live);
+// 		g_vm->bot = g_vm->bot->next;
+// 	}
+// 	print_memory(g_map, MEM_SIZE);
+// 	int i = -1;
+// 	while (++i < MEM_SIZE)
+// 		ft_printf("counter: %d | color %d\n", g_pixels[i]->counter, g_pixels[i]->color);
+// 	ft_printf("cycle_to_die: %u\n", g_vm->cycle_to_die);
+// 	ft_printf("cur_cycle: %u\n", g_vm->cur_cycle);
+// 	ft_printf("process_count: %u\n", g_vm->process_count);
+// }
 
-	// create_pixel_map();
-	// while (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
-	// {
-	// 	if (recv(socket_fd, &g_map, MEM_SIZE, 0) <= 0)
-	// 		ft_error("Error: get_game()");
-	// 	get_pixel_map(socket_fd, read_fds);
-	// }
+void	get_game(int socket_fd, fd_set read_fds)
+{
+	unsigned int winner_id;
+
+	winner_id = 0;
+	remove_player(&g_vm->bot);	/* KOSTIL */
+	get_init_data(socket_fd, read_fds);
+	create_pixel_map();
+	while (!winner_id)
+	{
+		get_data_select(socket_fd, read_fds, g_map, MEM_SIZE);
+		get_pixel_map(socket_fd, read_fds);
+		get_other_data(socket_fd, read_fds);
+		get_data_select(socket_fd, read_fds, &winner_id, 4);
+		// prohodochka();
+		while (1);
+	}
+	get_winner(winner_id);
 }

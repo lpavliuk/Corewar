@@ -83,5 +83,6 @@ void					server(void)
 	fill_pixel_map();
 	send_data_all_clients(server);
 	while (1);
+	/* Here we need to close sockets of clients */
 	close(server->master_socket);
 }

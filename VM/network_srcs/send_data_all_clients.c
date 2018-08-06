@@ -26,49 +26,55 @@ static void		send_bots_to_client(int socket_fd)
 	}
 }
 
-// static void		send_pixel_map_to_client(int socket_fd)
-// {
-// 	int	i;
+static void		send_pixel_map_to_client(int socket_fd)
+{
+	int	i;
 
-// 	i = 0;
-// 	while (i < MEM_SIZE)
-// 		send(socket_fd, g_pixels[i++], 2, 0);
-// }
+	i = 0;
+	while (i < MEM_SIZE)
+		send(socket_fd, g_pixels[i++], 2, 0);
+}
 
-// static void		send_other_data_to_client(int socket_fd)
-// {
-// 	t_bot	*bot;
+static void		send_other_data_to_client(int socket_fd)
+{
+	t_bot	*bot;
 
-// 	 VM data 
-// 	send(socket_fd, &g_vm->cycle_to_die, 4, 0);
-// 	send(socket_fd, &g_vm->cur_cycle, 4, 0);
-// 	send(socket_fd, &g_vm->process_count, 4, 0);
-// 	/* Bots' data */
-// 	bot = g_vm->bot;
-// 	while (bot)
-// 	{
-// 		send(socket_fd, &bot->lives_cur_period, 4, 0);
-// 		send(socket_fd, &bot->lives_last_period, 4, 0);
-// 		send(socket_fd, &bot->last_live, 4, 0);
-// 		bot = bot->next;
-// 	}
-// }
+	/* VM data */
+	send(socket_fd, &g_vm->cycle_to_die, 4, 0);
+	send(socket_fd, &g_vm->cur_cycle, 4, 0);
+	send(socket_fd, &g_vm->process_count, 4, 0);
+	/* Bots' data */
+	bot = g_vm->bot;
+	while (bot)
+	{
+		send(socket_fd, &bot->lives_cur_period, 4, 0);
+		send(socket_fd, &bot->lives_last_period, 4, 0);
+		send(socket_fd, &bot->last_live, 4, 0);
+		bot = bot->next;
+	}
+}
 
 static void		*send_data_to_client(void *sd)
 {
-	int	socket_fd;
+	int				socket_fd;
 
 	socket_fd = *(int *)sd;
 	send_bots_to_client(socket_fd);
-
-	// while (!g_vm->winner)
-	// {
-	// 	send(socket_fd, g_map, MEM_SIZE);
-	// 	send_pixel_map_to_client(socket_fd);
-	// 	send_other_data_to_client(socket_fd);
-	// 	step();
-	// }
-	// send(socket_fd, vm->winner->id, 4, 0);
+	while (1)
+	{
+		send(socket_fd, g_map, MEM_SIZE, 0);
+		send_pixel_map_to_client(socket_fd);
+		send_other_data_to_client(socket_fd);
+		if (g_vm->winner)
+		{
+			send(socket_fd, &g_vm->winner->id, 4, 0);
+			break ;
+		}
+		else
+			send(socket_fd, &g_vm->winner, 4, 0);
+		// step();
+		while (1);
+	}
 	return (sd);
 }
 
