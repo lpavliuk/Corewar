@@ -52,7 +52,7 @@ void	ft_or(t_process *process)
 	char			codage[4];
 	unsigned int	args[3];
 
-	decipher_codage(codage, COUNT_ARGS(7), GET_CODAGE);
+	decipher_codage(codage, COUNT_ARGS(OPCODE(6)), GET_CODAGE);
 	if (check_valid_codage(OPCODE(6), codage) && ft_and_or_xor_args(args,
 		codage, process, 2))
 	{
@@ -69,7 +69,7 @@ void	ft_xor(t_process *process)
 	char			codage[4];
 	unsigned int	args[3];
 
-	decipher_codage(codage, COUNT_ARGS(8), GET_CODAGE);
+	decipher_codage(codage, COUNT_ARGS(OPCODE(7)), GET_CODAGE);
 	if (check_valid_codage(OPCODE(7), codage) && ft_and_or_xor_args(args,
 		codage, process, 2))
 	{

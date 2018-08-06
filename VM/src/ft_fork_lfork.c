@@ -11,7 +11,7 @@ void	copy_new_process(t_process **head, t_process *process_old,
 	(!process) ? ft_error("Error") : 0;
 	while (i <= REG_NUMBER)
 	{
-		process->registries[i] = process->registries[i];
+		process->registries[i] = process_old->registries[i];
 		i++;
 	}
 	process->parent = process_old->parent;
