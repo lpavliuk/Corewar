@@ -15,7 +15,7 @@
 
 # include "libft.h"
 # include <fcntl.h>
-# include <curses.h>
+
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
 # define T_IND_SIZE				2
@@ -192,8 +192,20 @@ void		text_out();
 
 /*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 
+# include <curses.h>
+# include <signal.h>
+
+/* CURSOR */
+
+# define CURSOR_X win->cursor_x
+# define CURSOR_Y win->cursor_y
+
+/* A starting point of cursor */
+
 # define X_BEGIN	3
 # define Y_BEGIN	2
+
+/* UI keys */
 
 # define KEY_Q		113
 # define KEY_W		119
@@ -203,16 +215,15 @@ void		text_out();
 # define KEY_SPACE	32
 # define RESIZE		410
 
+/* Attributes ON / OFF */
+
 # define ON			1
 # define OFF		2
 
+/* Statistics for current period / last_period */
+
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2
-
-/* CURSOR */
-
-# define CURSOR_X win->cursor_x
-# define CURSOR_Y win->cursor_y
 
 # define INIT_PIXEL_COLOR 5
 
@@ -250,19 +261,20 @@ void					show_status(t_win *win);
 void					fill_pixel_map(void);
 void					handle_pixels(void);
 
+
 /* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <pthread.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <errno.h>
+# include <sys/types.h>
+# include <sys/time.h>
+# include <sys/select.h>
+# include <pthread.h>
 
 #define PORT 8888
 

@@ -21,10 +21,11 @@ void	visualize(void)
 	fill_pixel_map();
 	initscr();
 	noecho();
+	raw();
 	color_preparation();
 	win = init_win();
 	prepare_window(win);
-	while ((key = getch()) && !g_vm->winner)
+	while ((key = getch()) != 3 && !g_vm->winner)	/* 3 is a CTRL + C */
 		redraw(win, key);
 	delwin(win->window);
 	endwin();

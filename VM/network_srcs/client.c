@@ -48,10 +48,7 @@ static void	connect_to_server(int socket_fd, char *ip)
 static void				read_init_info(int socket_fd, fd_set read_fds)
 {
 	unsigned char	str[2];
-	struct timeval	timeout;
 
-	timeout.tv_sec = 1;
-	timeout.tv_usec = 0;
 	while (1)
 	{
 		ft_bzero(str, 2);
