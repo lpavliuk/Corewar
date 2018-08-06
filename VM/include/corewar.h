@@ -183,6 +183,7 @@ void					sort_bot_list(t_bot **head, unsigned char count_players);
 void					parse_argument(int count, char **args, int *i);
 void					get_args(int argc, char **args);
 int						step(void);
+void					fill_map(void);
 
 /*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
 void		print_header();

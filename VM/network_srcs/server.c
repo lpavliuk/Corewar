@@ -12,34 +12,9 @@
 
 #include "corewar.h"
 
-static void		fill_map(void)
-{
-	t_bot			*bot;
-	unsigned int	i;
-	unsigned int	total;
-
-	total = 0;
-	bot = g_vm->bot;
-	ft_bzero(g_map, MEM_SIZE);
-	while (bot)
-	{
-		i = 0;
-		push_new_process(&g_vm->process, &g_vm->process_count, bot, total + i);
-		while (i < bot->size)
-		{
-			g_map[total + i] = bot->exec[i];
-			i++;
-		}
-		total += MEM_SIZE / g_vm->count_players;
-		bot = bot->next;
-	}
-}
-
-/*---------------------------------------------------------------*/
-
 static void			bzero_sockets(int sockets[], int n_sockets)
 {
-	int				i;
+	int i;
 
 	i = 0;
 	while (i < n_sockets)
@@ -48,7 +23,7 @@ static void			bzero_sockets(int sockets[], int n_sockets)
 
 static t_server		*init_server(void)
 {
-	t_server		*server;
+	t_server *server;
 
 	server = (t_server *)malloc(sizeof(t_server));
 	(!server) ? ft_error("Error: init_server()") : 0;
@@ -59,9 +34,9 @@ static t_server		*init_server(void)
 	return (server);
 }
 
-static char				bind_to_address(int socket_fd, char *ip)
+static char			bind_to_address(int socket_fd, char *ip)
 {
-	struct sockaddr_in	address;
+	struct sockaddr_in address;
 
 	address.sin_family = AF_INET;
 	address.sin_port = htons(PORT);
@@ -70,9 +45,23 @@ static char				bind_to_address(int socket_fd, char *ip)
 	return (bind(socket_fd, (struct sockaddr *)&address, sizeof(struct sockaddr_in)));
 }
 
-void					server(void)
+static void			close_sockets(t_server *server)
 {
-	t_server			*server;
+	unsigned char i;
+
+	i = 0;
+	while (i < server->n_client_sockets)
+	{
+		if (server->client_sockets[i] > 0)
+			close(server->client_sockets[i]);
+		i++;
+	}
+	close(server->master_socket);
+}
+
+void				server(void)
+{
+	t_server *server;
 
 	server = init_server();
 	(bind_to_address(server->master_socket, g_vm->ip)) ? ft_error("Error: bind()") : 0;
@@ -82,6 +71,6 @@ void					server(void)
 	create_pixel_map();
 	fill_pixel_map();
 	send_data_all_clients(server);
-	/* Here we need to close sockets of clients */
-	close(server->master_socket);
+	close_sockets(server);
+	free(server);
 }
