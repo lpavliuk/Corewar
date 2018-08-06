@@ -18,12 +18,17 @@ void	ft_live(t_process *process)
 				bot->player_counter, bot->name) : 1;
 			bot->lives_cur_period++;
 		}
+		if (g_vm->flag_visual)
+		{
+			if (player_id == bot->id)
+			{
+				TURN_ON_LIVE;
+				g_pixels[process->position]->counter = 50;
+			}
+			else
+				SET_PIXEL_COLOR;
+		}
 		bot = bot->next;
-	}
-	if (g_vm->flag_visual)
-	{
-		TURN_ON_LIVE;
-		g_pixels[process->position]->counter = 50;
 	}
 	process->position = (process->position + 1 + 4) % MEM_SIZE;
 	(g_vm->flag_visual) ? (TURN_ON_PROCESS) : 0;
