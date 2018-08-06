@@ -59,8 +59,8 @@ static void				read_init_info(int socket_fd, fd_set read_fds)
 		{
 			sleep(1);
 			system("clear");
-			printf("Time to start the game: %d\n", str[0]);
-			printf("Number of connected players: %d\n", str[1]);
+			ft_printf("Time to start the game: %d\n", str[0]);
+			ft_printf("Number of connected players: %d\n", str[1]);
 			if (str[0] == 0)
 				break ;
 		}
