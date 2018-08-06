@@ -295,7 +295,6 @@ void					client(void);
 int						create_socket(void);
 void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
 void					get_data_select(int socket_fd, fd_set read_fds, void *dest, int len);
-void					send_data_select(int socket_fd, fd_set read_fds, void *src, int len);
 void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);

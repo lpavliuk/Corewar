@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-/*------------- VISUALIZATION on client side -------------*/
+/*------------- VISUALIZATION on the client side -------------*/
 
 static void	redraw_client(t_win *win, int key, int socket_fd, fd_set read_fds)
 {
