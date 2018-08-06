@@ -31,7 +31,7 @@ void		foreach_sockets(t_server *server, unsigned char *str, int bytes)
 	{
 		sd = server->client_sockets[i];
 		if (sd > 0)
-			send(sd, str, bytes, 0);
+			write(sd, str, bytes);
 		i++;
 	}
 }
@@ -44,7 +44,7 @@ void		get_data_select(int socket_fd, fd_set read_fds, void *dest, int len)
 	// timeout.tv_usec = 0;
 	if (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
 	{
-		if (recv(socket_fd, dest, len, 0) <= 0)
+		if (read(socket_fd, dest, len) <= 0)
 			ft_error("Error: connection interrupted");
 	}
 	else
