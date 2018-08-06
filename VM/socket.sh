@@ -1,1 +1,1 @@
-gcc network_srcs/*.c srcs/*.c visual_srcs/*.c libft.a -I includes -lpthread -lncurses 
+gcc network_srcs/*.c src/*.c visual_srcs/*.c libft.a -I includes -lpthread -lncurses 

@@ -39,16 +39,8 @@ static void		attributes_action(WINDOW *window, t_pixel *pixel, char flag)
 		else if (pixel->counter > 0)
 			wattron(window, A_BOLD);
 	}
-	else
-	{
+	else if (flag == OFF)
 		wattroff(window, COLOR_PAIR(pixel->color) | A_BOLD);
-		if (pixel->counter != 0)
-		{
-			pixel->counter--;
-			if (pixel->counter == 0)
-				pixel->color %= 10;
-		}
-	}
 }
 
 void			draw_map(t_win *win)

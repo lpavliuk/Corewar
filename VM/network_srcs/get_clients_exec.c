@@ -27,6 +27,7 @@ void		get_clients_exec(t_server *server)
 		if (sd > 0)
 		{
 			new_bot = push_new_bot(&g_vm->bot, id_bot);
+			new_bot->player_counter = i + 1;
 			read(sd, &new_bot->name, PROG_NAME_LENGTH);
 			read(sd, &new_bot->comment, COMMENT_LENGTH);
 			read(sd, &new_bot->size, 4);

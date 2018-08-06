@@ -16,7 +16,6 @@
 # include "libft.h"
 # include <fcntl.h>
 # include <curses.h>
-
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
 # define T_IND_SIZE				2
@@ -24,6 +23,8 @@
 # define REG_CODE				1
 # define DIR_CODE				2
 # define IND_CODE				3
+
+# define T_IND_READ				4
 
 # define MAX_ARGS_NUMBER		4
 # define MAX_PLAYERS			4
@@ -62,11 +63,12 @@
 # define NAME(i)		g_table[i - 1].name
 # define COUNT_ARGS(i)	g_table[i - 1].args_count
 # define ARG(i, j, k)	g_table[i - 1].args[j].arg[(int)k]
-# define OPCODE(i) 		g_table[i].opcode
-# define CODAGE(i) 		g_table[i - 1].codage
+# define OPCODE(i)		g_table[i].opcode
+# define CODAGE(i)		g_table[i - 1].codage
 # define LABEL_SIZE(i)	g_table[i - 1].label_size
-
+# define PREFORM(i)		g_table[i - 1].cycles
 # define MAX_TABLE 16
+
 
 typedef struct
 {
@@ -79,27 +81,28 @@ typedef	struct			s_table
 	char				args_count;
 	t_arr				args[3];
 	char				opcode;
-	char				codage : 1;
-	char				label_size : 4;
+	unsigned char		codage : 1;
+	unsigned char		label_size : 4;
+	unsigned int		cycles;
 }						t_table;
 
 static t_table		g_table[16] = {
-	{"live", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 1, 0, 4},
-	{"ld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 2, 1, 4},
-	{"st", 2, {{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}}, 3, 1, 4},
-	{"add", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 4, 1, 4},
-	{"sub", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 5, 1, 4},
-	{"and", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 6, 1, 4},
-	{"or", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 7, 1, 4},
-	{"xor", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 8, 1, 4},
-	{"zjmp", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 9, 0, 2},
-	{"ldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 10, 1, 2},
-	{"sti", 3, {{{1, 0, 0}}, {{1, 1, 1}}, {{1, 1, 0}}}, 11, 1, 2},
-	{"fork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 12, 0, 2},
-	{"lld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 13, 1, 4},
-	{"lldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 14, 1, 2},
-	{"lfork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 15, 1, 2},
-	{"aff", 1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 16, 1, 4}
+	{"live",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		1,	0,	4,	10},
+	{"ld",		2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}},		2,	1,	4,	5},
+	{"st",		2, {{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}},		3,	1,	4,	5},
+	{"add",		3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}},		4,	1,	4,	10},
+	{"sub",		3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}},		5,	1,	4,	10},
+	{"and",		3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},		6,	1,	4,	6},
+	{"or",		3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},		7,	1,	4,	6},
+	{"xor",		3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},		8,	1,	4,	6},
+	{"zjmp",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		9,	0,	2,	20},
+	{"ldi",		3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}},		10,	1,	2,	25},
+	{"sti",		3, {{{1, 0, 0}}, {{1, 1, 1}}, {{1, 1, 0}}},		11,	1,	2,	25},
+	{"fork",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		12,	0,	2,	800},
+	{"lld",		2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}},		13,	1,	4,	10},
+	{"lldi",	3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}},		14,	1,	2,	50},
+	{"lfork",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		15,	1,	2,	1000},
+	{"aff",		1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		16,	1,	4,	2}
 };
 
 /*
@@ -126,8 +129,8 @@ typedef struct			s_process
 	unsigned char		carry : 1;
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER + 1];
-	char				opcode;
-	unsigned char		codage;
+	unsigned char		opcode;
+	unsigned char		codage;		// ?  поки нахуй не здалась
 	unsigned int		cycles_to_perform;
 	t_bot				*parent;
 	struct s_process	*next;
@@ -141,8 +144,9 @@ typedef struct			s_vm
 	unsigned char		flag_server : 1;
 	unsigned char		flag_client : 1;
 	unsigned int		cycle_to_die;
-	unsigned int		dump_cycles;		/* Cycle on which we are going to dump memory. */
+	unsigned int		dump_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
+	unsigned int		last_change_cycle_to_die;
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
 	char				*ip;
@@ -178,21 +182,18 @@ t_bot					*push_new_bot(t_bot **head, unsigned int id);
 void					sort_bot_list(t_bot **head, unsigned char count_players);
 void					parse_argument(int count, char **args, int *i);
 void					get_args(int argc, char **args);
-// void					step();
+int						step(void);
 
-/* >>>>>>>>>> Visualisation <<<<<<<<<< */
+/*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
+void		print_header();
+void		dump_print();
+void		print_winer();
+void		text_out();
 
-/* CURSOR */
-
-# define CURSOR_X win->cursor_x
-# define CURSOR_Y win->cursor_y
-
-/* A starting point of cursor */
+/*>>>>>>>>>> Visualisation <<<<<<<<<<*/
 
 # define X_BEGIN	3
 # define Y_BEGIN	2
-
-/* UI keys */
 
 # define KEY_Q		113
 # define KEY_W		119
@@ -202,17 +203,25 @@ void					get_args(int argc, char **args);
 # define KEY_SPACE	32
 # define RESIZE		410
 
-/* Attributes ON / OFF */
-
 # define ON			1
 # define OFF		2
-
-/* Statistics for current period / last_period */
 
 # define CURR_PERIOD 1
 # define LAST_PERIOD 2
 
+/* CURSOR */
+
+# define CURSOR_X win->cursor_x
+# define CURSOR_Y win->cursor_y
+
 # define INIT_PIXEL_COLOR 5
+
+# define TURN_ON_LIVE g_pixels[process->position]->color =\
+			((g_pixels[process->position]->color) % 10) + 10
+# define TURN_ON_PROCESS g_pixels[process->position]->color =\
+				(g_pixels[process->position]->color % 10) + 20
+# define SET_PIXEL_COLOR g_pixels[process->position]->color =\
+		g_pixels[process->position]->color % 10
 
 typedef struct
 {

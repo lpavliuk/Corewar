@@ -71,9 +71,10 @@ void	redraw(t_win *win, int key)
 		dispatcher_keys(win, key, &flag);
 	if (flag || key == KEY_S)
 	{
-		// step();
+		step();
 		draw_map(win);
 		show_sidebar(win);
+		handle_pixels();
 	}
 	if (g_vm->winner)
 		print_winner(win);

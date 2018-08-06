@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   check_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,22 +12,13 @@
 
 #include "corewar.h"
 
-void	get_info_server(char *args[], int argv, int *i)
+void				check_magic_header(int fd)
 {
-	g_vm->flag_server = 1;
-	(*i)++;
-	if (*i >= argv)
-		ft_error("Error");
-	else
-		g_vm->ip = args[*i];
-}
+	unsigned int	magic_header;
 
-void	get_info_client(char *args[], int argv, int *i)
-{
-	g_vm->flag_client = 1;
-	(*i)++;
-	if (*i >= argv)
+	if (read(fd, &magic_header, 4) != 4)
 		ft_error("Error");
-	else
-		g_vm->ip = args[*i];
+	magic_header = reverse_bytes(magic_header, 4);
+	if (magic_header != COREWAR_EXEC_MAGIC)
+		ft_error("Error");
 }

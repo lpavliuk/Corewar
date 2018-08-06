@@ -114,14 +114,11 @@ t_bot				*push_new_bot(t_bot **head, unsigned int id)
 	t_bot			*new;
 
 	tmp = *head;
-	while (tmp)
+	while (tmp && tmp->next)
 	{
 		if (tmp->id == id)
 			ft_error("Error: not unique id");
-		else if (tmp->next)
-			tmp = tmp->next;
-		else
-			break ;
+		tmp = tmp->next;
 	}
 	new = bot_init(id);
 	if (!*head)
