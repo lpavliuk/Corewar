@@ -17,7 +17,7 @@ int			create_socket(void)
 	int		socket_fd;
 
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	(socket_fd < 0) ? ft_error("Error: create_socket()") : 0;
+	(socket_fd < 0) ? ft_error(ERR_306) : 0;
 	return (socket_fd);
 }
 
@@ -46,15 +46,11 @@ static void	ft_error_select(char *s)
 
 void		get_data_select(int socket_fd, fd_set read_fds, void *dest, int len)
 {
-	// struct timeval timeout;
-
-	// timeout.tv_sec = 1;
-	// timeout.tv_usec = 0;
 	if (select(socket_fd + 1, &read_fds, NULL, NULL, NULL) > 0)
 	{
 		if (recv(socket_fd, dest, len, 0) <= 0)
-			ft_error_select("Error: connection interrupted");
+			ft_error_select(ERR_301);
 	}
 	else
-		ft_error_select("Error: connection interrupted");
+		ft_error_select(ERR_301);
 }

@@ -12,6 +12,10 @@
 
 #include "corewar.h"
 
+/*
+** line 32: '3' - is a CTRL + C
+*/
+
 void	visualize(void)
 {
 	t_win	*win;
@@ -25,7 +29,7 @@ void	visualize(void)
 	color_preparation();
 	win = init_win();
 	prepare_window(win);
-	while ((key = getch()) != 3 && !g_vm->winner)	/* 3 is a CTRL + C */
+	while ((key = getch()) != 3 && !g_vm->winner)
 		redraw(win, key);
 	delwin(win->window);
 	endwin();

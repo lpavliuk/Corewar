@@ -21,7 +21,7 @@ static void	get_pixel_map(int socket_fd, fd_set read_fds)
 		get_data_select(socket_fd, read_fds, g_pixels[i++], 2);
 }
 
-static void		get_other_data(int socket_fd, fd_set read_fds)
+static void	get_other_data(int socket_fd, fd_set read_fds)
 {
 	t_bot	*bot;
 

@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-static double		get_cost_live(t_bot *bot, char len, char flag)
+static double	get_cost_live(t_bot *bot, char len, char flag)
 {
 	double	res;
 
@@ -42,11 +42,11 @@ static int		ft_round(double n)
 		return (res);
 }
 
-static void	show_line(t_win *win, t_bot *bot, char flag)
+static void		show_line(t_win *win, t_bot *bot, char flag)
 {
 	double			cost_live;
-	int				tmp;		/* How much area certain player occupies. */
-	char			len;		/* Whole area. */
+	int				tmp;
+	char			len;
 
 	len = 50;
 	cost_live = get_cost_live(bot, len, flag);
@@ -70,15 +70,17 @@ static void	show_line(t_win *win, t_bot *bot, char flag)
 	CURSOR_X = win->sidebar_pad + X_BEGIN;
 }
 
-void	sidebar_statistics(t_win *win)
+void			sidebar_statistics(t_win *win)
 {
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Live breakdown for current period : ");
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"Live breakdown for current period : ");
 	CURSOR_Y++;
 	wattron(win->window, COLOR_PAIR(5));
 	show_line(win, g_vm->bot, CURR_PERIOD);
 	wattroff(win->window, COLOR_PAIR(5));
 	CURSOR_Y += 2;
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Live breakdown for last period : ");
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"Live breakdown for last period : ");
 	CURSOR_Y++;
 	wattron(win->window, COLOR_PAIR(5));
 	show_line(win, g_vm->bot, LAST_PERIOD);

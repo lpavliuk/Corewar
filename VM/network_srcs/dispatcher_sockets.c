@@ -12,13 +12,13 @@
 
 #include "corewar.h"
 
-static void			accept_client(t_server *server)
+static void	accept_client(t_server *server)
 {
 	unsigned char	i;
 	int				new_socket;
 
 	new_socket = accept(server->master_socket, NULL, NULL);
-	(!new_socket) ? ft_error("Error: accept_client()") : 0;
+	(!new_socket) ? ft_error(ERR_303) : 0;
 	if (g_vm->count_players >= 4)
 	{
 		close(new_socket);
@@ -38,7 +38,7 @@ static void			accept_client(t_server *server)
 	}
 }
 
-static void			check_clients(t_server *server)
+static void	check_clients(t_server *server)
 {
 	int				sd;
 	unsigned char	i;

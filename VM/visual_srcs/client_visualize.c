@@ -12,7 +12,9 @@
 
 #include "corewar.h"
 
-/*------------- VISUALIZATION on the client side -------------*/
+/*
+** VISUALIZATION on the client side
+*/
 
 static void	redraw_client(t_win *win, int key, int socket_fd, fd_set read_fds)
 {
@@ -33,14 +35,14 @@ static void	redraw_client(t_win *win, int key, int socket_fd, fd_set read_fds)
 void		client_visualize(int socket_fd, fd_set read_fds)
 {
 	t_win	*win;
-	int 	key;
+	int		key;
 
 	initscr();
 	noecho();
 	raw();
 	color_preparation();
 	win = init_win();
-	win->speed = 1000;
+	win->speed = 50;
 	win->paused = 0;
 	g_vm->win_link = win;
 	nodelay(stdscr, true);

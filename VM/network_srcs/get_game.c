@@ -32,35 +32,17 @@ static void	get_init_data(int socket_fd, fd_set read_fds)
 	}
 }
 
-static void		remove_player(t_bot **bot)
+static void	remove_player(t_bot **bot)
 {
 	ft_strdel((char **)&(*bot)->exec);
 	free(*bot);
 	*bot = NULL;
 }
 
-void	get_game(int socket_fd, fd_set read_fds)
+void		get_game(int socket_fd, fd_set read_fds)
 {
-	remove_player(&g_vm->bot);	/* KOSTIL */
+	remove_player(&g_vm->bot);
 	create_pixel_map();
 	get_init_data(socket_fd, read_fds);
 	client_visualize(socket_fd, read_fds);
 }
-
-// void	prohodochka(void)
-// {
-// 	ft_printf("count players = %d\n", g_vm->count_players);
-// 	while (g_vm->bot)
-// 	{
-// 		ft_printf("player: %d\nname: %s\ncomment: %s\nid: %d\n", g_vm->bot->player_counter, g_vm->bot->name, g_vm->bot->comment, g_vm->bot->id);
-// 		ft_printf("lives_cur_period: %u\nlives_last_period: %u\nlast_live: %u\n", g_vm->bot->lives_cur_period, g_vm->bot->lives_last_period, g_vm->bot->last_live);
-// 		g_vm->bot = g_vm->bot->next;
-// 	}
-// 	print_memory(g_map, MEM_SIZE);
-// 	int i = -1;
-// 	while (++i < MEM_SIZE)
-// 		ft_printf("counter: %d | color %d\n", g_pixels[i]->counter, g_pixels[i]->color);
-// 	ft_printf("cycle_to_die: %u\n", g_vm->cycle_to_die);
-// 	ft_printf("cur_cycle: %u\n", g_vm->cur_cycle);
-// 	ft_printf("process_count: %u\n", g_vm->process_count);
-// }

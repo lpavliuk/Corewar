@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-static void			add_sockets_to_set(t_server *server, int *max_sd)
+static void		add_sockets_to_set(t_server *server, int *max_sd)
 {
 	unsigned char	i;
 	int				sd;
@@ -49,19 +49,19 @@ static void		*apply_clients(void *data)
 	{
 		add_sockets_to_set(server, &max_sd);
 		activity = select(max_sd + 1, &server->read_fds, NULL, NULL, &timeout);
-		(activity < 0) ? ft_error("Error: select") : 0;
+		(activity < 0) ? ft_error(ERR_305) : 0;
 		dispatcher_sockets(server);
 	}
-	(g_vm->count_players == 0) ? ft_error("Error: apply_clients()") : 0;
+	(g_vm->count_players == 0) ? ft_error(ERR_304) : 0;
 	return (data);
 }
 
-static void			*send_init_info_to_players(void *data)
+static void		*send_init_info_to_players(void *data)
 {
 	char		sec;
 	t_server	*server;
 
-	sec = 10;
+	sec = 30;
 	server = (t_server *)data;
 	while (sec >= 0)
 	{
@@ -69,8 +69,9 @@ static void			*send_init_info_to_players(void *data)
 		foreach_sockets(server, (unsigned char *)&sec, sizeof(unsigned char));
 		foreach_sockets(server, &g_vm->count_players, sizeof(unsigned char));
 		system("clear");
-		ft_printf("Time to start the game: %d\n", sec);
-		ft_printf("Number of connected players: %d\n", g_vm->count_players);
+		ft_printf("{blue}Time to start the game:{red} %d\n", sec);
+		ft_printf("{blue}Number of connected players:{green} %d\n",
+					g_vm->count_players);
 		sec--;
 	}
 	server->flag_start = 1;

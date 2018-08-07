@@ -15,7 +15,8 @@
 void		show_status(t_win *win)
 {
 	wattron(win->window, COLOR_PAIR((win->paused) ? 8 : 9) | A_BOLD);
-	mvwprintw(win->window, Y_BEGIN, win->sidebar_pad + X_BEGIN, "** %s ** ", ((win->paused) ? "PAUSED" : "RUNNING"));
+	mvwprintw(win->window, Y_BEGIN, win->sidebar_pad + X_BEGIN,
+			"** %s ** ", ((win->paused) ? "PAUSED" : "RUNNING"));
 	wattroff(win->window, COLOR_PAIR((win->paused) ? 8 : 9));
 }
 
@@ -23,11 +24,14 @@ static void	sidebar_header(t_win *win)
 {
 	show_status(win);
 	CURSOR_Y += 2;
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Cycles/second limit : %d", win->speed);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"Cycles/second limit : %d", win->speed);
 	CURSOR_Y += 3;
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Cycle : %d", g_vm->cur_cycle);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"Cycle : %d", g_vm->cur_cycle);
 	CURSOR_Y += 2;
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Processes : %d", g_vm->process_count);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"Processes : %d", g_vm->process_count);
 	CURSOR_Y += 2;
 }
 
@@ -38,14 +42,17 @@ static void	sidebar_players(t_win *win)
 	bot = g_vm->bot;
 	while (bot)
 	{
-		mvwprintw(win->window, CURSOR_Y, CURSOR_X, "Player %d : ", (int)bot->id);
+		mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+				"Player %d : ", (int)bot->id);
 		wattron(win->window, COLOR_PAIR(bot->player_counter));
 		mvwprintw(win->window, CURSOR_Y, CURSOR_X + 12, "%s", bot->name);
 		CURSOR_Y++;
 		wattroff(win->window, COLOR_PAIR(bot->player_counter));
-		mvwprintw(win->window, CURSOR_Y, CURSOR_X, "  Last live : %21d", bot->last_live);
+		mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+				"  Last live : %21d", bot->last_live);
 		CURSOR_Y++;
-		mvwprintw(win->window, CURSOR_Y, CURSOR_X, "  Lives in current period : %7d", bot->lives_cur_period);
+		mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+				"  Lives in current period : %7d", bot->lives_cur_period);
 		CURSOR_Y += 2;
 		bot = bot->next;
 	}
@@ -53,13 +60,17 @@ static void	sidebar_players(t_win *win)
 
 static void	sidebar_footer(t_win *win)
 {
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "CYCLE_TO_DIE : %d", g_vm->cycle_to_die);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"CYCLE_TO_DIE : %d", g_vm->cycle_to_die);
 	CURSOR_Y += 2;
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "CYCLE_DELTA : %d", CYCLE_DELTA);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"CYCLE_DELTA : %d", CYCLE_DELTA);
 	CURSOR_Y += 2;
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "NBR_LIVE : %d", NBR_LIVE);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"NBR_LIVE : %d", NBR_LIVE);
 	CURSOR_Y += 2;
-	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "MAX_CHECKS : %d", MAX_CHECKS);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
+			"MAX_CHECKS : %d", MAX_CHECKS);
 	CURSOR_Y += 2;
 }
 

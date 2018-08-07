@@ -14,10 +14,10 @@
 
 void		get_clients_exec(t_server *server)
 {
-	int 			i;
-	int 			sd;
+	int				i;
+	int				sd;
 	unsigned int	id_bot;
-    t_bot			*new_bot;
+	t_bot			*new_bot;
 
 	i = 0;
 	id_bot = -1;

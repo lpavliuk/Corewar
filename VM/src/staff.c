@@ -36,7 +36,7 @@ void				usage(void)
 
 void				ft_error(char *s)
 {
-	ft_printf("%s\n", s);
+	ft_printf(s);
 	exit(0);
 }
 

@@ -29,12 +29,16 @@ static void	draw_table(t_win *win)
 	wattroff(win->window, COLOR_PAIR(6));
 }
 
-static void		attributes_action(WINDOW *window, t_pixel *pixel, char flag)
+/*
+** line 41: Initial color
+*/
+
+static void	attributes_action(WINDOW *window, t_pixel *pixel, char flag)
 {
 	if (flag == ON)
 	{
 		wattron(window, COLOR_PAIR(pixel->color));
-		if ((pixel->color % 10) == INIT_PIXEL_COLOR)	/* INITIAL COLOR */
+		if ((pixel->color % 10) == INIT_PIXEL_COLOR)
 			wattron(window, A_BOLD);
 		else if (pixel->counter > 0)
 			wattron(window, A_BOLD);
@@ -43,7 +47,7 @@ static void		attributes_action(WINDOW *window, t_pixel *pixel, char flag)
 		wattroff(window, COLOR_PAIR(pixel->color) | A_BOLD);
 }
 
-void			draw_map(t_win *win)
+void		draw_map(t_win *win)
 {
 	char			*base;
 	unsigned short	i;
@@ -55,8 +59,10 @@ void			draw_map(t_win *win)
 	while (i < MEM_SIZE)
 	{
 		attributes_action(win->window, g_pixels[i], ON);
-		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i] / 16]);
-		mvwaddch(win->window, win->cursor_y, win->cursor_x++, base[g_map[i] % 16]);
+		mvwaddch(win->window, win->cursor_y, win->cursor_x++,
+				base[g_map[i] / 16]);
+		mvwaddch(win->window, win->cursor_y, win->cursor_x++,
+				base[g_map[i] % 16]);
 		attributes_action(win->window, g_pixels[i], OFF);
 		i++;
 		if ((i % 64) == 0)
@@ -69,7 +75,7 @@ void			draw_map(t_win *win)
 	}
 }
 
-void	prepare_window(t_win *win)
+void		prepare_window(t_win *win)
 {
 	win->cursor_x = X_BEGIN;
 	win->cursor_y = Y_BEGIN;

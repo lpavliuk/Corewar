@@ -14,6 +14,7 @@
 # define COREWAR_H
 
 # include "libft.h"
+# include "error.h"
 # include <fcntl.h>
 
 # define T_REG_SIZE				1

@@ -39,11 +39,9 @@ static void		send_other_data_to_client(int socket_fd)
 {
 	t_bot	*bot;
 
-	/* VM data */
 	send(socket_fd, &g_vm->cycle_to_die, 4, 0);
 	send(socket_fd, &g_vm->cur_cycle, 4, 0);
 	send(socket_fd, &g_vm->process_count, 4, 0);
-	/* Bots' data */
 	bot = g_vm->bot;
 	while (bot)
 	{
@@ -64,6 +62,7 @@ static void		*send_data_to_client(void *sd)
 	send_bots_to_client(socket_fd);
 	while (1)
 	{
+		ft_printf("{green}.");
 		send(socket_fd, g_map, MEM_SIZE, 0);
 		send_pixel_map_to_client(socket_fd);
 		send_other_data_to_client(socket_fd);
@@ -85,10 +84,13 @@ void			send_data_all_clients(t_server *server)
 	pthread_t	tid[4];
 	int			i;
 
+	ft_printf("{yellow}GAME IS BEGINNING{eoc}\n");
 	i = -1;
 	while (++i < server->n_client_sockets)
 		if (server->client_sockets[i])
-			pthread_create(&tid[i], NULL, send_data_to_client, &server->client_sockets[i]);
+			pthread_create(&tid[i], NULL, send_data_to_client,
+				&server->client_sockets[i]);
+	ft_printf("{yellow}GAME IS {green}RUNNING{eoc}\n");
 	i = -1;
 	while (++i < server->n_client_sockets)
 		if (server->client_sockets[i])
