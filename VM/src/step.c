@@ -123,6 +123,7 @@ t_bot	*winner_bot()
 
 int		step(void)
 {
+	g_vm->cur_cycle++;
 	do_proceses();
 	if (g_vm->cur_cycle && !(g_vm->cur_cycle % g_vm->cycle_to_die))
 	{
@@ -131,7 +132,6 @@ int		step(void)
 		g_vm->last_change_cycle_to_die > 10 ? delta_cycle(): 0;					// ? cut cycle_to_die when it had no changes more then 10 steps
 		g_vm->last_change_cycle_to_die++;
 	}
-	g_vm->cur_cycle++;
 	(!g_vm->process || !g_vm->cycle_to_die) ? g_vm->winner = winner_bot() : 0;
 	return (0);
 }

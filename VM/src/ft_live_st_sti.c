@@ -17,19 +17,14 @@ void	ft_live(t_process *process)
 				? ft_printf("Player %d (%s) is said to be alive\n",
 				bot->player_counter, bot->name) : 1;
 			bot->lives_cur_period++;
-		}
-		if (g_vm->flag_visual)
-		{
-			if (player_id == bot->id)
-			{
-				TURN_ON_LIVE;
-				g_pixels[process->position]->counter = 50;
-			}
-			else
-				SET_PIXEL_COLOR;
+			break ;
 		}
 		bot = bot->next;
 	}
+	if (g_vm->flag_visual && bot && player_id == bot->id)
+		TURN_ON_LIVE;
+	else if (g_vm->flag_visual)
+		SET_PIXEL_COLOR;
 	process->position = (process->position + 1 + 4) % MEM_SIZE;
 	(g_vm->flag_visual) ? (TURN_ON_PROCESS) : 0;
 }

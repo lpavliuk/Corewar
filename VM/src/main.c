@@ -32,6 +32,7 @@ void		init_vm(void)
 	g_vm->winner = NULL;
 	g_vm->process = NULL;
 	g_vm->bot = NULL;
+	g_vm->last_change_cycle_to_die = 0;
 }
 
 void		fill_map(void)

@@ -197,8 +197,9 @@ void		text_out();
 
 # define INIT_PIXEL_COLOR 5
 
-# define TURN_ON_LIVE g_pixels[process->position]->color =\
-			((g_pixels[process->position]->color) % 10) + 10
+# define TURN_ON_LIVE ((g_pixels[process->position]->color =\
+			((g_pixels[process->position]->color) % 10) + 10)\
+			&& (g_pixels[process->position]->counter = 50)) ? 1 : 0
 # define TURN_ON_PROCESS g_pixels[process->position]->color =\
 				(g_pixels[process->position]->color % 10) + 20
 # define SET_PIXEL_COLOR g_pixels[process->position]->color =\
