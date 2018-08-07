@@ -47,7 +47,6 @@ void	time_to_die()
 	prev = 0;
 	cur_p = g_vm->process; 
 	while(cur_p)
-	{
 		if (!(cur_p->live))
 		{
 			prev ? prev->next = cur_p->next : 0;
@@ -64,8 +63,6 @@ void	time_to_die()
 			prev = cur_p;
 			cur_p = cur_p->next;
 		}
-
-	}
 }
 
 void	do_proceses()
@@ -75,19 +72,16 @@ void	do_proceses()
 	process = g_vm->process;
 	while(process)
 	{
-		if (!process->opcode)
+		if (!process->opcode && (!g_map[process->position] || g_map[process->position] > 16))
 		{
-			if (!g_map[process->position] || g_map[process->position] > 16)
-			{
-				(g_vm->flag_visual) ? SET_PIXEL_COLOR : 1;
-				process->position = ((process->position) + 1) % MEM_SIZE;
-				(g_vm->flag_visual) ? TURN_ON_PROCESS : 1;
-			}
-			else
-			{
-				process->opcode = g_map[process->position];
-				process->cycles_to_perform = PREFORM(process->opcode) - 2;
-			}
+			(g_vm->flag_visual) ? SET_PIXEL_COLOR : 1;
+			process->position = ((process->position) + 1) % MEM_SIZE;
+			(g_vm->flag_visual) ? TURN_ON_PROCESS : 1;
+		}
+		else if (!process->opcode)
+		{
+			process->opcode = g_map[process->position];
+			process->cycles_to_perform = PREFORM(process->opcode) - 2;
 		}
 		else if (process->cycles_to_perform > 0)
 			process->cycles_to_perform--;
@@ -128,7 +122,7 @@ int		step(void)
 	if (g_vm->cur_cycle && !(g_vm->cur_cycle % g_vm->cycle_to_die))
 	{
 		time_to_die();
-		reset_cur_period() ? delta_cycle() : 0;								// ? cut cycle_to_die when "live" greater than 21
+		reset_cur_period() ? delta_cycle() : 0;									// ? cut cycle_to_die when "live" greater than 21
 		g_vm->last_change_cycle_to_die > 10 ? delta_cycle(): 0;					// ? cut cycle_to_die when it had no changes more then 10 steps
 		g_vm->last_change_cycle_to_die++;
 	}
