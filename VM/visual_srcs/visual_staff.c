@@ -33,7 +33,7 @@ void	handle_pixels(void)
 		if (g_pixels[i]->counter > 0)
 		{
 			g_pixels[i]->counter--;
-			if (g_pixels[i]->counter == 0)
+			if (g_pixels[i]->counter == 0 && g_pixels[i]->color / 10 != 2)
 				g_pixels[i]->color %= 10;
 		}
 		i++;
