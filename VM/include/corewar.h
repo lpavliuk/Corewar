@@ -150,6 +150,7 @@ typedef struct			s_vm
 	unsigned int		dump_cycles;			/* Cycle on which we are going to dump memory. */
 	unsigned int		cur_cycle;			/* Current cycle. */
 	unsigned int		last_change_cycle_to_die;
+	unsigned int		future_die;
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
 	char				*ip;

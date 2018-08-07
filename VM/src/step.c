@@ -31,12 +31,12 @@ int		reset_cur_period()
 	cur_bot = g_vm->bot;
 	while(cur_bot)
 	{
-		max = (cur_bot->lives_cur_period > max) ? cur_bot->lives_cur_period : 0;
+		max = (cur_bot->lives_cur_period >= 21) ? 1 : max;
 		cur_bot->lives_last_period = cur_bot->lives_cur_period;
 		cur_bot->lives_cur_period = 0;
 		cur_bot = cur_bot->next;
 	}
-	return (max > 21 ? 1 : 0);
+	return (max);
 }
 
 void	time_to_die()
@@ -119,12 +119,13 @@ int		step(void)
 {
 	g_vm->cur_cycle++;
 	do_proceses();
-	if (g_vm->cur_cycle && !(g_vm->cur_cycle % g_vm->cycle_to_die))
+	if (/*g_vm->cur_cycle && */g_vm->cur_cycle == g_vm->future_die)
 	{
-		time_to_die();
-		reset_cur_period() ? delta_cycle() : 0;									// ? cut cycle_to_die when "live" greater than 21
-		g_vm->last_change_cycle_to_die > 10 ? delta_cycle(): 0;					// ? cut cycle_to_die when it had no changes more then 10 steps
 		g_vm->last_change_cycle_to_die++;
+		reset_cur_period() ? delta_cycle() : 0;									// ? cut cycle_to_die when "live" greater than 21
+		g_vm->last_change_cycle_to_die >= MAX_CHECKS ? g_vm->cycle_to_die -= CYCLE_DELTA : 0;					// ? cut cycle_to_die when it had no changes more then 10 steps
+		g_vm->future_die = g_vm->cur_cycle + g_vm->cycle_to_die;
+		time_to_die();
 	}
 	(!g_vm->process || !g_vm->cycle_to_die) ? g_vm->winner = winner_bot() : 0;
 	return (0);

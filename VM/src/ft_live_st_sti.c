@@ -45,8 +45,12 @@ void	set_map_value(t_process *process, unsigned int val,
 		if (g_vm->flag_visual)
 		{
 			g_pixels[(new_pstn + j) % MEM_SIZE]->counter = 50;
-			g_pixels[(new_pstn + j) % MEM_SIZE]->color
-				= process->parent->player_counter;
+			if (g_pixels[(new_pstn + j) % MEM_SIZE]->color / 10 == 2)
+				g_pixels[(new_pstn + j) % MEM_SIZE]->color
+					= process->parent->player_counter + 20;
+			else
+				g_pixels[(new_pstn + j) % MEM_SIZE]->color
+					= process->parent->player_counter;
 		}
 		j++;
 	}

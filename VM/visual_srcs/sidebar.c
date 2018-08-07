@@ -31,7 +31,7 @@ static void	sidebar_header(t_win *win)
 			"Cycle : %d", g_vm->cur_cycle);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
-			"Processes : %d", g_vm->process_count);
+			"Processes : %-5d", g_vm->process_count);
 	CURSOR_Y += 2;
 }
 
@@ -61,7 +61,7 @@ static void	sidebar_players(t_win *win)
 static void	sidebar_footer(t_win *win)
 {
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
-			"CYCLE_TO_DIE : %d", g_vm->cycle_to_die);
+			"CYCLE_TO_DIE : %-4d", g_vm->cycle_to_die);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
 			"CYCLE_DELTA : %d", CYCLE_DELTA);
