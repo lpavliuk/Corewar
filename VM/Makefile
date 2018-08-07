@@ -10,73 +10,78 @@ WHITE	=\033[0;37m#		# White
 
 CC=		gcc
 
-# FLAGS=	-Wall -Wextra -Werror
+FLAGS=	-Wall -Wextra -Werror
 
 NAME=	core
 
-SRCNAME=	bot_parsing.c\
+INCLD_DIR=		./include/
+SRC_NAME_DIR=	./src/
+SRC_NET_DIR=	./network_srcs/
+SRC_VIS_DIR=	./visual_srcs/
+
+SRC_VIS=	client_visualize.c\
+			preparation.c\
+			prepare_window.c\
+			redraw.c\
+			sidebar.c\
+			sidebar_statistics.c\
+			visual_staff.c\
+			visualize.c
+
+SRC_NET=	client.c\
+			dispatcher_sockets.c\
+			get_clients.c\
+			get_clients_exec.c\
+			get_data_from_server.c\
+			get_game.c\
+			network_staff.c\
+			send_data_all_clients.c\
+			server.c
+
+SRC_NAME=	bot_parsing.c\
 			check_exec.c\
-			get_server_info.c\
-			main.c\
-			parse_argument.c\
-			process_function_ft_aff_zjmp.c\
 			ft_add_sub.c\
 			ft_and_or_xor.c\
 			ft_fork_lfork.c\
 			ft_ld_ldi_lld_lldi.c\
 			ft_live_st_sti.c\
+			get_server_info.c\
+			main.c\
+			parse_argument.c\
+			process_function_ft_aff_zjmp.c\
 			sort_bot_list.c\
 			staff.c\
 			staff2.c\
 			step.c\
-			text_output.c\
-			visualize.c
-			# test_socket.c\
+			text_output.c
 
-			# bot_parsing.c\
-			# check_exec.c\
-			# get_args.c\
-			# main.c\
-			# process_functions.c\
-			# staff.c\
-			# staff2.c\
-			# step.c\
-			# text_output.c\
-			# get_server_info.c\
-			# visualize.c
-			# # test_socket.c
-			# visualize.c
-#main.c
-
-INCLD=	./include
-
-SRC=$(addprefix ./src/, $(SRCNAME))
-# SRC= ./src/*.c
+SRC=$(addprefix $(SRC_NAME_DIR), $(SRC_NAME))\
+	$(addprefix $(SRC_VIS_DIR), $(SRC_VIS))\
+	$(addprefix $(SRC_NET_DIR), $(SRC_NET))
 
 OBJ= $(SRC:%.c=%.o)
 
+LIBFT_DIR= ../libft/
 LIBFT= ../libft/libft.a
-# LIBFTPRINTF= ./src/libft/libftprintf.a
 
-OK_STRING    =***	$(NAME) created		***
+OK_STRING    =\#\#\#	 $(NAME) created		\#\#\#
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@$(CC) $(FLAGS) $(LIBFT) $(OBJ) -I $(INCLD) -o $(NAME) -lncurses
-	@printf "\n$(GREEN)$(OK_STRING)\n\n"
+	@$(CC) $(FLAGS) $(LIBFT) $(OBJ) -I $(INCLD_DIR) -o $(NAME) -lncurses
+	@printf "\n\n$(GREEN)$(OK_STRING)\n\n"
 
 %.o:%.c $(LIBFT) ./include/corewar.h
-	@$(CC) $(FLAGS) -c $< -I $(INCLD) -o $@ 
+	@$(CC) $(FLAGS) -c $< -I $(INCLD_DIR) -o $@ 
 	@printf "$(CYAN)*$(COLOR_OFF)"
 
 $(LIBFT):
-	$(MAKE) -C ../libft
-	@printf "\n$(GREEN)libft created $(COLOR_OFF)\n\n"
+	@$(MAKE) -C $(LIBFT_DIR)
 
 clean:
 	@rm -f $(OBJ)
-	@$(MAKE) clean -C ../libft
+	@$(MAKE) clean -C $(LIBFT_DIR)
 	@printf  "$(YELLOW)remove OBJ\n"
 
 fclean:
