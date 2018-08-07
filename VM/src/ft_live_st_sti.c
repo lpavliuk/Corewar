@@ -6,6 +6,7 @@ void	ft_live(t_process *process)
 	t_bot			*bot;
 
 	process->live = 1;
+	process->parent->bot_processes_lives++;
 	player_id = get_arg((process->position + 1) % MEM_SIZE,
 		LABEL_SIZE(OPCODE(0)));
 	bot = g_vm->bot;
@@ -130,7 +131,7 @@ void	ft_sti(t_process *process)
 			ch_pos = process->registries[uargs[1]];
 		else if (codage[1] == IND_CODE)
 			ch_pos = uargs[1];
-		else if (codage[1] == DIR_CODE)
+		else
 			ch_pos = sargs[1];
 		if (codage[2] == REG_CODE)
 			ch_pos += process->registries[uargs[2]];

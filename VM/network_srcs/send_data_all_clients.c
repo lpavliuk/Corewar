@@ -55,7 +55,6 @@ static void		send_other_data_to_client(int socket_fd)
 static void		*send_data_to_client(void *sd)
 {
 	int				socket_fd;
-	fd_set			set;
 
 	socket_fd = *(int *)sd;
 	signal(SIGPIPE, SIG_IGN);

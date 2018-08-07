@@ -104,6 +104,7 @@ static t_bot		*bot_init(unsigned int id)
 	new->lives_cur_period = 0;
 	new->lives_last_period = 0;
 	new->last_live = 0;
+	new->bot_processes_lives = 0;
 	new->next = NULL;
 	return (new);
 }

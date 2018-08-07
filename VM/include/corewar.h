@@ -123,6 +123,7 @@ typedef struct			s_bot
 	unsigned int		lives_cur_period;	/* Quantity of lives for current period. */
 	unsigned int		lives_last_period;	/* Quantity of lives for last period. */
 	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */
+	unsigned int		bot_processes_lives;
 	struct s_bot		*next;
 }						t_bot;
 
@@ -311,7 +312,6 @@ void					get_data_from_server(int socket_fd, fd_set read_fds);
 */
 
 #define GET_CODAGE get_arg((process->position + 1) % MEM_SIZE, 1)
-FILE *g_f;
 
 int			check_valid_codage(char opcode, char *codage);
 void		change_process_position(char opcode, char *codage,

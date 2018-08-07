@@ -34,25 +34,23 @@ static void	compute_speed(t_win *win, int key)
 	}
 	wattron(win->window, COLOR_PAIR(7) | A_BOLD);
 	mvwprintw(win->window, CURSOR_Y + 2, CURSOR_X + win->sidebar_pad + 22,
-				"%-4d", win->speed);
+	"%-4d", win->speed);
 	wattroff(win->window, COLOR_PAIR(7) | A_BOLD);
 }
 
-static void	dispatcher_keys(t_win *win, int key, char *flag)
+static void	dispatcher_keys(t_win *win, int key)
 {
 	if (key == RESIZE)
 		prepare_window(win);
 	else if (key == KEY_SPACE)
 	{
-		if (!*flag)
+		if (win->paused)
 		{
-			*flag = 1;
 			nodelay(stdscr, true);
 			win->paused = 0;
 		}
 		else
 		{
-			*flag = 0;
 			nodelay(stdscr, false);
 			win->paused = 1;
 		}
@@ -64,13 +62,11 @@ static void	dispatcher_keys(t_win *win, int key, char *flag)
 
 void		redraw(t_win *win, int key)
 {
-	static char	flag = 0;
-
 	win->cursor_x = X_BEGIN;
 	win->cursor_y = Y_BEGIN;
 	if (key != -1)
-		dispatcher_keys(win, key, &flag);
-	if (flag || key == KEY_S)
+		dispatcher_keys(win, key);
+	if (!win->paused || key == KEY_S)
 	{
 		step();
 		draw_map(win);
