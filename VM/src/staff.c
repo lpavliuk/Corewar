@@ -14,13 +14,29 @@
 
 void				usage(void)
 {
-	ft_printf("USAGE\n");
+	ft_printf("{yellow}Usage:{eoc} ./corewar [-dump N | -v | -s IP | -c IP] "
+	"[[-n N] <champion1.cor> <...cor>]\n"
+	"   {red}-n{eoc}      : Number of player\n"
+	"{blue}### {yellow}TEXT OUTPUT MODE{eoc} {blue}###"
+	"#########################################################{eoc}\n"
+	"   {red}-dump N{eoc} : Dumps memory after N cycles then exits\n"
+	"{blue}### {yellow}NCURSES OUTPUT MODE{eoc} {blue}###"
+	"######################################################{eoc}\n"
+	"   {red}-v{eoc}      : Dumps memory after N cycles then exits\n"
+	"{blue}### {yellow}NETWORK GAME MODE{eoc} {blue}###"
+	"########################################################{eoc}\n"
+	"   {red}-s IP{eoc}   : Start server on IP address\n"
+	"             [./corewar -s 0.0.0.0]\n"
+	"   {red}-c IP{eoc}   : Connect client to server which on IP address\n"
+	"             [./corewar <champion.cor> -c 0.0.0.0]\n"
+	"{blue}########################"
+	"#########################################################{eoc}\n");
 	exit(0);
 }
 
 void				ft_error(char *s)
 {
-	ft_printf("%s\n", s);
+	ft_printf(s);
 	exit(0);
 }
 
@@ -71,8 +87,8 @@ unsigned int		get_arg(unsigned int i, char arg_size)
 	return (reverse_bytes(arg, arg_size));
 }
 
-t_process			*push_new_process(t_process **head, unsigned int
-					*process_count, t_bot *parent, unsigned int position)
+t_process			*push_new_process(t_process **head,
+	unsigned int *process_count, t_bot *parent, unsigned int position)
 {
 	t_process	*new;
 

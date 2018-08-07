@@ -1,24 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_exec.c                                       :+:      :+:    :+:   */
+/*   visualize.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/07/22 16:02:56 by tkiselev          #+#    #+#             */
+/*   Updated: 2018/07/22 16:02:58 by tkiselev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "corewar.h"
 
-void				check_magic_header(int fd)
-{
-	unsigned int	magic_header;
+/*
+** line 32: '3' - is a CTRL + C
+*/
 
-	if (read(fd, &magic_header, 4) != 4)
-		ft_error("Error");
-	magic_header = reverse_bytes(magic_header, 4);
-	if (magic_header != COREWAR_EXEC_MAGIC)
-		ft_error("Error");
+void	visualize(void)
+{
+	t_win	*win;
+	int		key;
+
+	create_pixel_map();
+	fill_pixel_map();
+	initscr();
+	noecho();
+	raw();
+	color_preparation();
+	win = init_win();
+	prepare_window(win);
+	while ((key = getch()) != 3 && !g_vm->winner)
+		redraw(win, key);
+	delwin(win->window);
+	endwin();
+	free(win);
 }

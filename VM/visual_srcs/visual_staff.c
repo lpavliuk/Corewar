@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_exec.c                                       :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,13 +12,30 @@
 
 #include "corewar.h"
 
-void				check_magic_header(int fd)
+void	print_winner(t_win *win)
 {
-	unsigned int	magic_header;
+	wattron(win->window, A_BOLD);
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "The winner is : ");
+	wattron(win->window, COLOR_PAIR(g_vm->winner->player_counter));
+	mvwprintw(win->window, CURSOR_Y, CURSOR_X + 16, "%s", g_vm->winner->name);
+	wattroff(win->window, COLOR_PAIR(g_vm->winner->player_counter));
+	mvwprintw(win->window, CURSOR_Y + 2, CURSOR_X, "Press any key to finish");
+	wattroff(win->window, A_BOLD);
+}
 
-	if (read(fd, &magic_header, 4) != 4)
-		ft_error("Error");
-	magic_header = reverse_bytes(magic_header, 4);
-	if (magic_header != COREWAR_EXEC_MAGIC)
-		ft_error("Error");
+void	handle_pixels(void)
+{
+	int i;
+
+	i = 0;
+	while (i < MEM_SIZE)
+	{
+		if (g_pixels[i]->counter > 0)
+		{
+			g_pixels[i]->counter--;
+			if (g_pixels[i]->counter == 0)
+				g_pixels[i]->color %= 10;
+		}
+		i++;
+	}
 }

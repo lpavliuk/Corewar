@@ -10,28 +10,64 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../corewar.h"
+#include "corewar.h"
 
-int			create_socket(void)
+static void	accept_client(t_server *server)
 {
-	int		socket_fd;
+	unsigned char	i;
+	int				new_socket;
 
-	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	(socket_fd < 0) ? ft_error("Error: create_socket()") : 0;
-	return (socket_fd);
+	new_socket = accept(server->master_socket, NULL, NULL);
+	(!new_socket) ? ft_error(ERR_303) : 0;
+	if (g_vm->count_players >= 4)
+	{
+		close(new_socket);
+		return ;
+	}
+	i = 0;
+	while (i < server->n_client_sockets)
+	{
+		if (server->client_sockets[i] == 0)
+		{
+			server->client_sockets[i] = new_socket;
+			g_vm->count_players++;
+			send(new_socket, "OK", 2, 0);
+			return ;
+		}
+		i++;
+	}
 }
 
-void		foreach_sockets(t_server *server, unsigned char *str, int bytes)
+static void	check_clients(t_server *server)
 {
-	int		i;
-	int		sd;
+	int				sd;
+	unsigned char	i;
 
 	i = 0;
 	while (i < server->n_client_sockets)
 	{
 		sd = server->client_sockets[i];
-		if (sd > 0)
-			send(sd, str, bytes, 0);
+		if (FD_ISSET(sd, &server->read_fds))
+		{
+			if (read(sd, 0, 0) < 0)
+			{
+				g_vm->count_players--;
+				server->client_sockets[i] = 0;
+				close(sd);
+			}
+		}
 		i++;
 	}
+}
+
+/*
+** FD_ISSET checks whether someone wants to connect to the server.
+*/
+
+void		dispatcher_sockets(t_server *server)
+{
+	if (FD_ISSET(server->master_socket, &server->read_fds))
+		accept_client(server);
+	else
+		check_clients(server);
 }

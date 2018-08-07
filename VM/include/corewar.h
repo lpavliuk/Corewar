@@ -14,8 +14,9 @@
 # define COREWAR_H
 
 # include "libft.h"
+# include "error.h"
 # include <fcntl.h>
-# include <curses.h>
+
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
 # define T_IND_SIZE				2
@@ -105,11 +106,13 @@ static t_table		g_table[16] = {
 	{"aff",		1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		16,	1,	4,	2}
 };
 
+typedef struct	s_win t_win;
+
 /*
 ** exec - executable
 */
 
-typedef struct		s_bot
+typedef struct			s_bot
 {
 	unsigned char 		player_counter;
 	char				name[PROG_NAME_LENGTH + 1];
@@ -150,6 +153,7 @@ typedef struct			s_vm
 	unsigned int		process_count;		/* Quantity of all processes on map. */
 	unsigned int		port;
 	char				*ip;
+	t_win				*win_link;			/* link to the window of ncurses, initialises if flag_visual == 1 */
 	t_bot				*winner;
 	t_process			*process;			/* All processes. */
 	t_bot				*bot;
@@ -165,59 +169,6 @@ t_pixel					**g_pixels;
 unsigned char			g_map[MEM_SIZE];
 t_vm					*g_vm;
 
-/*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
-void		print_header();
-void		dump_print();
-void		print_winer();
-void		text_out();
-
-/*>>>>>>>>>> Visualisation <<<<<<<<<<*/
-
-# define X_BEGIN	3
-# define Y_BEGIN	2
-
-# define KEY_Q		113
-# define KEY_W		119
-# define KEY_E		101
-# define KEY_R		114
-# define KEY_S		115
-# define KEY_SPACE	32
-# define RESIZE		410
-
-# define ON			1
-# define OFF		2
-
-# define CURR_PERIOD 1
-# define LAST_PERIOD 2
-
-/* CURSOR */
-
-# define CURSOR_X win->cursor_x
-# define CURSOR_Y win->cursor_y
-
-# define INIT_PIXEL_COLOR 5
-
-# define TURN_ON_LIVE ((g_pixels[process->position]->color =\
-			((g_pixels[process->position]->color) % 10) + 10)\
-			&& (g_pixels[process->position]->counter = 50)) ? 1 : 0
-# define TURN_ON_PROCESS g_pixels[process->position]->color =\
-				(g_pixels[process->position]->color % 10) + 20
-# define SET_PIXEL_COLOR g_pixels[process->position]->color =\
-		g_pixels[process->position]->color % 10
-
-typedef struct
-{
-	WINDOW				*window;
-	int					height;
-	int					width;
-	int					sidebar_pad;	/* Sidebar padding - quantity of columns to sidebar */
-	int					cursor_y;
-	int					cursor_x;
-	short int			speed;			/* Speed of visualisation. */
-	unsigned char		paused : 1;
-}						t_win;
-
-void					visualize(t_vm *vm);
 void					ft_error(char *s);
 void					usage(void);
 unsigned int			get_arg(unsigned int i, char arg_size);
@@ -232,26 +183,104 @@ t_process				*push_new_process(t_process **head, unsigned int
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
-int						step();
 void					sort_bot_list(t_bot **head, unsigned char count_players);
 void					parse_argument(int count, char **args, int *i);
-void					get_args(int count, char **args);
+void					get_args(int argc, char **args);
+int						step(void);
+void					fill_map(void);
+
+/*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
+void		print_header();
+void		dump_print();
+void		print_winer();
+void		text_out();
+
+/*>>>>>>>>>> Visualisation <<<<<<<<<<*/
+
+# include <curses.h>
+# include <signal.h>
+
+/* CURSOR */
+
+# define CURSOR_X win->cursor_x
+# define CURSOR_Y win->cursor_y
+
+/* A starting point of cursor */
+
+# define X_BEGIN	3
+# define Y_BEGIN	2
+
+/* UI keys */
+
+# define KEY_Q		113
+# define KEY_W		119
+# define KEY_E		101
+# define KEY_R		114
+# define KEY_S		115
+# define KEY_SPACE	32
+# define RESIZE		410
+
+/* Attributes ON / OFF */
+
+# define ON			1
+# define OFF		2
+
+/* Statistics for current period / last_period */
+
+# define CURR_PERIOD 1
+# define LAST_PERIOD 2
+
+# define INIT_PIXEL_COLOR 5
+
+# define TURN_ON_LIVE ((g_pixels[process->position]->color =\
+			((g_pixels[process->position]->color) % 10) + 10)\
+			&& (g_pixels[process->position]->counter = 50)) ? 1 : 0
+# define TURN_ON_PROCESS g_pixels[process->position]->color =\
+				(g_pixels[process->position]->color % 10) + 20
+# define SET_PIXEL_COLOR g_pixels[process->position]->color =\
+		g_pixels[process->position]->color % 10
+
+typedef struct			s_win
+{
+	WINDOW				*window;
+	int					height;
+	int					width;
+	int					sidebar_pad;	/* Sidebar padding - quantity of columns to sidebar */
+	int					cursor_y;
+	int					cursor_x;
+	short int			speed;			/* Speed of visualisation. */
+	unsigned char		paused : 1;
+}						t_win;
+
+void					visualize(void);
+void					client_visualize(int socket_fd, fd_set read_fds);
+void					print_winner(t_win *win);
+t_win					*init_win(void);
+void					create_pixel_map(void);
+void					color_preparation(void);
+void					prepare_window(t_win *win);
+void					draw_map(t_win *win);
+void					redraw(t_win *win, int key);
+void					show_sidebar(t_win *win);
+void					sidebar_statistics(t_win *win);
+void					show_status(t_win *win);
+void					fill_pixel_map(void);
+void					handle_pixels(void);
 
 
+/* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 
-/*>>>>>>>>>> Network Game Mode <<<<<<<<<<*/
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/select.h>
-#include <pthread.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <errno.h>
+# include <sys/types.h>
+# include <sys/time.h>
+# include <sys/select.h>
+# include <pthread.h>
 
 #define PORT 8888
 
@@ -260,17 +289,21 @@ typedef struct
 	int					master_socket;
 	int					client_sockets[4];
 	unsigned char		n_client_sockets;
-	unsigned char		flag_start : 1;
+	unsigned char		flag_start;
 	fd_set				read_fds;
 }						t_server;
 
 void					client(void);
 int						create_socket(void);
 void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
+void					get_data_select(int socket_fd, fd_set read_fds, void *dest, int len);
 void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
 void					get_clients_exec(t_server *server);
+void					get_game(int socket_fd, fd_set read_fds);
+void					send_data_all_clients(t_server *server);
+void					get_data_from_server(int socket_fd, fd_set read_fds);
 
 /*
 **>>>>>>>>>  Process functions <<<<<<<<<<<**

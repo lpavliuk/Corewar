@@ -28,6 +28,7 @@ void		init_vm(void)
 	g_vm->cur_cycle = 0;
 	g_vm->process_count = 0;
 	g_vm->port = 0;
+	g_vm->win_link = NULL;
 	g_vm->ip = NULL;
 	g_vm->winner = NULL;
 	g_vm->process = NULL;
@@ -63,18 +64,19 @@ void		dispatcher_routes(void)
 	{
 		if (g_vm->flag_client && g_vm->flag_server)
 			ft_error("Error: dispatcher_routes()");
-		// else if ((g_vm->flag_client))
-		// 	client();
-		// else
-		// 	server();	/* Here we need to fill a map. */
+		else if ((g_vm->flag_client))
+			client();
+		else
+			server();
 	}
 	else
 	{
 		fill_map();
 		if (g_vm->flag_visual)
-			visualize(g_vm);
+			visualize();
 		else
-			text_out();
+			while (!g_vm->winner)
+				step();
 	}
 }
 
@@ -84,26 +86,24 @@ void		dispatcher_routes(void)
 ** and call corresponding functions.
 */
 
-void			get_args(int count, char **args)
+void			get_args(int argc, char **args)
 {
-	int				i;
+	int	i;
 
 	i = 0;
-	while (++i < count)
-		parse_argument(count, args, &i);
-	(g_vm->count_players == 0) ? usage() : 0;
+	while (++i < argc)
+		parse_argument(argc, args, &i);
+	(g_vm->count_players == 0 && !g_vm->flag_server) ? usage() : 0;
 }
 
 int			main(int ac, char **av)
 {
 	if (ac > 1)
 	{
-		g_f = fopen("tmp2", "w");
 		init_vm();
 		get_args(ac, av);
 		sort_bot_list(&g_vm->bot, g_vm->count_players);
 		dispatcher_routes();
-		fclose(g_f);
 	}
 	else
 		usage();

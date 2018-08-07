@@ -20,6 +20,7 @@ void	get_info_server(char *args[], int argv, int *i)
 		ft_error("Error");
 	else
 		g_vm->ip = args[*i];
+	g_vm->flag_visual = 1;
 }
 
 void	get_info_client(char *args[], int argv, int *i)
