@@ -29,4 +29,5 @@ void	visualize(void)
 		redraw(win, key);
 	delwin(win->window);
 	endwin();
+	free(win);
 }

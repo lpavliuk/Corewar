@@ -77,6 +77,9 @@ void	redraw(t_win *win, int key)
 		handle_pixels();
 	}
 	if (g_vm->winner)
+	{
 		print_winner(win);
+		nodelay(stdscr, false);
+	}
 	wrefresh(win->window);
 }

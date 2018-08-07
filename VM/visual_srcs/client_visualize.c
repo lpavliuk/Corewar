@@ -49,4 +49,5 @@ void		client_visualize(int socket_fd, fd_set read_fds)
 		redraw_client(win, key, socket_fd, read_fds);
 	delwin(win->window);
 	endwin();
+	free(win);
 }

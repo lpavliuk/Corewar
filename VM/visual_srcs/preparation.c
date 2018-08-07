@@ -95,7 +95,7 @@ void			color_preparation(void)
 	init_pair(22, COLOR_BLACK, COLOR_BLUE);
 	init_pair(23, COLOR_BLACK, COLOR_RED);
 	init_pair(24, COLOR_BLACK, COLOR_CYAN);
-	init_pair(25, COLOR_BLACK, COLOR_BLACK);
+	init_pair(25, COLOR_BLACK, COLOR_MAGENTA);
 
 	/* ----- OTHERS ----- */
 	init_pair(6, COLOR_MAGENTA, COLOR_MAGENTA);			/* Layout color */	// WTF???

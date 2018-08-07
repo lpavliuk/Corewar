@@ -25,6 +25,8 @@ static double		get_cost_live(t_bot *bot, char len, char flag)
 			res += bot->lives_last_period;
 		bot = bot->next;
 	}
+	if (res == 0)
+		return (0);
 	return ((double)len / res);
 }
 
@@ -39,7 +41,6 @@ static int		ft_round(double n)
 	else
 		return (res);
 }
-
 
 static void	show_line(t_win *win, t_bot *bot, char flag)
 {
@@ -56,14 +57,13 @@ static void	show_line(t_win *win, t_bot *bot, char flag)
 		mvwaddch(win->window, CURSOR_Y, CURSOR_X + --len, '-');
 	while (bot)
 	{
-		tmp = ft_round(cost_live * bot->lives_cur_period);
+		if (flag == CURR_PERIOD)
+			tmp = ft_round(cost_live * bot->lives_cur_period);
+		else
+			tmp = ft_round(cost_live * bot->lives_last_period);
 		wattron(win->window, COLOR_PAIR(bot->player_counter));
-		while (tmp > 0 && len < 50)
-		{
-			mvwaddch(win->window, CURSOR_Y, CURSOR_X, '-');
-			CURSOR_X++;
-			tmp--;
-		}
+		while (tmp-- > 0 && len++ < 50)
+			mvwaddch(win->window, CURSOR_Y, CURSOR_X++, '-');
 		wattroff(win->window, COLOR_PAIR(bot->player_counter));
 		bot = bot->next;
 	}
