@@ -17,8 +17,8 @@ void				check_magic_header(int fd)
 	unsigned int	magic_header;
 
 	if (read(fd, &magic_header, 4) != 4)
-		ft_error("Error");
+		ft_error(ERR_109);
 	magic_header = reverse_bytes(magic_header, 4);
 	if (magic_header != COREWAR_EXEC_MAGIC)
-		ft_error("Error");
+		ft_error(ERR_110);
 }

@@ -26,7 +26,7 @@ static t_server		*init_server(void)
 	t_server *server;
 
 	server = (t_server *)malloc(sizeof(t_server));
-	(!server) ? ft_error(ERR_201) : 0;
+	(!server) ? ft_error(ERR_101) : 0;
 	server->master_socket = create_socket();
 	server->n_client_sockets = 4;
 	bzero_sockets(server->client_sockets, server->n_client_sockets);

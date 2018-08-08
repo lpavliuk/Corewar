@@ -63,7 +63,7 @@ void		dispatcher_routes(void)
 	if (g_vm->flag_client || g_vm->flag_server)
 	{
 		if (g_vm->flag_client && g_vm->flag_server)
-			ft_error("Error: dispatcher_routes()");
+			usage();
 		else if ((g_vm->flag_client))
 			client();
 		else

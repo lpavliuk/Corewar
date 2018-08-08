@@ -38,7 +38,7 @@ void				usage(void)
 
 void				ft_error(char *s)
 {
-	ft_printf(s);
+	write(2, s, ft_strlen(s));
 	exit(0);
 }
 
@@ -95,7 +95,7 @@ t_process			*push_new_process(t_process **head,
 	t_process	*new;
 
 	new = (t_process *)malloc(sizeof(t_process));
-	(!new) ? ft_error("Error") : 0;
+	(!new) ? ft_error(ERR_101) : 0;
 	ft_bzero(new->registries, REG_NUMBER + 1);
 	new->registries[1] = parent->id;
 	new->parent = parent;

@@ -20,7 +20,7 @@ void	copy_new_process(t_process **head, t_process *process_old,
 
 	i = 1;
 	process = (t_process *)malloc(sizeof(t_process));
-	(!process) ? ft_error("Error") : 0;
+	(!process) ? ft_error(ERR_101) : 0;
 	while (i <= REG_NUMBER)
 	{
 		process->registries[i] = process_old->registries[i];
