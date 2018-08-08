@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   parse_argument.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/08/08 15:09:01 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:09:02 by opavliuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void		get_bot(unsigned int id, char *filename)
 	int			fd;
 	t_bot		*new;
 
-	g_vm->count_players++;	
+	g_vm->count_players++;
 	if (g_vm->count_players > 4)
 		ft_error("Error: Can be only 1-4 players!");
 	if ((fd = open(filename, O_RDONLY)) < 0 || read(fd, 0, 0) == -1)
@@ -54,7 +54,7 @@ static void		get_number_bot(char **args, int count, int *i)
 		usage();
 }
 
-static char			available_id(unsigned int id)
+static char		available_id(unsigned int id)
 {
 	t_bot		*bot;
 
@@ -68,7 +68,7 @@ static char			available_id(unsigned int id)
 	return (1);
 }
 
-void				parse_argument(int count, char **args, int *i)
+void			parse_argument(int count, char **args, int *i)
 {
 	unsigned int	id;
 

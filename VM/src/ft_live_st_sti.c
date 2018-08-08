@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_live_st_sti.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/08 15:06:18 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:06:19 by opavliuk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "corewar.h"
 
 void	ft_live(t_process *process)
@@ -31,13 +43,14 @@ void	ft_live(t_process *process)
 }
 
 /*
-**	set_map_value() - print 4 bytes on the g_map and set appropriate values in g_pixels array
+** set_map_value() - print 4 bytes on the g_map and set appropriate
+** values in g_pixels array
 */
 
 void	set_map_value(t_process *process, unsigned int val,
 		unsigned int new_pstn)
 {
-	int		j;
+	int	j;
 
 	j = 0;
 	while (j < 4)
@@ -47,11 +60,11 @@ void	set_map_value(t_process *process, unsigned int val,
 		{
 			g_pixels[(new_pstn + j) % MEM_SIZE]->counter = 50;
 			if (g_pixels[(new_pstn + j) % MEM_SIZE]->color / 10 == 2)
-				g_pixels[(new_pstn + j) % MEM_SIZE]->color
-					= process->parent->player_counter + 20;
+				g_pixels[(new_pstn + j) %
+					MEM_SIZE]->color = process->parent->player_counter + 20;
 			else
-				g_pixels[(new_pstn + j) % MEM_SIZE]->color
-					= process->parent->player_counter;
+				g_pixels[(new_pstn + j) %
+					MEM_SIZE]->color = process->parent->player_counter;
 		}
 		j++;
 	}
@@ -112,8 +125,11 @@ int		ft_sti_check_args(unsigned int *uargs, short int *sargs, char *codage,
 }
 
 /*
-**	"Значение T_REG (первый аргумент) записывается в ячейку, по адресу (текущая позиция PC плюс ((второй аргумент плюс третий аргумент) % IDX_MOD))
-**	 - Если второй аргумент T_IND - то ясное дело, что вместо второго аргумента, в уровнение подставляются те 4 байта, которые мы берём из ячейки (T_IND % IDX_MOD)."
+** "Значение T_REG (первый аргумент) записывается в ячейку, по адресу
+** (текущая позиция PC плюс ((второй аргумент плюс третий аргумент) % IDX_MOD))
+** - Если второй аргумент T_IND - то ясное дело, что вместо второго аргумента,
+** в уровнение подставляются те 4 байта,
+** которые мы берём из ячейки (T_IND % IDX_MOD)."
 */
 
 void	ft_sti(t_process *process)

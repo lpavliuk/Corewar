@@ -14,6 +14,8 @@
 
 void	print_winner(t_win *win)
 {
+	system (ft_strjoin((ft_strjoin("say -v fred -r 30  \"Player,",
+		g_vm->winner->name)), " won\" & "));									// ! leaks can be this
 	wattron(win->window, A_BOLD);
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "The winner is : ");
 	wattron(win->window, COLOR_PAIR(g_vm->winner->player_counter));

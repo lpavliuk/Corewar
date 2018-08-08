@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   process_function_ft_aff_zjmp.c                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/08 15:06:52 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:06:53 by opavliuk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "corewar.h"
 
 int		check_valid_codage(char opcode, char *codage)
@@ -7,11 +19,11 @@ int		check_valid_codage(char opcode, char *codage)
 	int		it_was;
 
 	input_arg = 0;
-	while(input_arg < COUNT_ARGS(opcode))
+	while (input_arg < COUNT_ARGS(opcode))
 	{
 		possible_arg = 0;
 		it_was = 0;
-		while(possible_arg < 3)
+		while (possible_arg < 3)
 		{
 			if (ARG(opcode, input_arg, possible_arg)
 				&& codage[input_arg] == possible_arg + 1)
@@ -53,25 +65,21 @@ void	ft_zjmp(t_process *process)
 
 	if (g_vm->flag_visual)
 		SET_PIXEL_COLOR;
-	// ft_printf("ZJMP: <<cur_cycle %d>> <<carry %d>> <cur_position %d>>\n", g_vm->cur_cycle, process->carry, process->position);
 	if (process->carry)
 	{
 		new_position = (short)get_arg((process->position + 1) % MEM_SIZE,
 			T_DIR_SIZE) % IDX_MOD;
-		// ft_printf("	<<new_position %d>> <<changed position %d>>\n", new_position, (process->position + new_position) % MEM_SIZE);
 		process->position = (process->position + new_position) % MEM_SIZE;
-		// (process->position > 4096) ? (process->position %= 4096) : 1;
 	}
 	else
-	{
-		// ft_printf("	carry == 0 <<changed position %d>>\n", (process->position + 1 + T_DIR_SIZE) % MEM_SIZE);
 		process->position = (process->position + 1 + T_DIR_SIZE) % MEM_SIZE;
-	}
 	if (g_vm->flag_visual)
 		TURN_ON_PROCESS;
 }
 
-/* WTF-FUNCTION */
+/*
+** WTF-FUNCTION
+*/
 
 void	ft_aff(t_process *process)
 {

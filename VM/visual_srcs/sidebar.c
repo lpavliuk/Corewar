@@ -61,7 +61,7 @@ static void	sidebar_players(t_win *win)
 static void	sidebar_footer(t_win *win)
 {
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
-			"CYCLE_TO_DIE : %-4d", g_vm->cycle_to_die);
+			"CYCLE_TO_DIE : %-4u", g_vm->cycle_to_die);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
 			"CYCLE_DELTA : %d", CYCLE_DELTA);
