@@ -184,6 +184,7 @@ typedef struct			s_vm
 	t_bot				*winner;
 	t_process			*process;
 	t_bot				*bot;
+	t_bot				*last_live_bot;
 }						t_vm;
 
 /*

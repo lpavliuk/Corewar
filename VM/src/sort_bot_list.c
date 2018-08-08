@@ -26,6 +26,7 @@ static void		give_player_counter_to_bots(t_bot *bot)
 	{
 		bot->player_counter = player_counter;
 		player_counter++;
+		g_vm->last_live_bot = bot;
 		bot = bot->next;
 	}
 }
