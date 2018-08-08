@@ -41,7 +41,7 @@ void	ft_lld(t_process *process)
 
 	decipher_codage(codage, COUNT_ARGS(13), GET_CODAGE);
 	if (check_valid_codage(OPCODE(12), codage)
-	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
+	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 3 : 5))
 			% MEM_SIZE, T_REG_SIZE)) > 1 && arg2 < 17)
 	{
 		result = (codage[0] == IND_CODE) ? (get_arg((process->position
