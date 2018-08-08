@@ -19,7 +19,7 @@
 void	visualize(void)
 {
 	t_win	*win;
-	int		key;
+	
 
 	create_pixel_map();
 	fill_pixel_map();
@@ -29,8 +29,7 @@ void	visualize(void)
 	color_preparation();
 	win = init_win();
 	prepare_window(win);
-	while ((key = getch()) != 3 && !g_vm->winner)
-		redraw(win, key);
+	redraw(win);
 	delwin(win->window);
 	endwin();
 	free(win);
