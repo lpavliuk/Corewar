@@ -11,15 +11,14 @@
 /* ************************************************************************** */
 
 #include "corewar.h"
-#include <stdio.h>
 
-void	delta_cycle()
+void	delta_cycle(void)
 {
 	g_vm->cycle_to_die -= CYCLE_DELTA;
 	g_vm->last_change_cycle_to_die = 0;
 }
 
-int		reset_cur_period()
+int		reset_cur_period(void)
 {
 	t_bot			*cur_bot;
 	unsigned int	max;
@@ -38,14 +37,14 @@ int		reset_cur_period()
 	return (max);
 }
 
-void	time_to_die()
+void	time_to_die(void)
 {
 	t_process	*cur_p;
 	t_process	*prev;
 
 	prev = 0;
-	cur_p = g_vm->process; 
-	while(cur_p)
+	cur_p = g_vm->process;
+	while (cur_p)
 		if (!(cur_p->live))
 		{
 			prev ? prev->next = cur_p->next : 0;
@@ -64,14 +63,15 @@ void	time_to_die()
 		}
 }
 
-void	do_proceses()
+void	do_proceses(void)
 {
 	t_process *process;
 
 	process = g_vm->process;
-	while(process)
+	while (process)
 	{
-		if (!process->opcode && (!g_map[process->position] || g_map[process->position] > 16))
+		if (!process->opcode && (!g_map[process->position]
+			|| g_map[process->position] > 16))
 		{
 			(g_vm->flag_visual) ? SET_PIXEL_COLOR : 1;
 			process->position = ((process->position) + 1) % MEM_SIZE;
@@ -86,14 +86,14 @@ void	do_proceses()
 			process->cycles_to_perform--;
 		else if (!process->cycles_to_perform)
 		{
-			g_func[process->opcode - 1](process);			// ? call function
+			g_func[process->opcode - 1](process);
 			process->opcode = 0;
 		}
 		process = process->next;
 	}
 }
 
-t_bot	*winner_bot()
+t_bot	*winner_bot(void)
 {
 	t_bot			*cur_bot;
 	t_bot			*winner_bot;
@@ -102,7 +102,7 @@ t_bot	*winner_bot()
 	min = 0;
 	cur_bot = g_vm->bot;
 	winner_bot = 0;
-	while(cur_bot)
+	while (cur_bot)
 	{
 		if (cur_bot->last_live > min)
 		{
@@ -127,6 +127,7 @@ int		step(void)
 		g_vm->future_die = g_vm->cur_cycle + g_vm->cycle_to_die;
 		time_to_die();
 	}
-	(!g_vm->process || ((int)g_vm->cycle_to_die <= 0)) ? g_vm->winner = winner_bot() : 0;
+	(!g_vm->process || ((int)g_vm->cycle_to_die <= 0))
+		? g_vm->winner = winner_bot() : 0;
 	return (0);
 }

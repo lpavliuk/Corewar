@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "corewar.h"
-#include <stdio.h>
 
 void		init_vm(void)
 {
@@ -86,7 +85,7 @@ void		dispatcher_routes(void)
 ** and call corresponding functions.
 */
 
-void			get_args(int argc, char **args)
+void		get_args(int argc, char **args)
 {
 	int	i;
 

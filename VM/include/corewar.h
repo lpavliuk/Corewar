@@ -17,6 +17,16 @@
 # include "error.h"
 # include <fcntl.h>
 # include <time.h>
+# include <curses.h>
+# include <signal.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <errno.h>
+# include <sys/types.h>
+# include <sys/time.h>
+# include <sys/select.h>
+# include <pthread.h>
 
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
@@ -46,33 +56,26 @@
 # define NBR_LIVE				21
 # define MAX_CHECKS				10
 
-/*
-** get/send this size of bytes
-*/
-
-// # define T_REG				1
-// # define T_DIR				2
-// # define T_IND				4
-
 # define PROG_NAME_LENGTH		(128)
 # define COMMENT_LENGTH			(2048)
 # define COREWAR_EXEC_MAGIC		0xea83f3
 
 /*
-** TO THE TABLE WE CAN REFER JUST WITH OPCODE OF COMMAND!!!
+*************************************************************************************
+********************************** TABLE OF COMMANDS ********************************
+*************************************************************************************
 */
 
-# define NAME(i)		g_table[i - 1].name
-# define COUNT_ARGS(i)	g_table[i - 1].args_count
-# define ARG(i, j, k)	g_table[i - 1].args[j].arg[(int)k]
-# define OPCODE(i)		g_table[i].opcode
-# define CODAGE(i)		g_table[i - 1].codage
-# define LABEL_SIZE(i)	g_table[i - 1].label_size
-# define PREFORM(i)		g_table[i - 1].cycles
-# define MAX_TABLE 16
+# define NAME(i)				g_table[i - 1].name
+# define COUNT_ARGS(i)			g_table[i - 1].args_count
+# define ARG(i, j, k)			g_table[i - 1].args[j].arg[(int)k]
+# define OPCODE(i)				g_table[i].opcode
+# define CODAGE(i)				g_table[i - 1].codage
+# define LABEL_SIZE(i)			g_table[i - 1].label_size
+# define PREFORM(i)				g_table[i - 1].cycles
+# define MAX_TABLE 				16
 
-
-typedef struct
+typedef struct			s_arr
 {
 	char				arg[3];
 }						t_arr;
@@ -88,7 +91,7 @@ typedef	struct			s_table
 	unsigned int		cycles;
 }						t_table;
 
-static t_table		g_table[16] = {
+static t_table			g_table[16] = {
 	{"live",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		1,	0,	4,	10},
 	{"ld",		2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}},		2,	1,	4,	5},
 	{"st",		2, {{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}},		3,	1,	4,	5},
@@ -107,10 +110,18 @@ static t_table		g_table[16] = {
 	{"aff",		1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		16,	1,	4,	2}
 };
 
-typedef struct	s_win t_win;
+/*
+***********************************************************************************
+***********************************************************************************
+*/
+
+typedef struct			s_win t_win;
 
 /*
 ** exec - executable
+** lives_cur_period - Quantity of lives for current period.
+** lives_last_period - Quantity of lives for last period.
+** last_live - Cycle on which this bot has executed shout his player/id/name.
 */
 
 typedef struct			s_bot
@@ -121,25 +132,37 @@ typedef struct			s_bot
 	unsigned char		*exec;
 	unsigned int 		id;
 	unsigned int		size;
-	unsigned int		lives_cur_period;	/* Quantity of lives for current period. */
-	unsigned int		lives_last_period;	/* Quantity of lives for last period. */
-	unsigned int		last_live;			/* Cycle on which this bot has executed shout his player/id/name. */
+	unsigned int		lives_cur_period;
+	unsigned int		lives_last_period;
+	unsigned int		last_live;
 	unsigned int		bot_processes_lives;
 	struct s_bot		*next;
 }						t_bot;
 
+/*
+** position - INDEX 
+*/
+
 typedef struct			s_process
 {
-	unsigned int		position;	/* INDEX */
+	unsigned int		position;
 	unsigned char		carry : 1;
 	unsigned char		live : 1;
 	unsigned int		registries[REG_NUMBER + 1];
 	unsigned char		opcode;
-	unsigned char		codage;		// ?  поки нахуй не здалась
+	unsigned char		codage;
 	unsigned int		cycles_to_perform;
 	t_bot				*parent;
 	struct s_process	*next;
 }						t_process;
+
+/*
+** dump_cycles - Cycle on which we are going to dump memory.
+** cur_cycle - Current cycle.
+** process_count - Quantity of all processes on map.
+** *win_link - link to the window of ncurses, initialises if flag_visual == 1
+** *process - All processes.
+*/
 
 typedef struct			s_vm
 {
@@ -149,22 +172,26 @@ typedef struct			s_vm
 	unsigned char		flag_server : 1;
 	unsigned char		flag_client : 1;
 	unsigned int		cycle_to_die;
-	unsigned int		dump_cycles;			/* Cycle on which we are going to dump memory. */
-	unsigned int		cur_cycle;			/* Current cycle. */
+	unsigned int		dump_cycles;
+	unsigned int		cur_cycle;
 	unsigned int		last_change_cycle_to_die;
 	unsigned int		future_die;
-	unsigned int		process_count;		/* Quantity of all processes on map. */
+	unsigned int		process_count;
 	unsigned int		port;
 	char				*ip;
-	t_win				*win_link;			/* link to the window of ncurses, initialises if flag_visual == 1 */
+	t_win				*win_link;
 	t_bot				*winner;
-	t_process			*process;			/* All processes. */
+	t_process			*process;
 	t_bot				*bot;
 }						t_vm;
 
+/*
+** counter - How much iterations this pixel must be in bold.
+*/
+
 typedef struct			s_pixel
 {
-	unsigned char		counter;	/* How much iterations this pixel must be in bold */
+	unsigned char		counter;
 	unsigned char		color;
 }						t_pixel;
 
@@ -192,66 +219,115 @@ void					get_args(int argc, char **args);
 int						step(void);
 void					fill_map(void);
 
-/*>>>>>>>>>>   Text mode  <<<<<<<<<<<*/
-void		print_header();
-void		dump_print();
-void		print_winer();
-void		text_out();
+/*
+** Process functions
+*/
 
-/*>>>>>>>>>> Visualisation <<<<<<<<<<*/
+#define GET_CODAGE 		get_arg((process->position + 1) % MEM_SIZE, 1)
 
-# include <curses.h>
-# include <signal.h>
+int						check_valid_codage(char opcode, char *codage);
+void					change_process_position(char opcode, char *codage,
+						t_process *process);
+void					ft_live(t_process *process);
+void					ft_ld(t_process *process);
+void					ft_st(t_process *process);
+void					ft_add(t_process *process);
+void					ft_sub(t_process *process);
+void					ft_and(t_process *process);
+void					ft_or(t_process *process);
+void					ft_xor(t_process *process);
+void					ft_zjmp(t_process *process);
+void					ft_ldi(t_process *process);
+void					ft_sti(t_process *process);
+void					ft_fork(t_process *process);
+void					ft_lld(t_process *process);
+void					ft_lldi(t_process *process);
+void					ft_lfork(t_process *process);
+void					ft_aff(t_process *process);
 
-/* CURSOR */
+static void				(*g_func[16])(t_process *process) = {
+	ft_live, ft_ld, ft_st, ft_add, ft_sub, ft_and, ft_or, ft_xor,
+	ft_zjmp, ft_ldi, ft_sti, ft_fork, ft_lld, ft_lldi, ft_lfork, ft_aff
+};
 
-# define CURSOR_X win->cursor_x
-# define CURSOR_Y win->cursor_y
+/*
+*************************************************************************************
+********************************** TEXT OUTPUT MODE *********************************
+*************************************************************************************
+*/
 
-/* A starting point of cursor */
+void					print_header();
+void					dump_print();
+void					print_winer();
+void					text_out();
 
-# define X_BEGIN	3
-# define Y_BEGIN	2
+/*
+*************************************************************************************
+******************************** NCURSES OUTPUT MODE ********************************
+*************************************************************************************
+*/
 
-/* UI keys */
+/*
+** CURSOR
+*/
 
-# define KEY_Q		113
-# define KEY_W		119
-# define KEY_E		101
-# define KEY_R		114
-# define KEY_S		115
-# define KEY_SPACE	32
-# define RESIZE		410
+# define CURSOR_X 		win->cursor_x
+# define CURSOR_Y 		win->cursor_y
 
-/* Attributes ON / OFF */
+/*
+** A starting point of cursor
+*/
 
-# define ON			1
-# define OFF		2
+# define X_BEGIN		3
+# define Y_BEGIN		2
 
-/* Statistics for current period / last_period */
+/*
+** UI keys
+*/
 
-# define CURR_PERIOD 1
-# define LAST_PERIOD 2
+# define KEY_Q			113
+# define KEY_W			119
+# define KEY_E			101
+# define KEY_R			114
+# define KEY_S			115
+# define KEY_SPACE		32
+# define RESIZE			410
+
+/*
+** Attributes ON / OFF
+*/
+
+# define ON				1
+# define OFF			2
+
+/*
+** Statistics for current period / last_period
+*/
+
+# define CURR_PERIOD 	1
+# define LAST_PERIOD 	2
 
 # define INIT_PIXEL_COLOR 5
 
-# define TURN_ON_LIVE ((g_pixels[process->position]->color =\
-			((g_pixels[process->position]->color) % 10) + 10)\
+# define TURN_ON_LIVE ((g_pixels[process->position]->color = \
+			((g_pixels[process->position]->color) % 10) + 10) \
 			&& (g_pixels[process->position]->counter = 50)) ? 1 : 0
-# define TURN_ON_PROCESS g_pixels[process->position]->color =\
+# define TURN_ON_PROCESS g_pixels[process->position]->color = \
 				(g_pixels[process->position]->color % 10) + 20
-# define SET_PIXEL_COLOR g_pixels[process->position]->color =\
+# define SET_PIXEL_COLOR g_pixels[process->position]->color = \
 		g_pixels[process->position]->color % 10
+
+# define SPEED (unsigned long)(CLOCKS_PER_SEC / win->speed)
 
 typedef struct			s_win
 {
 	WINDOW				*window;
 	int					height;
 	int					width;
-	int					sidebar_pad;	/* Sidebar padding - quantity of columns to sidebar */
+	int					sidebar_pad;
 	int					cursor_y;
 	int					cursor_x;
-	short int			speed;			/* Speed of visualisation. */
+	short int			speed;
 	unsigned char		paused : 1;
 }						t_win;
 
@@ -269,25 +345,16 @@ void					sidebar_statistics(t_win *win);
 void					show_status(t_win *win);
 void					fill_pixel_map(void);
 void					handle_pixels(void);
-# define SPEED (unsigned long)(CLOCKS_PER_SEC / win->speed)
 
-/* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
-
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <errno.h>
-# include <sys/types.h>
-# include <sys/time.h>
-# include <sys/select.h>
-# include <pthread.h>
+/*
+*************************************************************************************
+********************************* NETWORK GAME MODE *********************************
+*************************************************************************************
+*/
 
 #define PORT 8888
 
-typedef struct
+typedef struct			s_server
 {
 	int					master_socket;
 	int					client_sockets[4];
@@ -298,8 +365,10 @@ typedef struct
 
 void					client(void);
 int						create_socket(void);
-void					foreach_sockets(t_server *server, unsigned char *str, int bytes);
-void					get_data_select(int socket_fd, fd_set read_fds, void *dest, int len);
+void					foreach_sockets(t_server *server, unsigned char *str,
+						int bytes);
+void					get_data_select(int socket_fd,
+						fd_set read_fds, void *dest, int len);
 void					server(void);
 void					dispatcher_sockets(t_server *server);
 void					get_clients(t_server *server);
@@ -307,36 +376,5 @@ void					get_clients_exec(t_server *server);
 void					get_game(int socket_fd, fd_set read_fds);
 void					send_data_all_clients(t_server *server);
 void					get_data_from_server(int socket_fd, fd_set read_fds);
-
-/*
-**>>>>>>>>>  Process functions <<<<<<<<<<<**
-*/
-
-#define GET_CODAGE get_arg((process->position + 1) % MEM_SIZE, 1)
-
-int			check_valid_codage(char opcode, char *codage);
-void		change_process_position(char opcode, char *codage,
-	t_process *process);
-void		ft_live(t_process *process);
-void		ft_ld(t_process *process);
-void		ft_st(t_process *process);
-void		ft_add(t_process *process);
-void		ft_sub(t_process *process);
-void		ft_and(t_process *process);
-void		ft_or(t_process *process);
-void		ft_xor(t_process *process);
-void		ft_zjmp(t_process *process);
-void		ft_ldi(t_process *process);
-void		ft_sti(t_process *process);
-void		ft_fork(t_process *process);
-void		ft_lld(t_process *process);
-void		ft_lldi(t_process *process);
-void		ft_lfork(t_process *process);
-void		ft_aff(t_process *process);
-
-static void	(*g_func[16])(t_process *process) = {
-	ft_live, ft_ld, ft_st, ft_add, ft_sub, ft_and, ft_or, ft_xor,
-	ft_zjmp, ft_ldi, ft_sti, ft_fork, ft_lld, ft_lldi, ft_lfork, ft_aff
-};
 
 #endif

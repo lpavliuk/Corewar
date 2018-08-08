@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_ld_ldi_lld_lldi.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/08 15:06:11 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:06:12 by opavliuk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "corewar.h"
 
 void	ft_ld(t_process *process)
@@ -63,7 +75,7 @@ int		ft_ldi_lldi_check_args(unsigned int *uargs, short int *sargs,
 			if (uargs[i] < 1 || uargs[i] > 16)
 				return (0);
 		}
-		else if (codage[i] == DIR_CODE && (offset += LABEL_SIZE(OPCODE(9)))) /* LABEL_SIZE(OPCODE(9)) == LABEL_SIZE(OPCODE(13))*/
+		else if (codage[i] == DIR_CODE && (offset += LABEL_SIZE(OPCODE(9))))
 			sargs[i] = (short)get_arg((process->position
 			+ (offset - LABEL_SIZE(OPCODE(9)))) % MEM_SIZE, T_DIR_SIZE);
 		i++;

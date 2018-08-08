@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   sort_bot_list.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/08/08 15:08:38 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:08:40 by opavliuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void		bot_swap(t_bot **head, t_bot *prev, t_bot **cur, t_bot **next)
 	*cur = tmp;
 }
 
-void				sort_bot_list(t_bot **head, unsigned char count_players)
+void			sort_bot_list(t_bot **head, unsigned char count_players)
 {
 	unsigned char	i;
 	t_bot			*prev;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   staff.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/08/08 15:08:18 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:08:20 by opavliuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,23 @@
 
 void				usage(void)
 {
-	ft_printf("{yellow}Usage:{eoc} ./corewar [-dump N | -v | -s IP | -c IP] "
+	ft_printf("{yellow}Usage:{eoc} ./corewar [-dump N -v | -v | -s IP | -c IP] "
 	"[[-n N] <champion1.cor> <...cor>]\n"
-	"   {red}-n{eoc}      : Number of player\n"
+	"   {red}-n{eoc}         : Number of player\n"
 	"{blue}### {yellow}TEXT OUTPUT MODE{eoc} {blue}###"
 	"#########################################################{eoc}\n"
-	"   {red}-dump N{eoc} : Dumps memory after N cycles then exits\n"
+	"   {red}-dump N{eoc}    : Dumps memory after N cycles then exits\n"
 	"{blue}### {yellow}NCURSES OUTPUT MODE{eoc} {blue}###"
 	"######################################################{eoc}\n"
-	"   {red}-v{eoc}      : Dumps memory after N cycles then exits\n"
+	"   {red}-v{eoc}         : Ncurses output mode\n"
+	"   {red}-dump N -v{eoc} : Dumps memory in Ncurses output mode after"
+	" N cycles then exits\n"
 	"{blue}### {yellow}NETWORK GAME MODE{eoc} {blue}###"
 	"########################################################{eoc}\n"
-	"   {red}-s IP{eoc}   : Start server on IP address\n"
-	"             [./corewar -s 0.0.0.0]\n"
-	"   {red}-c IP{eoc}   : Connect client to server which on IP address\n"
-	"             [./corewar <champion.cor> -c 0.0.0.0]\n"
+	"   {red}-s IP{eoc}      : Start server on IP address\n"
+	"                [./corewar -s 0.0.0.0]\n"
+	"   {red}-c IP{eoc}      : Connect client to server which on IP address\n"
+	"                [./corewar <champion.cor> -c 0.0.0.0]\n"
 	"{blue}########################"
 	"#########################################################{eoc}\n");
 	exit(0);

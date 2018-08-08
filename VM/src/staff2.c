@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   staff2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/08/08 15:08:00 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:08:02 by opavliuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "corewar.h"
 
-char				get_arg_size(char opcode, char type)
+char			get_arg_size(char opcode, char type)
 {
 	if (type == REG_CODE)
 		return (T_REG_SIZE);
@@ -34,7 +34,8 @@ char				get_arg_size(char opcode, char type)
 ** After that I make a bitwise shift left on two bits.
 */
 
-void				decipher_codage(char *arr, unsigned char n_args, unsigned char codage)
+void			decipher_codage(char *arr, unsigned char n_args,
+									unsigned char codage)
 {
 	int				i;
 	unsigned char	tmp;
@@ -64,7 +65,7 @@ void				decipher_codage(char *arr, unsigned char n_args, unsigned char codage)
 ** we save this type of argument.
 */
 
-void				pseudo_codage(char *arr, char opcode)
+void			pseudo_codage(char *arr, char opcode)
 {
 	unsigned char	i;
 	unsigned char	j;
@@ -87,7 +88,7 @@ void				pseudo_codage(char *arr, char opcode)
 	}
 }
 
-static t_bot		*bot_init(unsigned int id)
+static t_bot	*bot_init(unsigned int id)
 {
 	t_bot			*new;
 
@@ -109,7 +110,7 @@ static t_bot		*bot_init(unsigned int id)
 	return (new);
 }
 
-t_bot				*push_new_bot(t_bot **head, unsigned int id)
+t_bot			*push_new_bot(t_bot **head, unsigned int id)
 {
 	t_bot			*tmp;
 	t_bot			*new;

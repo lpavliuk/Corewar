@@ -1,6 +1,16 @@
-#include "corewar.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_and_or_xor.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/08 15:06:01 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:06:02 by opavliuk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-/* WITH IDX_MOD OR NOT??????? */
+#include "corewar.h"
 
 int		ft_and_or_xor_args(unsigned int *args, char *codage,
 	t_process *process, char offset)
@@ -22,9 +32,10 @@ int		ft_and_or_xor_args(unsigned int *args, char *codage,
 			if (args[i] < 1 || args[i] > 16)
 				return (0);
 		}
-		else if (codage[i] == DIR_CODE && (offset += LABEL_SIZE(OPCODE(6)))) /* LABEL_SIZE(OPCODE(6)) == LABEL_SIZE(OPCODE(7 && 8))*/
+		else if (codage[i] == DIR_CODE && (offset += LABEL_SIZE(OPCODE(6))))
 			args[i] = get_arg((process->position
-			+ (offset - LABEL_SIZE(OPCODE(6)))) % MEM_SIZE, LABEL_SIZE(OPCODE(6)));
+			+ (offset - LABEL_SIZE(OPCODE(6)))) % MEM_SIZE,
+		LABEL_SIZE(OPCODE(6)));
 		i++;
 	}
 	return (1);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_fork_lfork.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/08/08 15:05:24 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 15:05:28 by opavliuk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "corewar.h"
 
 void	copy_new_process(t_process **head, t_process *process_old,
@@ -35,7 +47,8 @@ void	ft_fork(t_process *process)
 
 	new_position = ((short)(get_arg((process->position + 1)
 		% MEM_SIZE, T_DIR_SIZE)) % IDX_MOD);
-	copy_new_process(&(g_vm->process), process, ((new_position + process->position) % MEM_SIZE));
+	copy_new_process(&(g_vm->process), process,
+		((new_position + process->position) % MEM_SIZE));
 	if (g_vm->flag_visual)
 		SET_PIXEL_COLOR;
 	process->position = (process->position + T_DIR_SIZE + 1) % MEM_SIZE;
