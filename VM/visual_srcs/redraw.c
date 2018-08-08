@@ -85,5 +85,5 @@ void		redraw(t_win *win)
 	(g_vm->winner) ? print_winner(win) : 0;
 	wrefresh(win->window);
 	nodelay(stdscr,false);
-	getch();
+	(g_vm->winner) ? getch() : 0;
 }
