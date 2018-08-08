@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   redraw.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/08/08 18:12:17 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 18:12:19 by opavliuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,6 @@ void		redraw(t_win *win)
 	}
 	(g_vm->winner) ? print_winner(win) : 0;
 	wrefresh(win->window);
-	nodelay(stdscr,false);
+	nodelay(stdscr, false);
 	(g_vm->winner) ? getch() : 0;
 }

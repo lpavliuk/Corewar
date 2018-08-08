@@ -12,7 +12,7 @@
 
 #include "corewar.h"
 
-int			reset_cur_period(void)
+static int		reset_cur_period(void)
 {
 	t_bot			*cur_bot;
 	unsigned int	max;
@@ -31,7 +31,7 @@ int			reset_cur_period(void)
 	return (max);
 }
 
-void		time_to_die(void)
+static void		time_to_die(void)
 {
 	t_process	*cur_p;
 	t_process	*prev;
@@ -57,7 +57,7 @@ void		time_to_die(void)
 		}
 }
 
-static void	do_proceses(t_process *process)
+static void		do_proceses(t_process *process)
 {
 	while (process)
 	{
@@ -84,7 +84,7 @@ static void	do_proceses(t_process *process)
 	}
 }
 
-t_bot		*winner_bot(void)
+static t_bot	*winner_bot(void)
 {
 	t_bot			*cur_bot;
 	t_bot			*winner_bot;
@@ -105,7 +105,7 @@ t_bot		*winner_bot(void)
 	return (winner_bot);
 }
 
-int			step(void)
+int				step(void)
 {
 	g_vm->cur_cycle++;
 	do_proceses(g_vm->process);
