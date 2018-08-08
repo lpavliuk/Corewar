@@ -14,8 +14,8 @@ void	ft_live(t_process *process)
 	{
 		if (player_id == bot->id && (bot->last_live = g_vm->cur_cycle))
 		{
-			!g_vm->flag_visual
-				? ft_printf("Player %d (%s) is said to be alive\n",
+			(!g_vm->flag_visual && !g_vm->flag_dump)
+				? ft_printf("A process shows that player %d (%s) is alive\n",
 				bot->player_counter, bot->name) : 1;
 			bot->lives_cur_period++;
 			break ;

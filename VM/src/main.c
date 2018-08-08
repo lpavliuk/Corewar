@@ -76,8 +76,7 @@ void		dispatcher_routes(void)
 		if (g_vm->flag_visual)
 			visualize();
 		else
-			while (!g_vm->winner)
-				step();
+			text_out();
 	}
 }
 

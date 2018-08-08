@@ -16,20 +16,14 @@
 void		print_header()														// ! bot id realy ??
 {
 	t_bot			*cur_bot;
-	char			i;
 
 	ft_printf("Introducing contestants...\n");
-	i = 1;
-	while(i < g_vm->count_players)
+	cur_bot = g_vm->bot;
+	while(cur_bot)
 	{
-		ft_printf("_____\n");
-		cur_bot = g_vm->bot;
-		while(cur_bot && (int)cur_bot->id != (int)i)
-			cur_bot = cur_bot->next;
-		if (cur_bot)															
-			ft_printf("* Player %u, weighing %u bytes, \"%s\" (\"%s\") !\n",
-			i, cur_bot->size, cur_bot->name, cur_bot->comment);
-		i++;
+		ft_printf("* Player %u, weighing %u bytes, \"%s\" (\"%s\") !\n",
+			(-1) * (int)cur_bot->id, cur_bot->size, cur_bot->name, cur_bot->comment);
+		cur_bot = cur_bot->next;
 	}
 }
 
@@ -40,7 +34,7 @@ void		dump_print()
 	i = -1;
 	while(++i < MEM_SIZE)
 	{
-		if (!(i % 64))
+		if (!(i % 64) && i)
 			ft_printf("\n");
 		if (!(i % 64))
 			ft_printf("0x%04x :", i);
@@ -51,7 +45,7 @@ void		dump_print()
 
 void		print_winer()
 {
-	ft_printf("Player %i (%s) won\n", g_vm->winner->id , g_vm->winner->name);
+	ft_printf("Player %i (%s) won\n", (-1) * (int)g_vm->winner->id , g_vm->winner->name);
 }
 
 void		text_out()
@@ -59,7 +53,7 @@ void		text_out()
 	print_header();
 	while (!g_vm->winner && !(g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles))
 		step();
-	if (g_vm->flag_dump)
+	if (g_vm->flag_dump && g_vm->cur_cycle == g_vm->dump_cycles)
 		dump_print();
 	else if (g_vm->winner)
 		print_winer();
