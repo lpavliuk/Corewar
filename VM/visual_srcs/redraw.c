@@ -60,23 +60,31 @@ static void	dispatcher_keys(t_win *win, int key)
 		compute_speed(win, key);
 }
 
-void		redraw(t_win *win, int key)
+void		redraw(t_win *win)
 {
-	win->cursor_x = X_BEGIN;
-	win->cursor_y = Y_BEGIN;
-	if (key != -1)
-		dispatcher_keys(win, key);
-	if (!win->paused || key == KEY_S)
+	int		key;
+	clock_t	start;
+
+	start = clock();
+	while ((key = getch()) != 3 && !g_vm->winner)
 	{
-		step();
-		draw_map(win);
+		if (key != -1)
+			dispatcher_keys(win, key);
+		win->cursor_x = X_BEGIN;
+		win->cursor_y = Y_BEGIN;
+		if (key == KEY_S || (!win->paused && (clock() - start > SPEED)))
+		{
+			start = clock();
+			step();
+			draw_map(win);
+			handle_pixels();
+		}
 		show_sidebar(win);
-		handle_pixels();
+		if (g_vm->winner)
+		{
+			print_winner(win);
+			nodelay(stdscr, false);
+		}
+		wrefresh(win->window);
 	}
-	if (g_vm->winner)
-	{
-		print_winner(win);
-		nodelay(stdscr, false);
-	}
-	wrefresh(win->window);
 }
