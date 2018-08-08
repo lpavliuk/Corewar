@@ -15,12 +15,10 @@
 
 void	delta_cycle()
 {
-	// open("1",O_RDWR);
 	if (CYCLE_DELTA < g_vm->cycle_to_die)
 		g_vm->cycle_to_die -= CYCLE_DELTA;
 	else
 		g_vm->cycle_to_die = 0;
-	// dprintf(3,"die %u	:	cur %u\n", g_vm->cycle_to_die , g_vm->cur_cycle);
 }
 
 int		reset_cur_period()
@@ -33,7 +31,8 @@ int		reset_cur_period()
 	while(cur_bot)
 	{
 		max = (cur_bot->bot_processes_lives >= 21) ? 1 : max;
-		cur_bot->lives_last_period = cur_bot->lives_cur_period;
+		// if (!(cur_bot->lives_last_period = cur_bot->lives_cur_period))
+		// 	system (ft_strjoin((ft_strjoin("say -v fred -r 30000  \"Player,", cur_bot->name)), " is dead\" & "));
 		cur_bot->lives_cur_period = 0;
 		cur_bot->bot_processes_lives = 0;
 		cur_bot = cur_bot->next;
