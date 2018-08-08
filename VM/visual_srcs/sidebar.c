@@ -25,7 +25,7 @@ static void	sidebar_header(t_win *win)
 	show_status(win);
 	CURSOR_Y += 2;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
-			"Cycles/second limit : %d", win->speed);
+			"Cycles/second limit : %-4d", win->speed);
 	CURSOR_Y += 3;
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X,
 			"Cycle : %d", g_vm->cur_cycle);

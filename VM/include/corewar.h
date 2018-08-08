@@ -16,6 +16,7 @@
 # include "libft.h"
 # include "error.h"
 # include <fcntl.h>
+# include <time.h>
 
 # define T_REG_SIZE				1
 # define T_DIR_SIZE				2
@@ -262,13 +263,13 @@ void					create_pixel_map(void);
 void					color_preparation(void);
 void					prepare_window(t_win *win);
 void					draw_map(t_win *win);
-void					redraw(t_win *win, int key);
+void					redraw(t_win *win);
 void					show_sidebar(t_win *win);
 void					sidebar_statistics(t_win *win);
 void					show_status(t_win *win);
 void					fill_pixel_map(void);
 void					handle_pixels(void);
-
+# define SPEED (unsigned long)(CLOCKS_PER_SEC / win->speed)
 
 /* >>>>>>>>>> Network Game Mode <<<<<<<<<< */
 
