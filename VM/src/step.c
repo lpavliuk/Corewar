@@ -95,7 +95,7 @@ t_bot		*winner_bot(void)
 	winner_bot = 0;
 	while (cur_bot)
 	{
-		if (cur_bot->last_live > min)
+		if (cur_bot->last_live >= min)
 		{
 			min = cur_bot->last_live;
 			winner_bot = cur_bot;

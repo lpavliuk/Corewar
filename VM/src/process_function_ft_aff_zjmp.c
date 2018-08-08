@@ -84,14 +84,16 @@ void	ft_zjmp(t_process *process)
 void	ft_aff(t_process *process)
 {
 	char			codage[4];
-	unsigned int	reg_num;
+	unsigned char	reg_num;
 
-	decipher_codage(codage, COUNT_ARGS(16), GET_CODAGE);
+	decipher_codage(codage, COUNT_ARGS(OPCODE(15)), GET_CODAGE);
 	if (codage[0] == REG_CODE)
 	{
-		reg_num = get_arg((process->position + 1) % MEM_SIZE, T_REG_SIZE);
-		if (reg_num > 0 && reg_num < 17 && !g_vm->flag_visual)
-			ft_printf("%c", process->registries[reg_num]);
+		reg_num = (unsigned char)get_arg((process->position + 2)
+			% MEM_SIZE, T_REG_SIZE);
+		if (reg_num > 0 && reg_num < 17 && !g_vm->flag_visual
+			&& !g_vm->flag_dump)
+			ft_printf("AFF: %c\n", process->registries[reg_num] % 256);
 	}
 	change_process_position(OPCODE(15), codage, process);
 }
