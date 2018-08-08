@@ -66,7 +66,7 @@ void		redraw(t_win *win)
 	clock_t	start;
 
 	start = clock();
-	while ((key = getch()) != 3 && !g_vm->winner)
+	while (!g_vm->winner && (key = getch()) != 3)
 	{
 		if (key != -1)
 			dispatcher_keys(win, key);
@@ -80,11 +80,10 @@ void		redraw(t_win *win)
 			handle_pixels();
 		}
 		show_sidebar(win);
-		if (g_vm->winner)
-		{
-			print_winner(win);
-			nodelay(stdscr, false);
-		}
 		wrefresh(win->window);
 	}
+	(g_vm->winner) ? print_winner(win) : 0;
+	wrefresh(win->window);
+	nodelay(stdscr,false);
+	(g_vm->winner) ? getch() : 0;
 }
