@@ -64,13 +64,13 @@ OBJ= $(SRC:%.c=%.o)
 LIBFT_DIR= ../libft/
 LIBFT= ../libft/libft.a
 
-OK_STRING    =\#\#\#	 $(NAME) created		\#\#\#
+OK_STRING    =\#\#\#	$(GREEN)$(NAME)$(COLOR_OFF) is $(GREEN)READY!$(COLOR_OFF)	\#\#\#
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	@$(CC) $(FLAGS) $(LIBFT) $(OBJ) -I $(INCLD_DIR) -o $(NAME) -lncurses
-	@printf "\n\n$(GREEN)$(OK_STRING)\n\n"
+	@printf "\n\n$(OK_STRING)\n\n"
 
 %.o:%.c $(LIBFT) ./include/corewar.h
 	@$(CC) $(FLAGS) -c $< -I $(INCLD_DIR) -o $@ 
@@ -90,7 +90,5 @@ fclean:
 	@rm -f $(OBJ)
 	@printf "$(RED)remove $(NAME)$(COLOR_OFF)\n"
 	@rm -f $(NAME)
-	@printf "$(RED)remove $(NAME2)$(COLOR_OFF)\n"
-	@rm -f $(NAME2)
 
 re: fclean all

@@ -122,5 +122,6 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME)
+	@printf "$(RED)remove $(NAME)$(COLOR_OFF)\n"
 
 re: fclean all

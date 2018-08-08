@@ -10,6 +10,16 @@
 #                                                                              #
 # **************************************************************************** #
 
+COLOR_OFF=\033[0m#			# Text Reset
+BLACK	=\033[0;30m#		# Black
+RED		=\033[0;31m#		# Red
+GREEN	=\033[0;32m#		# Green
+YELLOW	=\033[0;33m#		# Yellow
+BLUE	=\033[0;34m#		# Blue
+PURPLE	=\033[0;35m#		# Purple
+CYAN	=\033[0;36m#		# Cyan
+WHITE	=\033[0;37m#		# White
+
 CC=gcc 
 CFLAGS=-Wall -Werror -Wextra
 SRC=./srcs/add_argument.c \
@@ -39,26 +49,24 @@ all: $(NAME)
 
 %.o: %.c $(INCLUDES) $(LIB)
 	@ $(CC) $(CFLAGS) -o $@ -c $< -I $(INCLUDES)
+	@printf "$(CYAN)*$(COLOR_OFF)"
 
 $(NAME): $(LIB) $(OBJ) $(HEADER) $(LIB_HEADER)
 	@ $(CC) $(CFLAGS) $(OBJ) $(LIB) -o $(NAME)
-	@ printf "\e[37;1m[Program \e[34;1masm \e[37;1mis \e[32;1mREADY!\e[37;1m]\e[0m🎅🏾🤙🏾🥃\n\n"
-	@ ./asm
+	@ printf "\n\n###	$(GREEN) asm $(COLOR_OFF) is $(GREEN)READY!$(COLOR_OFF) 	###\n\n"
 
 $(LIB):
-	@ printf "\e[32;1mCompiling libft.a ...\n"
 	@ make -C ../libft/
-	@ printf "\n\e[32;1mCompiling asm ...\n"
 
-clean:
+clean: 
 	@ rm -f $(OBJ)
 	@ make clean -C ../libft/
-	@ printf "\e[37;1m[Directories \e[33;1msrcs/ \e[37;1m&& \e[33;1mlibft/ \e[37;1mis \e[32;1mCLEAN!\e[37;1m]\e[0m🗑\n"
+	@printf  "$(YELLOW)remove OBJ\n"
 
 fclean: clean
 	@ rm -f $(NAME)
 	@ make fclean -C ../libft/
-	@ printf "\e[37;1m[Directories \e[33;1masm/ \e[37;1m&& \e[33;1mlibft/ \e[37;1mis \e[32;1mFCLEAN!\e[37;1m]\e[0m🗑\n"
+	@ printf "$(RED)remove $(NAME)$(COLOR_OFF)\n"
 
 re: fclean all
 
