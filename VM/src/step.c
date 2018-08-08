@@ -15,10 +15,8 @@
 
 void	delta_cycle()
 {
-	if (CYCLE_DELTA < g_vm->cycle_to_die)
-		g_vm->cycle_to_die -= CYCLE_DELTA;
-	else
-		g_vm->cycle_to_die = 0;
+	g_vm->cycle_to_die -= CYCLE_DELTA;
+	g_vm->last_change_cycle_to_die = 0;
 }
 
 int		reset_cur_period()
@@ -37,7 +35,6 @@ int		reset_cur_period()
 		cur_bot = cur_bot->next;
 	}
 	(max < NBR_LIVE) ? max = 0 : 0;
-	(max) ? g_vm->last_change_cycle_to_die = 0 : 0;
 	return (max);
 }
 
@@ -130,6 +127,6 @@ int		step(void)
 		g_vm->future_die = g_vm->cur_cycle + g_vm->cycle_to_die;
 		time_to_die();
 	}
-	(!g_vm->process || !g_vm->cycle_to_die) ? g_vm->winner = winner_bot() : 0;
+	(!g_vm->process || ((int)g_vm->cycle_to_die <= 0)) ? g_vm->winner = winner_bot() : 0;
 	return (0);
 }
