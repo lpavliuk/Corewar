@@ -61,9 +61,9 @@
 # define COREWAR_EXEC_MAGIC		0xea83f3
 
 /*
-*************************************************************************************
-********************************** TABLE OF COMMANDS ********************************
-*************************************************************************************
+*******************************************************************************
+****************************** TABLE OF COMMANDS ******************************
+*******************************************************************************
 */
 
 # define NAME(i)				g_table[i - 1].name
@@ -92,30 +92,30 @@ typedef	struct			s_table
 }						t_table;
 
 static t_table			g_table[16] = {
-	{"live",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		1,	0,	4,	10},
-	{"ld",		2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}},		2,	1,	4,	5},
-	{"st",		2, {{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}},		3,	1,	4,	5},
-	{"add",		3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}},		4,	1,	4,	10},
-	{"sub",		3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}},		5,	1,	4,	10},
-	{"and",		3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},		6,	1,	4,	6},
-	{"or",		3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},		7,	1,	4,	6},
-	{"xor",		3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}},		8,	1,	4,	6},
-	{"zjmp",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		9,	0,	2,	20},
-	{"ldi",		3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}},		10,	1,	2,	25},
-	{"sti",		3, {{{1, 0, 0}}, {{1, 1, 1}}, {{1, 1, 0}}},		11,	1,	2,	25},
-	{"fork",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		12,	0,	2,	800},
-	{"lld",		2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}},		13,	1,	4,	10},
-	{"lldi",	3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}},		14,	1,	2,	50},
-	{"lfork",	1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		15,	1,	2,	1000},
-	{"aff",		1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}},		16,	1,	4,	2}
+	{"live", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 1, 0, 4, 10},
+	{"ld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 2, 1, 4, 5},
+	{"st", 2, {{{1, 0, 0}}, {{1, 0, 1}}, {{0, 0, 0}}}, 3, 1, 4, 5},
+	{"add", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 4, 1, 4, 10},
+	{"sub", 3, {{{1, 0, 0}}, {{1, 0, 0}}, {{1, 0, 0}}}, 5, 1, 4, 10},
+	{"and", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 6, 1, 4, 6},
+	{"or", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 7, 1, 4, 6},
+	{"xor", 3, {{{1, 1, 1}}, {{1, 1, 1}}, {{1, 0, 0}}}, 8, 1, 4, 6},
+	{"zjmp", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 9, 0, 2, 20},
+	{"ldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 10, 1, 2, 25},
+	{"sti", 3, {{{1, 0, 0}}, {{1, 1, 1}}, {{1, 1, 0}}}, 11, 1, 2, 25},
+	{"fork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 12, 0, 2, 800},
+	{"lld", 2, {{{0, 1, 1}}, {{1, 0, 0}}, {{0, 0, 0}}}, 13, 1, 4, 10},
+	{"lldi", 3, {{{1, 1, 1}}, {{1, 1, 0}}, {{1, 0, 0}}}, 14, 1, 2, 50},
+	{"lfork", 1, {{{0, 1, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 15, 1, 2, 1000},
+	{"aff", 1, {{{1, 0, 0}}, {{0, 0, 0}}, {{0, 0, 0}}}, 16, 1, 4, 2}
 };
 
 /*
-***********************************************************************************
-***********************************************************************************
+*****************************************************************************
+*****************************************************************************
 */
 
-typedef struct			s_win t_win;
+typedef struct s_win	t_win;
 
 /*
 ** exec - executable
@@ -126,11 +126,11 @@ typedef struct			s_win t_win;
 
 typedef struct			s_bot
 {
-	unsigned char 		player_counter;
+	unsigned char		player_counter;
 	char				name[PROG_NAME_LENGTH + 1];
 	char				comment[COMMENT_LENGTH + 1];
 	unsigned char		*exec;
-	unsigned int 		id;
+	unsigned int		id;
 	unsigned int		size;
 	unsigned int		lives_cur_period;
 	unsigned int		lives_last_period;
@@ -140,7 +140,7 @@ typedef struct			s_bot
 }						t_bot;
 
 /*
-** position - INDEX 
+** position - INDEX
 */
 
 typedef struct			s_process
@@ -160,7 +160,8 @@ typedef struct			s_process
 ** dump_cycles - Cycle on which we are going to dump memory.
 ** cur_cycle - Current cycle.
 ** process_count - Quantity of all processes on map.
-** *win_link - link to the window of ncurses, initialises if flag_visual == 1
+** *win_link - link to the window of ncurses,
+** initialises if flag_visual == 1
 ** *process - All processes.
 */
 
@@ -204,7 +205,8 @@ void					usage(void);
 unsigned int			get_arg(unsigned int i, char arg_size);
 unsigned int			reverse_bytes(unsigned int data, char bytes);
 char					get_arg_size(char opcode, char type);
-void					decipher_codage(char *arr, unsigned char n_args, unsigned char codage);
+void					decipher_codage(char *arr,
+						unsigned char n_args, unsigned char codage);
 void					pseudo_codage(char *arr, char opcode);
 void					get_info_server(char *args[], int argv, int *i);
 void					get_info_client(char *args[], int argv, int *i);
@@ -213,7 +215,8 @@ t_process				*push_new_process(t_process **head, unsigned int
 void					check_magic_header(int fd);
 void					bot_parsing(int fd, t_bot *new);
 t_bot					*push_new_bot(t_bot **head, unsigned int id);
-void					sort_bot_list(t_bot **head, unsigned char count_players);
+void					sort_bot_list(t_bot **head,
+						unsigned char count_players);
 void					parse_argument(int count, char **args, int *i);
 void					get_args(int argc, char **args);
 int						step(void);
@@ -223,7 +226,7 @@ void					fill_map(void);
 ** Process functions
 */
 
-#define GET_CODAGE 		get_arg((process->position + 1) % MEM_SIZE, 1)
+# define GET_CODAGE		get_arg((process->position + 1) % MEM_SIZE, 1)
 
 int						check_valid_codage(char opcode, char *codage);
 void					change_process_position(char opcode, char *codage,
@@ -251,9 +254,9 @@ static void				(*g_func[16])(t_process *process) = {
 };
 
 /*
-*************************************************************************************
-********************************** TEXT OUTPUT MODE *********************************
-*************************************************************************************
+********************************************************************************
+****************************** TEXT OUTPUT MODE ********************************
+********************************************************************************
 */
 
 void					print_header();
@@ -262,9 +265,9 @@ void					print_winer();
 void					text_out();
 
 /*
-*************************************************************************************
-******************************** NCURSES OUTPUT MODE ********************************
-*************************************************************************************
+********************************************************************************
+***************************** NCURSES OUTPUT MODE ******************************
+********************************************************************************
 */
 
 /*
@@ -309,17 +312,17 @@ void					text_out();
 
 # define INIT_PIXEL_COLOR 5
 
-# define TURN_ON_LIVE ((g_pixels[process->position]->color = \
-			((g_pixels[process->position]->color) % 10) + 10) \
-			&& (g_pixels[process->position]->counter = 50)) ? 1 : 0
-# define TURN_ON_PROCESS g_pixels[process->position]->color = \
-				(g_pixels[process->position]->color % 10) + 20
-# define SET_PIXEL_COLOR g_pixels[process->position]->color = \
-		g_pixels[process->position]->color % 10
+# define PX_CLR g_pixels[process->position]->color
+# define PX_CNTR g_pixels[process->position]->counter
+
+# define TURN_ON_LIVE ((PX_CLR = ((PX_CLR) % 10) + 10) && (PX_CNTR = 50)) ? 1 : 0
+
+# define TURN_ON_PROCESS PX_CLR = (PX_CLR % 10) + 20
+# define SET_PIXEL_COLOR PX_CLR = PX_CLR % 10
 
 # define SPEED (unsigned long)(CLOCKS_PER_SEC / win->speed)
 
-typedef struct			s_win
+struct					s_win
 {
 	WINDOW				*window;
 	int					height;
@@ -329,7 +332,7 @@ typedef struct			s_win
 	int					cursor_x;
 	short int			speed;
 	unsigned char		paused : 1;
-}						t_win;
+};
 
 void					visualize(void);
 void					client_visualize(int socket_fd, fd_set read_fds);
@@ -347,12 +350,12 @@ void					fill_pixel_map(void);
 void					handle_pixels(void);
 
 /*
-*************************************************************************************
-********************************* NETWORK GAME MODE *********************************
-*************************************************************************************
+********************************************************************************
+****************************** NETWORK GAME MODE *******************************
+********************************************************************************
 */
 
-#define PORT 8888
+# define PORT 8888
 
 typedef struct			s_server
 {

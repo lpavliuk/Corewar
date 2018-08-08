@@ -12,13 +12,7 @@
 
 #include "corewar.h"
 
-void	delta_cycle(void)
-{
-	g_vm->cycle_to_die -= CYCLE_DELTA;
-	g_vm->last_change_cycle_to_die = 0;
-}
-
-int		reset_cur_period(void)
+int			reset_cur_period(void)
 {
 	t_bot			*cur_bot;
 	unsigned int	max;
@@ -37,7 +31,7 @@ int		reset_cur_period(void)
 	return (max);
 }
 
-void	time_to_die(void)
+void		time_to_die(void)
 {
 	t_process	*cur_p;
 	t_process	*prev;
@@ -63,11 +57,8 @@ void	time_to_die(void)
 		}
 }
 
-void	do_proceses(void)
+static void	do_proceses(t_process *process)
 {
-	t_process *process;
-
-	process = g_vm->process;
 	while (process)
 	{
 		if (!process->opcode && (!g_map[process->position]
@@ -93,7 +84,7 @@ void	do_proceses(void)
 	}
 }
 
-t_bot	*winner_bot(void)
+t_bot		*winner_bot(void)
 {
 	t_bot			*cur_bot;
 	t_bot			*winner_bot;
@@ -114,16 +105,18 @@ t_bot	*winner_bot(void)
 	return (winner_bot);
 }
 
-int		step(void)
+int			step(void)
 {
 	g_vm->cur_cycle++;
-	do_proceses();
+	do_proceses(g_vm->process);
 	if (g_vm->cur_cycle == g_vm->future_die)
 	{
 		g_vm->last_change_cycle_to_die++;
-		(reset_cur_period()) ? delta_cycle() : 0;
-		(g_vm->last_change_cycle_to_die >= MAX_CHECKS)
-			? delta_cycle() : 0;
+		if (reset_cur_period() || g_vm->last_change_cycle_to_die >= MAX_CHECKS)
+		{
+			g_vm->cycle_to_die -= CYCLE_DELTA;
+			g_vm->last_change_cycle_to_die = 0;
+		}
 		g_vm->future_die = g_vm->cur_cycle + g_vm->cycle_to_die;
 		time_to_die();
 	}
