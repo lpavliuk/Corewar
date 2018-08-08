@@ -29,7 +29,7 @@ void	visualize(void)
 	color_preparation();
 	win = init_win();
 	if (g_vm->flag_dump)
-		while(g_vm->cur_cycle < g_vm->dump_cycles)
+		while(g_vm->cur_cycle < g_vm->dump_cycles && !g_vm->winner)
 		{
 			step();
 			handle_pixels();
