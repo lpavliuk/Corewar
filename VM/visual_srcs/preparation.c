@@ -39,7 +39,7 @@ static void	ft_prepare_pixel_map(void)
 	while (i < MEM_SIZE)
 	{
 		g_pixels[i] = (t_pixel *)malloc(sizeof(t_pixel));
-		(!g_pixels[i]) ? ft_error(ERR_201) : 0;
+		(!g_pixels[i]) ? ft_error(ERR_101) : 0;
 		g_pixels[i]->counter = 0;
 		g_pixels[i]->color = INIT_PIXEL_COLOR;
 		i++;
@@ -74,7 +74,7 @@ void		fill_pixel_map(void)
 void		create_pixel_map(void)
 {
 	g_pixels = (t_pixel **)malloc(sizeof(t_pixel *) * MEM_SIZE);
-	(!g_pixels) ? ft_error(ERR_201) : ft_prepare_pixel_map();
+	(!g_pixels) ? ft_error(ERR_101) : ft_prepare_pixel_map();
 }
 
 /*

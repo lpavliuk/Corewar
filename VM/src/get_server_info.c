@@ -17,7 +17,7 @@ void	get_info_server(char *args[], int argv, int *i)
 	g_vm->flag_server = 1;
 	(*i)++;
 	if (*i >= argv)
-		ft_error("Error");
+		usage();
 	else
 		g_vm->ip = args[*i];
 	g_vm->flag_visual = 1;
@@ -28,7 +28,7 @@ void	get_info_client(char *args[], int argv, int *i)
 	g_vm->flag_client = 1;
 	(*i)++;
 	if (*i >= argv)
-		ft_error("Error");
+		usage();
 	else
 		g_vm->ip = args[*i];
 }
