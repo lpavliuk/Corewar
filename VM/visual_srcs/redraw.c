@@ -82,7 +82,6 @@ void		redraw(t_win *win)
 		show_sidebar(win);
 		if (g_vm->winner)
 		{
-			system (ft_strjoin((ft_strjoin("say -v fred -r 30  \"Player,", g_vm->winner->name)), " won\" & "));
 			print_winner(win);
 			nodelay(stdscr, false);
 		}
