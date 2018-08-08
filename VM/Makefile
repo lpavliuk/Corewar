@@ -12,7 +12,7 @@ CC=		gcc
 
 FLAGS=	-Wall -Wextra -Werror
 
-NAME=	core
+NAME=	corewar
 
 INCLD_DIR=		./include/
 SRC_NAME_DIR=	./src/

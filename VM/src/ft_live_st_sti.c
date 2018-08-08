@@ -19,8 +19,7 @@ void	ft_live(t_process *process)
 
 	process->live = 1;
 	process->parent->bot_processes_lives++;
-	player_id = get_arg((process->position + 1) % MEM_SIZE,
-		LABEL_SIZE(OPCODE(0)));
+	player_id = get_arg((process->position + 1) % MEM_SIZE, 4);
 	bot = g_vm->bot;
 	while (bot)
 	{
@@ -30,6 +29,7 @@ void	ft_live(t_process *process)
 				? ft_printf("A process shows that player %d (%s) is alive\n",
 				bot->player_counter, bot->name) : 1;
 			bot->lives_cur_period++;
+			g_vm->last_live_bot = bot;
 			break ;
 		}
 		bot = bot->next;

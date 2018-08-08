@@ -84,27 +84,6 @@ static void		do_proceses(t_process *process)
 	}
 }
 
-static t_bot	*winner_bot(void)
-{
-	t_bot			*cur_bot;
-	t_bot			*winner_bot;
-	unsigned int	min;
-
-	min = 0;
-	cur_bot = g_vm->bot;
-	winner_bot = 0;
-	while (cur_bot)
-	{
-		if (cur_bot->last_live >= min)
-		{
-			min = cur_bot->last_live;
-			winner_bot = cur_bot;
-		}
-		cur_bot = cur_bot->next;
-	}
-	return (winner_bot);
-}
-
 int				step(void)
 {
 	g_vm->cur_cycle++;
@@ -121,6 +100,6 @@ int				step(void)
 		time_to_die();
 	}
 	(!g_vm->process || ((int)g_vm->cycle_to_die <= 0))
-		? g_vm->winner = winner_bot() : 0;
+		? g_vm->winner = g_vm->last_live_bot : 0;
 	return (0);
 }
