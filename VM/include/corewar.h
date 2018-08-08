@@ -315,7 +315,7 @@ void					text_out();
 # define PX_CLR g_pixels[process->position]->color
 # define PX_CNTR g_pixels[process->position]->counter
 
-# define TURN_ON_LIVE ((PX_CLR = ((PX_CLR) % 10) + 10) && (PX_CNTR = 50)) ? 1 : 0
+# define TURN_ON_LIVE ((PX_CLR = ((PX_CLR) % 10) + 10)&&(PX_CNTR = 50)) ? 1 : 0
 
 # define TURN_ON_PROCESS PX_CLR = (PX_CLR % 10) + 20
 # define SET_PIXEL_COLOR PX_CLR = PX_CLR % 10

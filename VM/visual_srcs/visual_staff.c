@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   visual_staff.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkiselev <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: opavliuk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/07/19 14:03:16 by tkiselev          #+#    #+#             */
-/*   Updated: 2018/07/19 14:03:20 by tkiselev         ###   ########.fr       */
+/*   Created: 2018/08/08 18:12:40 by opavliuk          #+#    #+#             */
+/*   Updated: 2018/08/08 18:12:41 by opavliuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	print_winner(t_win *win)
 {
-	system (ft_strjoin((ft_strjoin("say -v fred -r 30  \"Player,",
-		g_vm->winner->name)), " won\" & "));									// ! leaks can be this
 	wattron(win->window, A_BOLD);
 	mvwprintw(win->window, CURSOR_Y, CURSOR_X, "The winner is : ");
 	wattron(win->window, COLOR_PAIR(g_vm->winner->player_counter));
