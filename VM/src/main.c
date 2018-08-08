@@ -73,7 +73,7 @@ void		dispatcher_routes(void)
 	else
 	{
 		fill_map();
-		if (g_vm->flag_visual)
+		if (g_vm->flag_visual && g_vm->flag_dump)
 			visualize();
 		else
 			text_out();

@@ -23,21 +23,21 @@ void	delta_cycle()
 
 int		reset_cur_period()
 {
-	t_bot		*cur_bot;
-	unsigned	max;
+	t_bot			*cur_bot;
+	unsigned int	max;
 
 	max = 0;
 	cur_bot = g_vm->bot;
-	while(cur_bot)
+	while (cur_bot)
 	{
-		max = (cur_bot->bot_processes_lives >= 21) ? 1 : max;
-		// if (!(cur_bot->lives_last_period = cur_bot->lives_cur_period))
-		// 	system (ft_strjoin((ft_strjoin("say -v fred -r 30000  \"Player,", cur_bot->name)), " is dead\" & "));
+		max = max + cur_bot->bot_processes_lives;
+		cur_bot->lives_last_period = cur_bot->lives_cur_period;
 		cur_bot->lives_cur_period = 0;
 		cur_bot->bot_processes_lives = 0;
 		cur_bot = cur_bot->next;
 	}
-	max ? g_vm->last_change_cycle_to_die = 0 : 0;
+	(max < NBR_LIVE) ? max = 0 : 0;
+	(max) ? g_vm->last_change_cycle_to_die = 0 : 0;
 	return (max);
 }
 
@@ -124,9 +124,9 @@ int		step(void)
 	if (g_vm->cur_cycle == g_vm->future_die)
 	{
 		g_vm->last_change_cycle_to_die++;
-		reset_cur_period() ? delta_cycle() : 0;
-		(CYCLE_DELTA < g_vm->cycle_to_die && g_vm->last_change_cycle_to_die >= MAX_CHECKS)
-			? g_vm->cycle_to_die -= CYCLE_DELTA : 0;
+		(reset_cur_period()) ? delta_cycle() : 0;
+		(g_vm->last_change_cycle_to_die >= MAX_CHECKS)
+			? delta_cycle() : 0;
 		g_vm->future_die = g_vm->cur_cycle + g_vm->cycle_to_die;
 		time_to_die();
 	}
