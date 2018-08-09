@@ -24,8 +24,8 @@ void	ft_ld(t_process *process)
 		+ 2) % MEM_SIZE, T_REG_SIZE)) > 0 && arg2 < 17)
 	{
 		result = (codage[0] == IND_CODE) ? (get_arg((process->position
-		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)),
-			T_IND_READ)) : (get_arg((process->position + 2)
+		+ ((short)get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE)
+			% IDX_MOD)), T_IND_READ)) : ((int)get_arg((process->position + 2)
 			% MEM_SIZE, LABEL_SIZE(OPCODE(1))));
 		process->registries[arg2] = result;
 		process->carry = (result) ? 0 : 1;
@@ -45,7 +45,7 @@ void	ft_lld(t_process *process)
 			% MEM_SIZE, T_REG_SIZE)) > 1 && arg2 < 17)
 	{
 		result = (codage[0] == IND_CODE) ? (get_arg((process->position
-		+ get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE))
+		+ ((short)get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE)))
 		% MEM_SIZE, T_IND_READ)) : (get_arg((process->position + 2) % MEM_SIZE,
 			LABEL_SIZE(OPCODE(12))));
 		process->registries[arg2] = result;
@@ -65,8 +65,9 @@ int		ft_ldi_lldi_check_args(unsigned int *uargs, short int *sargs,
 	while (i < 3)
 	{
 		if (codage[i] == IND_CODE && (offset += T_IND_SIZE))
-			uargs[i] = get_arg((process->position + (get_arg((process->position
-			+ 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)) % MEM_SIZE, T_IND_READ);
+			uargs[i] = get_arg((process->position +
+				((short)get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE)
+					% IDX_MOD)) % MEM_SIZE, T_IND_READ);
 		else if (codage[i] == REG_CODE)
 		{
 			uargs[i] = get_arg((process->position + offset)

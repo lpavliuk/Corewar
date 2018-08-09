@@ -84,6 +84,17 @@ static void		do_proceses(t_process *process)
 	}
 }
 
+static void		ft_refresh_map(t_process *process)
+{
+	while (process)
+	{
+		if (g_pixels[process->position]->color < 10 ||
+			g_pixels[process->position]->color > 20)
+			TURN_ON_PROCESS;
+		process = process->next;
+	}
+}
+
 int				step(void)
 {
 	g_vm->cur_cycle++;
@@ -101,5 +112,7 @@ int				step(void)
 	}
 	(!g_vm->process || ((int)g_vm->cycle_to_die <= 0))
 		? g_vm->winner = g_vm->last_live_bot : 0;
+	if (g_vm->flag_visual)
+		ft_refresh_map(g_vm->process);
 	return (0);
 }
