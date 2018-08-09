@@ -24,8 +24,8 @@ void	ft_ld(t_process *process)
 		+ 2) % MEM_SIZE, T_REG_SIZE)) > 0 && arg2 < 17)
 	{
 		result = (codage[0] == IND_CODE) ? (get_arg((process->position
-		+ (get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)),
-			T_IND_READ)) : (get_arg((process->position + 2)
+		+ ((short int)get_arg((process->position + 2) % MEM_SIZE, T_IND_SIZE) % IDX_MOD)),
+			T_IND_READ)) : ((int)get_arg((process->position + 2)
 			% MEM_SIZE, LABEL_SIZE(OPCODE(1))));
 		process->registries[arg2] = result;
 		process->carry = (result) ? 0 : 1;
