@@ -262,10 +262,10 @@ static void				(*g_func[16])(t_process *process) = {
 ********************************************************************************
 */
 
-void					print_header();
-void					dump_print();
-void					print_winer();
-void					text_out();
+void					print_header(void);
+void					dump_print(void);
+void					print_winer(void);
+void					text_out(void);
 
 /*
 ********************************************************************************
