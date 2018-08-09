@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ysamchuk <marvin@42.fr>                    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2018/08/09 20:13:30 by ysamchuk          #+#    #+#              #
+#    Updated: 2018/08/09 20:13:37 by ysamchuk         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 COLOR_OFF=\033[0m#			# Text Reset
 BLACK	=\033[0;30m#		# Black
 RED		=\033[0;31m#		# Red
@@ -13,7 +25,6 @@ OK_STRING    =\#\#\#	 $(NAME) created		\#\#\#
 
 VM_D=./VM/
 ASM_D=./ASSEMBLER/
-
 
 
 VM=		corewar
@@ -40,3 +51,5 @@ fclean:
 	@rm -f $(ASM)
 
 re: fclean all
+
+.PHONY: all, clean, fclean, re
