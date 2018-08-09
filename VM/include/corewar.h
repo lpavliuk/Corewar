@@ -232,6 +232,8 @@ void					fill_map(void);
 int						check_valid_codage(char opcode, char *codage);
 void					change_process_position(char opcode, char *codage,
 						t_process *process);
+void					set_map_value(t_process *process, unsigned int val,
+						unsigned int new_pstn);
 void					ft_live(t_process *process);
 void					ft_ld(t_process *process);
 void					ft_st(t_process *process);
