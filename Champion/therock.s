@@ -1,7 +1,7 @@
 # Champion likes banana pancakes with peanut butter and maple syrup!!!
 # Work HARD play HARD!!!
 #
-# Size: 542 Mb
+# Size: 542 bytes
 # Created by: opavliuk
 
 .name "The Rock"
