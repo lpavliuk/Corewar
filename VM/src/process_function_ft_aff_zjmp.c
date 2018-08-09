@@ -77,10 +77,6 @@ void	ft_zjmp(t_process *process)
 		TURN_ON_PROCESS;
 }
 
-/*
-** WTF-FUNCTION
-*/
-
 void	ft_aff(t_process *process)
 {
 	char			codage[4];
@@ -96,4 +92,32 @@ void	ft_aff(t_process *process)
 			ft_printf("AFF: %c\n", process->registries[reg_num] % 256);
 	}
 	change_process_position(OPCODE(15), codage, process);
+}
+
+/*
+** set_map_value() - print 4 bytes on the g_map and set appropriate
+** values in g_pixels array
+*/
+
+void	set_map_value(t_process *process, unsigned int val,
+		unsigned int new_pstn)
+{
+	int	j;
+
+	j = 0;
+	while (j < 4)
+	{
+		g_map[(new_pstn + j) % MEM_SIZE] = ((unsigned char *)&val)[3 - j];
+		if (g_vm->flag_visual)
+		{
+			g_pixels[(new_pstn + j) % MEM_SIZE]->counter = 50;
+			if (g_pixels[(new_pstn + j) % MEM_SIZE]->color / 10 == 2)
+				g_pixels[(new_pstn + j) %
+					MEM_SIZE]->color = process->parent->player_counter + 20;
+			else
+				g_pixels[(new_pstn + j) %
+					MEM_SIZE]->color = process->parent->player_counter;
+		}
+		j++;
+	}
 }

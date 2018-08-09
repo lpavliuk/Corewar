@@ -12,6 +12,16 @@
 
 #include "corewar.h"
 
+void	live_bot_manage(t_bot *bot)
+{
+	(!g_vm->flag_visual && !g_vm->flag_dump)
+		? ft_printf("A process shows that player %d (%s) is alive\n",
+		bot->player_counter, bot->name) : 1;
+	bot->lives_cur_period++;
+	bot->last_live = g_vm->cur_cycle;
+	g_vm->last_live_bot = bot;
+}
+
 void	ft_live(t_process *process)
 {
 	unsigned int	player_id;
@@ -23,13 +33,9 @@ void	ft_live(t_process *process)
 	bot = g_vm->bot;
 	while (bot)
 	{
-		if (player_id == bot->id && (bot->last_live = g_vm->cur_cycle))
+		if (player_id == bot->id)
 		{
-			(!g_vm->flag_visual && !g_vm->flag_dump)
-				? ft_printf("A process shows that player %d (%s) is alive\n",
-				bot->player_counter, bot->name) : 1;
-			bot->lives_cur_period++;
-			g_vm->last_live_bot = bot;
+			live_bot_manage(bot);
 			break ;
 		}
 		bot = bot->next;
@@ -40,34 +46,6 @@ void	ft_live(t_process *process)
 		SET_PIXEL_COLOR;
 	process->position = (process->position + 1 + 4) % MEM_SIZE;
 	(g_vm->flag_visual) ? (TURN_ON_PROCESS) : 0;
-}
-
-/*
-** set_map_value() - print 4 bytes on the g_map and set appropriate
-** values in g_pixels array
-*/
-
-void	set_map_value(t_process *process, unsigned int val,
-		unsigned int new_pstn)
-{
-	int	j;
-
-	j = 0;
-	while (j < 4)
-	{
-		g_map[(new_pstn + j) % MEM_SIZE] = ((unsigned char *)&val)[3 - j];
-		if (g_vm->flag_visual)
-		{
-			g_pixels[(new_pstn + j) % MEM_SIZE]->counter = 50;
-			if (g_pixels[(new_pstn + j) % MEM_SIZE]->color / 10 == 2)
-				g_pixels[(new_pstn + j) %
-					MEM_SIZE]->color = process->parent->player_counter + 20;
-			else
-				g_pixels[(new_pstn + j) %
-					MEM_SIZE]->color = process->parent->player_counter;
-		}
-		j++;
-	}
 }
 
 void	ft_st(t_process *process)
