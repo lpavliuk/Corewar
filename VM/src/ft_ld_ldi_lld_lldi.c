@@ -107,7 +107,6 @@ void	ft_ldi(t_process *process)
 				? process->registries[uargs[1]] : uargs[1];
 		process->registries[uargs[2]] = get_arg((process->position
 			+ (sum % IDX_MOD)) % MEM_SIZE, T_IND_READ);
-		process->carry = (process->registries[uargs[2]]) ? 0 : 1;
 	}
 	change_process_position(OPCODE(9), codage, process);
 }
