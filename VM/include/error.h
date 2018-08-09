@@ -29,10 +29,10 @@
 # define ERR_108 "\e[91mError: \e[93mthere isn't name\e[0m\n"
 # define ERR_109 "\e[91mError: \e[93mthere isn't magic header\e[0m\n"
 # define ERR_110 "\e[91mError: \e[93mmagic header isn't right\e[0m\n"
-# define ERR_111 "\e[91mError: \e[93too many players\e[0m\n"
-# define ERR_112 "\e[91mError: \e[93can't open file\e[0m\n"
-# define ERR_113 "\e[91mError: \e[93repeats number of bot\e[0m\n"
-# define ERR_114 "\e[91mError: \e[93can be only one of 1-4 numbers\e[0m\n"
+# define ERR_111 "\e[91mError: \e[93mtoo many players\e[0m\n"
+# define ERR_112 "\e[91mError: \e[93mcan't open file\e[0m\n"
+# define ERR_113 "\e[91mError: \e[93mrepeats number of bot\e[0m\n"
+# define ERR_114 "\e[91mError: \e[93mcan be only one of 1-4 numbers\e[0m\n"
 # define ERR_115 "\e[91mError: \e[93mchampion's size doesn't exist\e[0m\n"
 
 /*
