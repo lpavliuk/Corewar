@@ -19,13 +19,13 @@ ASM_D=./ASSEMBLER/
 VM=		corewar
 ASM=	asm
 
-all: $(ASM) $(VM)
+all: virtual assemb
 
-$(VM):
+virtual:
 	@$(MAKE) -C $(VM_D)
 	@cp $(VM_D)$(VM) $(VM)
 
-$(ASM):
+assemb:
 	@$(MAKE) -C $(ASM_D)
 	@cp $(ASM_D)$(ASM) $(ASM)
 
