@@ -19,6 +19,10 @@ SRC_NAME_DIR=	./src/
 SRC_NET_DIR=	./network_srcs/
 SRC_VIS_DIR=	./visual_srcs/
 
+HEADER=		./include/error.h\
+			./include/corewar.h\
+			./libft.h
+
 SRC_VIS=	client_visualize.c\
 			preparation.c\
 			prepare_window.c\
@@ -72,7 +76,7 @@ $(NAME): $(OBJ)
 	@$(CC) $(FLAGS) $(LIBFT) $(OBJ) -I $(INCLD_DIR) -o $(NAME) -lncurses
 	@printf "\n\n$(OK_STRING)\n\n"
 
-%.o:%.c $(LIBFT) ./include/corewar.h
+%.o:%.c $(LIBFT) ./include/corewar.h ./include/error.h
 	@$(CC) $(FLAGS) -c $< -I $(INCLD_DIR) -o $@ 
 	@printf "$(CYAN)*$(COLOR_OFF)"
 

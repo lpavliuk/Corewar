@@ -78,9 +78,10 @@ unsigned int		get_arg(unsigned int i, char arg_size)
 	ft_bzero(str, 4);
 	while (j < arg_size)
 	{
-		((i + j) >= MEM_SIZE) ? (i = 0) : 0;
-		str[j] = g_map[i + j];
+		(i >= MEM_SIZE) ? (i = 0) : 0;
+		str[j] = g_map[i];
 		j++;
+		i++;
 	}
 	((unsigned char *)&arg)[0] = ((unsigned char *)&str)[0];
 	((unsigned char *)&arg)[1] = ((unsigned char *)&str)[1];

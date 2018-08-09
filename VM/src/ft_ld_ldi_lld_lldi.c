@@ -41,7 +41,7 @@ void	ft_lld(t_process *process)
 
 	decipher_codage(codage, COUNT_ARGS(13), GET_CODAGE);
 	if (check_valid_codage(OPCODE(12), codage)
-	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 2 : 4))
+	&& (arg2 = get_arg((process->position + ((codage[0] == IND_CODE) ? 3 : 5))
 			% MEM_SIZE, T_REG_SIZE)) > 1 && arg2 < 17)
 	{
 		result = (codage[0] == IND_CODE) ? (get_arg((process->position
@@ -58,7 +58,7 @@ int		ft_ldi_lldi_check_args(unsigned int *uargs, short int *sargs,
 	char *codage, t_process *process)
 {
 	int		i;
-	char	offset;
+	int		offset;
 
 	i = 0;
 	offset = 2;
@@ -97,11 +97,13 @@ void	ft_ldi(t_process *process)
 		if (codage[0] == DIR_CODE)
 			sum = sargs[0];
 		else
-			sum = uargs[0];
+			sum = (codage[0] == REG_CODE)
+				? process->registries[uargs[0]] : uargs[0];
 		if (codage[1] == DIR_CODE)
 			sum += sargs[1];
 		else
-			sum += uargs[1];
+			sum += (codage[1] == REG_CODE)
+				? process->registries[uargs[1]] : uargs[1];
 		process->registries[uargs[2]] = get_arg((process->position
 			+ (sum % IDX_MOD)) % MEM_SIZE, T_IND_READ);
 		process->carry = (process->registries[uargs[2]]) ? 0 : 1;
@@ -123,11 +125,13 @@ void	ft_lldi(t_process *process)
 		if (codage[0] == DIR_CODE)
 			sum = sargs[0];
 		else
-			sum = uargs[0];
+			sum = (codage[0] == REG_CODE)
+				? process->registries[uargs[0]] : uargs[0];
 		if (codage[1] == DIR_CODE)
 			sum += sargs[1];
 		else
-			sum += uargs[1];
+			sum += (codage[1] == REG_CODE)
+				? process->registries[uargs[1]] : uargs[1];
 		process->registries[uargs[2]] = get_arg((process->position + sum)
 			% MEM_SIZE, T_IND_READ);
 		process->carry = (process->registries[uargs[2]]) ? 0 : 1;
