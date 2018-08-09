@@ -38,10 +38,12 @@ void		foreach_sockets(t_server *server, unsigned char *str, int bytes)
 
 static void	ft_error_select(char *s)
 {
-	delwin(g_vm->win_link->window);
-	endwin();
+	if (g_vm->win_link)
+	{
+		delwin(g_vm->win_link->window);
+		endwin();
+	}
 	ft_error(s);
-	exit(0);
 }
 
 void		get_data_select(int socket_fd, fd_set read_fds, void *dest, int len)
