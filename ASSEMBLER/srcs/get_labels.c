@@ -32,7 +32,6 @@ void			get_labels(t_asm *asmb, t_command *new, int *j)
 
 	while (asmb->line)
 	{
-		asmb->last_line_size = ft_strlen(asmb->line);
 		comment_delete(asmb->line);
 		s = asmb->line;
 		skip_shit(s, j, " \t");
@@ -44,5 +43,7 @@ void			get_labels(t_asm *asmb, t_command *new, int *j)
 		*j = 0;
 		ft_strdel(&asmb->line);
 		get_next_line(asmb->fd, &asmb->line);
+		if (asmb->line)
+			asmb->last_line_size = ft_strlen(asmb->line);
 	}
 }

@@ -21,16 +21,15 @@ char		check_last_line(t_asm *asmb)
 	ft_bzero(s, asmb->last_line_size + 1);
 	lseek(asmb->fd, -asmb->last_line_size, SEEK_CUR);
 	read(asmb->fd, &s, asmb->last_line_size);
-	skip_shit(s, &i, " \t");
-	if (s[i] != '\0' && s[i] != ';' && s[i] != '#')
+	if (!str_has(s, LABEL) && !str_has(s, COMMAND))
+		return (1);
+	else
 	{
 		i = ft_strlen(s) - 1;
-		if (i >= 0 && s[i] == '\n')
+		if (s[i] == '\n')
 			return (1);
-		else
-			return (0);
 	}
-	return (1);
+	return (0);
 }
 
 char		str_has(char *str, char flag)

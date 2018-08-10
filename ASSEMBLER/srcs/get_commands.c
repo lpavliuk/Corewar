@@ -82,13 +82,11 @@ void				get_commands(t_asm *asmb)
 {
 	while (get_next_line(asmb->fd, &asmb->line) > 0)
 	{
+		asmb->last_line_size = ft_strlen(asmb->line);
 		comment_delete(asmb->line);
 		get_lca(asmb);
 		if (asmb->line)
-		{
-			asmb->last_line_size = ft_strlen(asmb->line);
 			ft_strdel(&asmb->line);
-		}
 	}
 	(!check_last_line(asmb)) ? ft_error(ERR_EOF) : 0;
 }
