@@ -29,6 +29,9 @@ Rhône 1982 (that is one delicious French wine!), etc...
 reported to be “alive”.
 
 
+__Wikipedia ("Core War"):__ https://en.wikipedia.org/wiki/Core_War
+
+
 # Breakdown of the project’s objectives
 
 
