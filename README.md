@@ -62,14 +62,14 @@ neurasthenic hedgehog.
 __We made some cool bonuses:__
 
 
-• __Disassembler__: our assembler has flag '-b' which retranslates back your champions from Bytecode into assembly language.
+• __Disassembler__: our assembler has flag __'-b'__ which retranslates back your champions from Bytecode into assembly language.
 
 
-• __Info about champion__: our assember has flag '-a' also, which reads champions assembly file and shows you 
+• __Info about champion__: our assember has flag __'-a'__ also, which reads champions assembly file and shows you 
 all information about champions (name, comment, commands: opcode, codage, bytes).
 
 
-• __Network Game Mode__: our corewar has flags '-s'(server) and '-c'(client)!
-'-s' flag allows you to create a server and other clients (from another computer, on the local network,
-which have the IP address of the server), through '-c' flag, can send their best champions and watch the battle on their computers.
+• __Network Game Mode__: our corewar has flags __'-s' (server)__ and __'-c'(client)__!
+__'-s'__ flag allows you to create a server and other clients (from another computer, on the local network,
+which have the IP address of the server), through __'-c'__ flag, can send their best champions and watch the battle on their computers.
 
