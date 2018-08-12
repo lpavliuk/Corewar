@@ -69,7 +69,7 @@ __We made some cool bonuses:__
 all information about champions (name, comment, commands: opcode, codage, bytes).
 
 
-• __Network Game Mode__: our corewar has flags __'-s' (server)__ and __'-c'(client)__!
+• __Network Game Mode__: our corewar has flags __'-s' (server)__ and __'-c' (client)__!
 __'-s'__ flag allows you to create a server and other clients (from another computer, on the local network,
 which have the IP address of the server), through __'-c'__ flag, can send their best champions and watch the battle on their computers.
 
