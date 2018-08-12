@@ -10,7 +10,7 @@ Our team: __opavliuk__, __tkiselev__, __ysamchuk__, __tkuhar__.
 Project of __UNIT Factory__ (école 42)
 
 
-__What is Corewar?__
+# What is Corewar?
 
 • Corewar is a very peculiar game. It’s about bringing “players” together around a
 “virtual machine”, which will load some “champions” who will fight against one another
@@ -29,25 +29,25 @@ Rhône 1982 (that is one delicious French wine!), etc...
 reported to be “alive”.
 
 
-__Breakdown of the project’s objectives__
+# Breakdown of the project’s objectives
 
 
-This project can be broken down into three distinctive parts:
+This project can be broken down into __three distinctive parts__:
 
 
-• The assembler: this is the program that will compile your champions and translate
+• __The assembler__: this is the program that will compile your champions and translate
 them from the language you will write them in (assembly language) into “Bytecode”.Bytecode
 is a machine code, which will be directly interpreted by the virtual
 machine.
 
 
-• The virtual machine: It’s the “arena” in which your champions will be executed.
+• __The virtual machine__: It’s the “arena” in which your champions will be executed.
 It offers various functions, all of which will be useful for the battle of the champions.
 Obviously, the virtual machine should allow for numerous simultaneous processes;
 we are asking you for a gladiator fight, not a one-man show simulator.
 
 
-• The champion: This one is a special case. Later, in the championship, you will
+• __The champion__: This one is a special case. Later, in the championship, you will
 need to render a super powerful champion, who will scare the staff team to death.
 However, rendering this kind of champion is serious work. And since, for now, we
 are mostly interested in your capacity to create Corewar’s other programs (i.e. the
@@ -59,17 +59,17 @@ neurasthenic hedgehog.
 
 # Our Bonuses:
 
-We made some cool bonuses:
+__We made some cool bonuses:__
 
 
-• Disassembler: our assembler has flag '-b' which retranslates back your champions from Bytecode into assembly language.
+• __Disassembler__: our assembler has flag '-b' which retranslates back your champions from Bytecode into assembly language.
 
 
-• Info about champion: our assember has flag '-a' also, which reads champions assembly file and shows you 
+• __Info about champion__: our assember has flag '-a' also, which reads champions assembly file and shows you 
 all information about champions (name, comment, commands: opcode, codage, bytes).
 
 
-• Network Game Mode: our corewar has flags '-s'(server) and '-c'(client)!
+• __Network Game Mode__: our corewar has flags '-s'(server) and '-c'(client)!
 '-s' flag allows you to create a server and other clients (from another computer, on the local network,
 which have the IP address of the server), through '-c' flag, can send their best champions and watch the battle on their computers.
 
