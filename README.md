@@ -76,6 +76,8 @@ all information about champions (name, comment, commands: opcode, codage, bytes)
 __'-s'__ flag allows you to create a server and other clients (from another computer, on the local network,
 which have the IP address of the server), through __'-c'__ flag, can send their best champions and watch the battle on their computers.
 
+# Usages
+
 <br>
-<img height="300" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.26%20PM.png" />
+<img height="200" weight="100" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.26%20PM.png" />
 <br>
