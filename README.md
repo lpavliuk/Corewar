@@ -86,6 +86,6 @@ which have the IP address of the server), through __'-c'__ flag, can send their 
 # Visualizer
 
 <br>
-<img height="800" width="1000" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.36.54%20PM.png" />
-<img height="800" width="1000" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.37.56%20PM.png" />
+<img height="600" width="1000" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.36.54%20PM.png" />
+<img height="600" width="1000" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.37.56%20PM.png" />
 <br>
