@@ -80,5 +80,5 @@ which have the IP address of the server), through __'-c'__ flag, can send their 
 
 <br>
 <img height="200" weight="100" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.26%20PM.png" />
-<img height="200" weight="100" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.53%20PM.png" />
+<img height="100" weight="50" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.53%20PM.png" />
 <br>
