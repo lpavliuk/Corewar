@@ -79,6 +79,6 @@ which have the IP address of the server), through __'-c'__ flag, can send their 
 # Usages
 
 <br>
-<img height="100" width="500" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.53%20PM.png" />
-<img height="200" width="500" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.26%20PM.png" />
+<img height="100" width="700" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.53%20PM.png" />
+<img height="200" width="700" src="https://github.com/lpavliuk/Corewar/blob/master/screenshots/Screen%20Shot%202018-08-13%20at%201.35.26%20PM.png" />
 <br>
